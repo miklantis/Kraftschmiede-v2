@@ -21,7 +21,7 @@ export function SkillCard({
   onReset: () => void;
 }): React.ReactElement {
   const statusPill = model.mastered ? (
-    <span className="flex-none rounded-pill bg-primary/15 px-2.5 py-1 text-[11px] font-semibold text-primary">
+    <span className="flex-none rounded-pill bg-skill/15 px-2.5 py-1 text-[11px] font-semibold text-skill-foreground">
       Gemeistert
     </span>
   ) : model.active && !model.startable ? (
@@ -72,6 +72,7 @@ export function SkillCard({
     <Switch
       checked={model.active}
       disabled={busy}
+      tone="skill"
       onChange={onToggle}
       label={model.active ? `${model.name} deaktivieren` : `${model.name} aktivieren`}
     />

@@ -18,7 +18,7 @@ export function SkillPhaseList({
           className={
             "flex items-start gap-3 rounded-[12px] px-3 py-2.5 " +
             (p.isCurrent
-              ? "bg-primary/10"
+              ? "bg-skill/10"
               : p.state === "done"
                 ? "bg-secondary"
                 : "bg-white/60")
@@ -28,9 +28,9 @@ export function SkillPhaseList({
             className={
               "mt-px flex h-[22px] w-[22px] flex-none items-center justify-center rounded-full font-mono text-[12px] font-semibold " +
               (p.isCurrent
-                ? "bg-primary text-primary-foreground"
+                ? "bg-skill text-white"
                 : p.state === "done"
-                  ? "bg-primary/20 text-primary"
+                  ? "bg-skill/20 text-skill-foreground"
                   : "bg-secondary text-[#a0a0a5]")
             }
           >
@@ -52,7 +52,7 @@ export function SkillPhaseList({
                 <Lock size={13} className="flex-none text-[#a0a0a5]" />
               )}
               {p.isCurrent && (
-                <span className="flex-none rounded-pill bg-primary/15 px-2 py-px text-[10px] font-semibold text-primary">
+                <span className="flex-none rounded-pill bg-skill/15 px-2 py-px text-[10px] font-semibold text-skill-foreground">
                   Du bist hier
                 </span>
               )}

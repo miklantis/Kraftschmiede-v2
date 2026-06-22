@@ -1,18 +1,27 @@
 import { cn } from "@/lib/utils";
 
+const TONE_ON: Record<"primary" | "skill" | "yoga", string> = {
+  primary: "bg-primary",
+  skill: "bg-skill",
+  yoga: "bg-yoga",
+};
+
 // An/Aus-Schalter (role=switch). Generisch und domaenenfrei: nutzbar fuer
 // Skill aktivieren/deaktivieren und spaeter Einstellungen (Equipment, Theme).
-// Optik: gruene Wanne an, graue aus; runder Knopf gleitet. label fuer Screenreader.
+// tone faerbt den Ein-Zustand (Skills blau, Journey gruen, Yoga lila); aus ist
+// immer grau. label fuer Screenreader.
 export function Switch({
   checked,
   onChange,
   disabled = false,
+  tone = "primary",
   label,
   className,
 }: {
   checked: boolean;
   onChange: (next: boolean) => void;
   disabled?: boolean;
+  tone?: "primary" | "skill" | "yoga";
   label?: string;
   className?: string;
 }): React.ReactElement {
@@ -26,7 +35,7 @@ export function Switch({
       onClick={() => onChange(!checked)}
       className={cn(
         "relative inline-flex h-[26px] w-[44px] flex-none items-center rounded-pill transition-colors disabled:opacity-50",
-        checked ? "bg-primary" : "bg-[#d4d4d8]",
+        checked ? TONE_ON[tone] : "bg-[#d4d4d8]",
         className,
       )}
     >
