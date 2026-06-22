@@ -268,8 +268,11 @@ laenger wegen Feedback-Schleifen.
 ### Phase 2 – Navigation / Shell
 - Sidebar + Bottom-Nav, Routing-Geruest. ~1 Tag.
 
-### Phase 3 – Training
-- Workout-Karten, Suitability/Erholungs-Check, Coach-Anbindung. ~2–3 Tage.
+### Phase 3 – Training (Uebersicht & Empfehlung)
+- Reine Lese-/Navigationsseite: Journey-Streifen, Hero "Heute empfohlen" (Score), weitere
+  Workouts, aktive Skills, Yoga-Einstieg. Eignung/Erholung + Coach-Empfehlung nur als
+  Anzeige (Engine/Coach rechnen bereits aus Phase 0). "Session starten" fuehrt vorerst zu
+  einem Platzhalter; die gefuehrte Durchfuehrung ist bewusst Phase 11. ~1–2 Tage.
 
 ### Phase 4 – Verlauf
 - Kalender + Liste + Session-Zusammenfassung, erste Charts. ~1–2 Tage.
@@ -293,8 +296,12 @@ laenger wegen Feedback-Schleifen.
 - Inventar, Plate-Loader, Settings, Sync-/Konto-Panel. ~1–2 Tage.
 
 ### Phase 11 – Live-Session (Kraft + Skill)
-- Timer, Pausen-/Rest-Sheet, Audio/Vibration, Start-/Ende-Dialoge, Bottom-Sheet.
-  Dickster Brocken, plus Zusammenspiel mit der Offline-Strategie. ~4–6 Tage.
+- Die gefuehrte Durchfuehrung samt aller schwierigen Mechanik, bewusst von Phase 3
+  getrennt: Sitzungsaufbau aus Vorlage + Coach (Arbeits-/Aufwaermsaetze, Plate-Loader),
+  Satz-Abhaken, Coach beim Durchfuehren (Aufwaermen/Vorschlaege/Progression), Pausen-/
+  Rest-Timer, Audio/Vibration, Overlay (Desktop) / Bottom-Sheet (Mobile) mit Ziehgeste +
+  Wake-Lock, fokus-erhaltende Inline-Updates, Start-/Ende-Dialoge, volles Offline-
+  Aufzeichnen. Dickster Brocken, plus Zusammenspiel mit der Offline-Strategie. ~4–6 Tage.
 
 ### Phase 12 – Migration + Import/Export
 - Migrationsskript (Abschnitt 7), JSON-Import/Export, Abgleich alt/neu. ~2–4 Tage.

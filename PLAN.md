@@ -17,8 +17,10 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Phase:** Phase 1 (V1-Look) und Navigations-Feinschliff abgeschlossen (2026-06-22). Die
-  Shell folgt jetzt durchgehend dem V1-"Klar"-Look. Als Naechstes Phase 3 (Training).
+- **Phase:** Phase 1 (V1-Look) und Navigations-Feinschliff abgeschlossen. Plan praezisiert:
+  Training (Phase 3) und Live-Session (Phase 11) sauber getrennt - Phase 3 ist die reine
+  Uebersichts-/Empfehlungsseite (Coach/Eignung nur als Anzeige), die gesamte gefuehrte
+  Durchfuehrung samt Timer/Sheet/Wake-Lock liegt in Phase 11. Als Naechstes Phase 3.
 - **Erledigt:** Phase 0 abgeschlossen (Fundament, Schema/RLS, Engine, Zod-Schemas, UI-Fundament,
   Offline-Grundgeruest, Live-Deploy). Schlichter Login als Voraussetzung fuer alle
   Schreibzugriffe (E-Mail/Passwort ueber Supabase Auth, AuthProvider + useAuth, AuthGate vor
@@ -59,8 +61,10 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   bleibt kein eigener Punkt (spaeter Karte im Training). Umschaltpunkt 960px. / zeigt direkt
   Training (kein eigener Startbildschirm). Sidebar und Bottom-Nav teilen sich eine Nav-Liste,
   damit sie nicht auseinanderlaufen.
-- **Als Naechstes:** Phase 3 - Training (Workout-Karten, Eignungs-/Erholungs-Check,
-  Coach-Anbindung) gemeinsam abstimmen, dann umsetzen.
+- **Als Naechstes:** Phase 3 - Training (Uebersicht & Empfehlung). Funktionsschnitt
+  gegenueber Live ist geklaert; offen sind Layout (Mobile/Desktop, Zwei-Spalten wie V1?)
+  und Komponentenschnitt (Hero-Karte, Workout-Zeile, Journey-Streifen als wiederverwendbare
+  Bausteine). Erst abstimmen, dann bauen.
 - **Bewusst noch nicht dabei:** JSON-Export-Haelfte und Import/Export-Politur (Phase 12),
   Abgleich alt/neu (Stichproben), vollstaendiges Konto-Panel (Phase 10), App-Huelle offline
   laden (PWA, Phase 13), sichtbare Offline-Anzeige (Phase 1/2).
@@ -124,13 +128,20 @@ zurueckgedreht). Quelle: V1-Dateien klar-tokens.css und klar-app.css (nur lesen)
 - [x] Shell-Optik auf V1 angeglichen (versaler Markenname, Nav 12px-Radius + warmes Grau,
       Bottom-Nav deckend weiss mit weichem Schatten, keine Luma-Transparenz)
 
-## Phase 3 – Training
+## Phase 3 – Training (Uebersicht & Empfehlung)
 
-- [ ] Konzept abgestimmt
-- [ ] Workout-Karten
-- [ ] Suitability/Erholungs-Check
-- [ ] Coach-Anbindung
-- [ ] Live getestet
+Reine Lese-/Navigationsseite: zeigt an und fuehrt hin, fuehrt aber nicht durch. Die
+eigentliche Durchfuehrung (Timer, Satz-Abhaken, Coach beim Trainieren, Sheet/Overlay)
+ist bewusst Phase 11 (Live-Session). Eignung/Erholung und Coach-Empfehlung erscheinen
+hier nur als Anzeige - Engine und Coach rechnen bereits (Phase 0). "Session starten"
+fuehrt vorerst zu einem Platzhalter, bis Live steht.
+
+- [ ] Konzept abgestimmt (Funktionsschnitt Training/Live geklaert; Layout + Komponenten offen)
+- [ ] Journey-Streifen (Fortschritt) + Hero "Heute empfohlen" (Workout, Score, Lifts)
+- [ ] Liste weiterer Workouts (mit Score), aktive Skills, Yoga-Einstieg
+- [ ] Eignung/Erholung + Coach-Empfehlung als reine Anzeige (kein Eingriff in die Logik)
+- [ ] "Session starten" verdrahtet (vorerst Platzhalter bis Phase 11)
+- [ ] Live getestet (auf der Deploy-Seite)
 
 ## Phase 4 – Verlauf
 
@@ -186,13 +197,20 @@ zurueckgedreht). Quelle: V1-Dateien klar-tokens.css und klar-app.css (nur lesen)
 - [ ] Sync-/Konto-Panel
 - [ ] Live getestet
 
-## Phase 11 – Live-Session (Kraft + Skill)
+## Phase 11 – Live-Session (Kraft + Skill) — der dicke, heikle Brocken
+
+Die gefuehrte Durchfuehrung samt aller schwierigen Mechanik. Bewusst von Phase 3
+getrennt: was hier liegt, gehoert nicht auf den Trainings-Screen.
 
 - [ ] Konzept abgestimmt
-- [ ] Gefuehrter Ablauf, Saetze abhaken
-- [ ] Pausen-/Rest-Timer (Satz/Uebung getrennt, Auto-Start)
+- [ ] Sitzungsaufbau aus Vorlage + Coach (Arbeitssaetze, Aufwaermsaetze, Plate-Loader)
+- [ ] Gefuehrter Ablauf: Saetze abhaken (Aufwaermen, Arbeitssaetze, allg. Aufwaermen)
+- [ ] Coach beim Durchfuehren (Aufwaerm-Generator, Satz-Vorschlaege, Progression)
+- [ ] Pausen-/Rest-Timer (Satz/Uebung getrennt, Auto-Start) + Rest-Bar
 - [ ] Audio/Vibration
-- [ ] Start-/Ende-Dialoge, Bottom-Sheet
+- [ ] Overlay (Desktop) / Bottom-Sheet (Mobile) mit Ein-/Ausklappen per Ziehgeste, Wake-Lock
+- [ ] Fokus-erhaltende Inline-Updates (kein Voll-Neurender beim Tippen)
+- [ ] Start-/Ende-Dialoge
 - [ ] Volles Offline-Zusammenspiel (Aufzeichnen ohne Netz, spaeter Sync)
 - [ ] Live getestet
 
@@ -219,6 +237,18 @@ zurueckgedreht). Quelle: V1-Dateien klar-tokens.css und klar-app.css (nur lesen)
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-22 - Plan praezisiert: Training und Live-Session sauber getrennt (nur Doku, kein
+  Code). Vergleich gegen V1 (viewTraining in app.js vs. live.js): der Trainings-Screen ist
+  in V1 eine reine Lese-/Navigationsseite (Journey-Streifen, Hero "Heute empfohlen" mit
+  Score, weitere Workouts, aktive Skills, Yoga), die Live-Session (live.js, ~1200 Zeilen)
+  ist der eigenstaendige, heikle Brocken (Sitzungsaufbau, Satz-Abhaken, Coach beim
+  Durchfuehren, Timer/Audio/Vibration, Overlay/Bottom-Sheet mit Ziehgeste, Wake-Lock,
+  fokus-erhaltende Inline-Updates, Start-/Ende-Dialoge, Offline-Aufzeichnen). Phase 3 in
+  PLAN.md und Masterplan auf "Uebersicht & Empfehlung" geschaerft (Coach/Eignung nur als
+  Anzeige, "Session starten" vorerst Platzhalter, Schaetzung auf ~1-2 Tage gesenkt),
+  Phase 11 mit allem Heiklen explizit ausformuliert. Reihenfolge unveraendert (Live bleibt
+  Phase 11).
 
 - 2026-06-22 - Navigation/Shell auf V1-Look feinjustiert (Stil, keine Struktur-/Funktions-
   aenderung): Sidebar.tsx - Markenname versal mit Sperrung in V1-Grau (#5c5c61), Logo auf
