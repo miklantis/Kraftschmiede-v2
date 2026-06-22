@@ -3,7 +3,6 @@ import { Settings2 } from "lucide-react";
 import { NAV_ENTRIES } from "@/lib/nav";
 import { BrandMark } from "./BrandMark";
 import { AccountButton } from "./AccountButton";
-import { ThemeToggle } from "@/components/ThemeToggle";
 
 // Feste Seitenleiste fuer Desktop (ab 960px). Sichtbarkeit steuert die AppShell.
 export function Sidebar(): React.ReactElement {
@@ -43,7 +42,6 @@ export function Sidebar(): React.ReactElement {
         <div className="min-w-0 flex-1">
           <AccountButton variant="full" />
         </div>
-        <ThemeToggle variant="icon" />
         <Link
           to="/einstellungen"
           aria-label="Einstellungen"

@@ -3,8 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useTheme, type Theme } from "@/lib/theme";
 
 // Schaltet die Darstellung der Reihe nach durch: hell -> dunkel -> system -> hell.
-// Zwei Auspraegungen: "button" (mit Beschriftung, z. B. Einstellungen) und
-// "icon" (nur Symbol, z. B. Sidebar-Fuss / Mobile-Kopf).
+// Sitzt vorerst nur in den Einstellungen.
 const NEXT: Record<Theme, Theme> = {
   light: "dark",
   dark: "system",
@@ -17,35 +16,16 @@ const LABEL: Record<Theme, string> = {
   system: "System",
 };
 
-export function ThemeToggle({
-  variant = "button",
-}: {
-  variant?: "button" | "icon";
-}): React.ReactElement {
+export function ThemeToggle(): React.ReactElement {
   const { theme, setTheme } = useTheme();
   const Icon = theme === "light" ? Sun : theme === "dark" ? Moon : Monitor;
-  const label = `Darstellung: ${LABEL[theme]}. Klicken zum Umschalten.`;
-
-  if (variant === "icon") {
-    return (
-      <Button
-        variant="ghost"
-        size="icon-sm"
-        onClick={() => setTheme(NEXT[theme])}
-        aria-label={label}
-        title={label}
-      >
-        <Icon />
-      </Button>
-    );
-  }
 
   return (
     <Button
       variant="outline"
       size="sm"
       onClick={() => setTheme(NEXT[theme])}
-      aria-label={label}
+      aria-label={`Darstellung: ${LABEL[theme]}. Klicken zum Umschalten.`}
     >
       <Icon />
       {LABEL[theme]}

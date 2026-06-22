@@ -36,11 +36,11 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   umschaltbar (hell/dunkel/system, gemerkt) ueber ThemeProvider + ThemeToggle.
   Phase 2 - Navigation/Shell: durchgaengige AppShell um alle Seiten (im __root). Eine
   gemeinsame Nav-Definition (src/lib/nav.ts) speist Sidebar (Desktop ab 960px, fix links,
-  264px) und Bottom-Nav (Mobile darunter, sechs Punkte Icon ueber Label); Aktiv-Zustand
-  ueber die Link-activeProps des Routers. Einstellungen separat ueber das Konto-Symbol
-  (Sidebar-Fuss bzw. Mobile-Kopf), nicht in der Leiste - wie V1. Theme-Umschalter ist von
-  der Startseite in Sidebar-Fuss/Mobile-Kopf gewandert (neue Icon-Variante). Sieben Routen
-  als deutsche Slugs: / = Training, /journey, /verlauf, /uebungen, /koerper, /skills,
+  264px) und Bottom-Nav (Mobile darunter, sechs Punkte, nur Icons - Label als aria-label);
+  Aktiv-Zustand ueber die Link-activeProps des Routers. Einstellungen separat ueber das Konto-
+  Symbol (Sidebar-Fuss bzw. Mobile-Kopf), nicht in der Leiste - wie V1. Theme-Umschalter sitzt
+  vorerst nur in den Einstellungen (aus Sidebar-Fuss und Mobile-Kopf wieder entfernt). Sieben
+  Routen als deutsche Slugs: / = Training, /journey, /verlauf, /uebungen, /koerper, /skills,
   /einstellungen; die sechs Seiten vorerst schlanke Platzhalter (PagePlaceholder), echter
   Inhalt ab Phase 3. Der provisorische Startseiten-Inhalt (Konto/Abmelden, Verbindungs-
   Diagnose, Datenstand, V1-Import) ist nach /einstellungen umgezogen.
@@ -215,10 +215,10 @@ alle Bloecke und wird einmal bewusst entschieden, bevor einzelne Seiten entstehe
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
 
 - 2026-06-22 – Phase 2 (Navigation/Shell): AppShell um alle Seiten; gemeinsame Nav-Definition
-  fuer Sidebar (Desktop ab 960px) und Bottom-Nav (Mobile); sechs Hauptpunkte, Einstellungen
-  ueber Konto-Symbol; sieben Routen mit deutschen Slugs (/ = Training) als Platzhalter; Theme-
-  Umschalter in Sidebar-Fuss/Mobile-Kopf; provisorischer Startseiten-Inhalt nach /einstellungen
-  umgezogen. Typecheck/Build/Tests gruen.
+  fuer Sidebar (Desktop ab 960px) und Bottom-Nav (Mobile, nur Icons); sechs Hauptpunkte,
+  Einstellungen ueber Konto-Symbol; sieben Routen mit deutschen Slugs (/ = Training) als
+  Platzhalter; Theme-Umschalter vorerst nur in den Einstellungen; provisorischer Startseiten-
+  Inhalt nach /einstellungen umgezogen. Typecheck/Build/Tests gruen.
 
 - 2026-06-22 - Phase 1 Feinschliff Geometrie (shadcn-Stil "Luma"): die echten Luma-Werte aus
   dem shadcn-Quellcode (radix-luma) uebernommen statt geschaetzt. Primitives umgestellt:
