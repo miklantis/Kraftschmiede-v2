@@ -34,12 +34,16 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   Skill/Blau, Yoga/Lila plus Ampel (gut/Warnung/Abweichung/Gefahr) als eigene Tokens; Schrift
   Inter (UI) + Spline Sans Mono (Zahlen) selbst gehostet (offline-fest); Dunkelmodus
   umschaltbar (hell/dunkel/system, gemerkt) ueber ThemeProvider + ThemeToggle.
-- **Entscheidung:** Look folgt dem V1-"Klar"-Geist, aber weisser Hintergrund und engere Ecken
-  (10px) aus dem abgestimmten shadcn-Token-Set; Akzent bleibt Marken-#0c9d77 (nicht das Gruen
-  aus dem Token-Paste). Dunkelmodus ist von Anfang an umschaltbar. Schrift Inter statt Sora.
-  Import laeuft client-seitig in der angemeldeten Sitzung (RLS), per JSON-Datei aus dem
-  V1-Export. Vorschau vor dem Schreiben, Sperre gegen Doppel-Import, vorerst auf der Startseite
-  (wandert spaeter nach Einstellungen). Aktive Journey ist die echte "Rueckkehr 2026".
+- **Entscheidung:** Look folgt dem V1-"Klar"-Geist, aber weisser Hintergrund und die
+  Geometrie des shadcn-Stils "Luma" (radix-luma): stark gerundete Karten (rounded-4xl/32px)
+  mit weicher Elevation (Schatten + feiner Ring statt hartem Rahmen), Pillen-Buttons
+  (rounded-4xl), gerundete gefuellte Felder (rounded-3xl), luftiges Padding (--card-spacing
+  24px, kompakt 16px) - die echten Werte aus dem Luma-Quellcode, nicht geschaetzt. Akzent
+  bleibt Marken-#0c9d77 (nicht das Gruen aus dem Token-Paste). Dunkelmodus ist von Anfang an
+  umschaltbar. Schrift Inter statt Sora. Import laeuft client-seitig in der angemeldeten
+  Sitzung (RLS), per JSON-Datei aus dem V1-Export. Vorschau vor dem Schreiben, Sperre gegen
+  Doppel-Import, vorerst auf der Startseite (wandert spaeter nach Einstellungen). Aktive
+  Journey ist die echte "Rueckkehr 2026".
 - **Als Naechstes:** Phase 2 - Navigation/Shell (Seitenstruktur, Sidebar Desktop + Bottom-Nav
   Mobile, Verhalten) gemeinsam abstimmen, dann umsetzen. Der Theme-Umschalter sitzt vorlaeufig
   auf der Startseite und wandert dann an seinen endgueltigen Platz.
@@ -87,7 +91,8 @@ alle Bloecke und wird einmal bewusst entschieden, bevor einzelne Seiten entstehe
 
 - [x] Konzept abgestimmt (Theme/Stimmung, Schriften, Farben, Spacing, Grundelemente)
 - [x] Klar-Tokens (`--primary #0c9d77` etc.) als Tailwind-Theme
-- [x] shadcn/ui auf das Aussehen getrimmt
+- [x] shadcn/ui auf das Aussehen getrimmt (Luma-Geometrie: Karte rounded-4xl + weiche
+      Elevation, Pillen-Buttons, gerundete Felder; Primitives Button/Input/Card)
 - [x] Inter (UI) / Spline Sans Mono (Zahlen) eingebunden; Dunkelmodus umschaltbar
 
 ## Phase 2 – Navigation / Shell
@@ -191,6 +196,20 @@ alle Bloecke und wird einmal bewusst entschieden, bevor einzelne Seiten entstehe
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-22 - Phase 1 Feinschliff Geometrie (shadcn-Stil "Luma"): die echten Luma-Werte aus
+  dem shadcn-Quellcode (radix-luma) uebernommen statt geschaetzt. Primitives umgestellt:
+  src/components/ui/button.tsx (rounded-4xl/Pille, Zustaende, dezenter Druck-Effekt,
+  Groessen xs/sm/default/lg/icon; Akzent bleibt bg-primary = #0c9d77), src/components/ui/
+  input.tsx (rounded-3xl, gefuellt bg-input/50, transparenter Rahmen, Fokusring), neu
+  src/components/ui/card.tsx (Card + Header/Title/Description/Action/Content/Footer;
+  rounded-4xl/32px, shadow-md + ring-1 ring-foreground/5 als weiche Elevation, Padding ueber
+  --card-spacing: 24px, size=sm 16px). Slot-Import auf das vorhandene @radix-ui/react-slot
+  angepasst (kein zusaetzliches radix-ui-Metapaket); cn-font-heading entfernt (Inter als
+  einzige UI-Schrift). Radius-Stufen rounded-3xl/4xl und --card-spacing kommen aus den
+  Tailwind-v4-Defaults und sind im Build verifiziert (32px/24px/24px). Startseite: Status,
+  Umschalter und Markenfarben-Streifen vorlaeufig in eine echte Luma-Karte gefasst, damit der
+  Look live testbar ist. Typecheck, Build und 109 Tests gruen.
 
 - 2026-06-22 - Phase 1 Design-System (globaler Look): src/index.css auf das abgestimmte
   Token-Set umgestellt (warmes Stone-Grau, weisser Hintergrund, Radius 0.625rem/10px, Chart-
