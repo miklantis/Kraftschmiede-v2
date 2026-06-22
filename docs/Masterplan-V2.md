@@ -8,7 +8,9 @@ Status: Arbeitsdokument zur Diskussion. Block fuer Block verfeinerbar.
 
 Kompletter Neubau der App als moderne Web-App – neues Repo, neue Supabase-Datenbank,
 neuer Frontend-Stack. Funktional gleichwertig zur jetzigen Kraftschmiede, optisch
-aehnlich (Theme/Farben pro Block neu entschieden).
+moeglichst nah an V1: der globale Look (Farben, Schriften, Radien, Schatten, Spacing)
+wird 1:1 vom V1-"Klar"-Theme uebernommen, nicht neu erfunden. Einzelne Bloecke duerfen
+in der Funktion neu durchdacht werden, aber das Aussehen bleibt das von V1.
 
 Treiber (vom Nutzer benannt):
 - Wiederverwendbare Komponenten statt page-to-page-Duplikation (Pop-ups, Tabellen).
@@ -181,6 +183,13 @@ Entwurf wurde verworfen (V1 kennt keinen).
   `useSessions`, `useExercises`). Komponenten kennen kein Supabase direkt.
 - **Wiederverwendbare Primitives** in `src/components/ui` (Modal, DataTable, Sheet,
   MuscleMap, Chart). Genau das Ziel: einmal bauen, ueberall nutzen.
+- **shadcn/ui als Fundament, nicht als Optik.** shadcn liefert die unsichtbare Mechanik
+  (Fokus-Fang, Schliessen-Verhalten, Tastatur, Barrierefreiheit, iOS-Verhalten) als
+  eigenen, ins Projekt kopierten Code – kein mitgeschlepptes Paket. Das Aussehen kommt
+  ausschliesslich aus den V1-Tokens, die wir drueberziehen. shadcn ist farb- und
+  formneutral; behalten und V1-Look fahren ist kein Widerspruch, sondern der vorgesehene
+  Weg. Es spart genau die ueber Monate gewachsenen Kanten (Dialog, Sheet, Tabelle), die
+  unter Abschnitt 11 als Aufwandstreiber stehen.
 - **Zod-Schemas** als Quelle der Wahrheit fuer Datenformen; TypeScript-Typen daraus
   abgeleitet.
 - **Domaenensprache deutsch** (Uebung, Journey, Session, Vorlage, Phase), Code-/
@@ -211,10 +220,13 @@ Quellen: die Definitionen stehen im V1-Code (Seed), die Nutzerdaten im jsonb-Blo
 
 Der Bau laeuft in zwei Stufen, Konzept vor Code:
 
-1. **Globaler Look zuerst.** Bevor einzelne Bloecke entstehen, legen wir die
-   durchgaengige Gestaltung fest: Theme/Stimmung, Schriftarten, Farbpalette, Spacing,
-   Grundelemente. Dieser globale Look gilt fuer alle Bloecke und wird einmal bewusst
-   entschieden.
+1. **Globaler Look zuerst – aus V1 uebernommen.** Bevor einzelne Bloecke entstehen, steht
+   die durchgaengige Gestaltung. Sie wird nicht neu erfunden, sondern moeglichst 1:1 aus
+   dem V1-"Klar"-Theme uebernommen: Farben (Tokens `--bg`/`--panel`/`--accent` etc.),
+   Schriften (System-UI fuer die Oberflaeche, Spline Sans Mono fuer Zahlen – Sora ist in
+   V1 abgewaehlt), Radien (Karten 16px, Bedienelemente 11px, Pillen 20px), weiche Schatten
+   statt harter Rahmen, Spacing. Dieser globale Look gilt fuer alle Bloecke. Quelle der
+   Wahrheit sind die V1-Dateien `klar-tokens.css` und `klar-app.css` im Referenz-Repo.
 
 2. **Dann Block fuer Block.** Jeder Block (eine Seite oder ein Teilbereich einer Seite)
    wird vor der Implementierung gemeinsam durchgesprochen:
@@ -248,8 +260,10 @@ laenger wegen Feedback-Schleifen.
 - Schaetzung: ~5–8 Tage. Wichtigster Block.
 
 ### Phase 1 – Design-System
-- Klar-Tokens (`--accent #0c9d77` etc.) als Tailwind-Theme, shadcn auf das Aussehen
-  trimmen, Sora / Spline Sans Mono einbinden. ~1–2 Tage.
+- V1-"Klar"-Theme uebernehmen: Tokens (`--accent #0c9d77` etc.) 1:1 aus `klar-tokens.css`
+  als Tailwind-Theme, shadcn-Primitives auf die V1-Optik trimmen (Karte 16px + weicher
+  Schatten, Bedienelemente 11px, Pillen 20px), System-UI als Oberflaechenschrift,
+  Spline Sans Mono fuer Zahlen. ~1–2 Tage.
 
 ### Phase 2 – Navigation / Shell
 - Sidebar + Bottom-Nav, Routing-Geruest. ~1 Tag.

@@ -17,7 +17,10 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Phase:** Phase 2 (Navigation/Shell) abgeschlossen. Als Naechstes Phase 3 (Training).
+- **Phase:** Kursaenderung am Design (2026-06-22). Phase 1 wird neu aufgemacht: weg von der
+  eigenen Luma-Interpretation, hin zum moeglichst 1:1 uebernommenen V1-"Klar"-Look. shadcn
+  bleibt als Fundament. Reihenfolge: erst globalen Look auf V1 angleichen, dann
+  Navigation/Shell mit diesem Look gegenpruefen, danach Phase 3 (Training).
 - **Erledigt:** Phase 0 abgeschlossen (Fundament, Schema/RLS, Engine, Zod-Schemas, UI-Fundament,
   Offline-Grundgeruest, Live-Deploy). Schlichter Login als Voraussetzung fuer alle
   Schreibzugriffe (E-Mail/Passwort ueber Supabase Auth, AuthProvider + useAuth, AuthGate vor
@@ -44,25 +47,23 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   /einstellungen; die sechs Seiten vorerst schlanke Platzhalter (PagePlaceholder), echter
   Inhalt ab Phase 3. Der provisorische Startseiten-Inhalt (Konto/Abmelden, Verbindungs-
   Diagnose, Datenstand, V1-Import) ist nach /einstellungen umgezogen.
-- **Entscheidung:** Look folgt dem V1-"Klar"-Geist, aber weisser Hintergrund und die
-  Geometrie des shadcn-Stils "Luma" (radix-luma): stark gerundete Karten (rounded-4xl/32px)
-  mit weicher Elevation (Schatten + feiner Ring statt hartem Rahmen), Pillen-Buttons
-  (rounded-4xl), gerundete gefuellte Felder (rounded-3xl), luftiges Padding (--card-spacing
-  24px, kompakt 16px) - die echten Werte aus dem Luma-Quellcode, nicht geschaetzt. Akzent
-  bleibt Marken-#0c9d77 (nicht das Gruen aus dem Token-Paste). Dunkelmodus ist von Anfang an
-  umschaltbar. Hell-Hintergrund zart warm abgetoent (Stone-Hue) statt reinweiss, damit die
-  reinweissen Karten sich ueber die Flaeche abheben (Luma-Prinzip); nur --background hell
-  geaendert, Karten-Token und Dunkelmodus unberuehrt. Schrift Inter statt Sora. Import laeuft client-seitig in der angemeldeten
-  Sitzung (RLS), per JSON-Datei aus dem V1-Export. Vorschau vor dem Schreiben, Sperre gegen
-  Doppel-Import, vorerst auf der Startseite (wandert spaeter nach Einstellungen). Aktive
-  Journey ist die echte "Rueckkehr 2026".
+- **Entscheidung (Design, 2026-06-22 revidiert):** Globaler Look wird moeglichst 1:1 aus
+  dem V1-"Klar"-Theme uebernommen statt eigener Luma-Interpretation. Heisst konkret:
+  V1-Tokens (warmweisser Canvas `--bg #edeef1`, weisse Karten `--panel`, Akzent #0c9d77),
+  V1-Radien (Karten 16px, Bedienelemente 11px, Pillen 20px), V1-Schatten (weich, kein
+  harter Rahmen), Schrift System-UI fuer die Oberflaeche (Inter raus) und Spline Sans Mono
+  fuer Zahlen. Die in der ersten Runde gebaute Luma-Geometrie (32px-Karten, Inter,
+  Luma-Elevation) wird zurueckgedreht. shadcn/ui bleibt als Komponenten-Fundament
+  (Mechanik/Barrierefreiheit), nur die Optik wird auf V1 gelegt. Dunkelmodus bleibt
+  umschaltbar. Quelle der Wahrheit: V1-Dateien klar-tokens.css und klar-app.css (nur lesen).
 - **Entscheidung (Phase 2):** Navigation 1:1 wie V1 - sechs Hauptpunkte (Training, Journey,
   Verlauf, Uebungen, Koerper, Skills), Einstellungen separat ueber das Konto-Symbol; Yoga
   bleibt kein eigener Punkt (spaeter Karte im Training). Umschaltpunkt 960px. / zeigt direkt
   Training (kein eigener Startbildschirm). Sidebar und Bottom-Nav teilen sich eine Nav-Liste,
   damit sie nicht auseinanderlaufen.
-- **Als Naechstes:** Phase 3 - Training (Workout-Karten, Eignungs-/Erholungs-Check, Coach-
-  Anbindung) gemeinsam abstimmen, dann umsetzen.
+- **Als Naechstes:** Phase 1 neu - globalen Look auf V1 angleichen (Tokens, Primitives,
+  Schrift zurueckdrehen). Danach Navigation/Shell mit dem V1-Look gegenpruefen, erst dann
+  Phase 3 - Training gemeinsam abstimmen.
 - **Bewusst noch nicht dabei:** JSON-Export-Haelfte und Import/Export-Politur (Phase 12),
   Abgleich alt/neu (Stichproben), vollstaendiges Konto-Panel (Phase 10), App-Huelle offline
   laden (PWA, Phase 13), sichtbare Offline-Anzeige (Phase 1/2).
@@ -105,11 +106,17 @@ alle Bloecke und wird einmal bewusst entschieden, bevor einzelne Seiten entstehe
 
 ## Phase 1 – Design-System (globaler Look)
 
-- [x] Konzept abgestimmt (Theme/Stimmung, Schriften, Farben, Spacing, Grundelemente)
-- [x] Klar-Tokens (`--primary #0c9d77` etc.) als Tailwind-Theme
-- [x] shadcn/ui auf das Aussehen getrimmt (Luma-Geometrie: Karte rounded-4xl + weiche
-      Elevation, Pillen-Buttons, gerundete Felder; Primitives Button/Input/Card)
-- [x] Inter (UI) / Spline Sans Mono (Zahlen) eingebunden; Dunkelmodus umschaltbar
+Kursaenderung 2026-06-22: nicht mehr eigene Luma-Interpretation, sondern V1-"Klar"-Theme
+moeglichst 1:1 uebernehmen. shadcn bleibt als Fundament (nur die Optik wird auf V1
+zurueckgedreht). Quelle: V1-Dateien klar-tokens.css und klar-app.css (nur lesen).
+
+- [x] Konzept abgestimmt (Entscheidung: V1-Look 1:1 statt eigener Luma-Stil)
+- [ ] V1-Tokens 1:1 als Tailwind-Theme (Farben `--bg`/`--panel`/`--accent`, Radien
+      16/11/20px, weiche Schatten `--shadow-card`/`-hi`/`-pop`, hell+dunkel)
+- [ ] shadcn-Primitives (Button/Input/Card) von Luma-Geometrie auf V1-Optik zurueckgedreht
+      (Karte 16px statt 32px, V1-Schatten statt Luma-Elevation, V1-Button/-Feld)
+- [ ] Schrift auf V1 umgestellt: System-UI fuer die Oberflaeche (Inter raus), Spline Sans
+      Mono fuer Zahlen; Dunkelmodus bleibt umschaltbar
 
 ## Phase 2 – Navigation / Shell
 
@@ -213,6 +220,15 @@ alle Bloecke und wird einmal bewusst entschieden, bevor einzelne Seiten entstehe
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-22 - Kursaenderung Design (nur Doku, kein Code): Entscheidung revidiert - der
+  globale Look folgt nicht mehr einer eigenen Luma-Interpretation, sondern wird moeglichst
+  1:1 aus dem V1-"Klar"-Theme uebernommen (Tokens, Radien 16/11/20px, weiche Schatten,
+  Schrift System-UI + Spline Sans Mono, Inter raus). shadcn/ui bleibt als Komponenten-
+  Fundament, nur die Optik wird auf V1 zurueckgedreht. Phase 1 im Plan wieder geoeffnet,
+  Masterplan (Abschnitte 1, 6, 8, Phase 1) entsprechend angepasst. Reihenfolge neu: erst
+  Look auf V1, dann Navigation gegenpruefen, dann Phase 3. Der gebaute Luma-Stand bleibt
+  vorerst live, bis Phase 1 neu umgesetzt ist.
 
 - 2026-06-22 – Phase 2 (Navigation/Shell): AppShell um alle Seiten; gemeinsame Nav-Definition
   fuer Sidebar (Desktop ab 960px) und Bottom-Nav (Mobile, nur Icons); sechs Hauptpunkte,
