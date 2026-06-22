@@ -17,26 +17,26 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Phase:** Erstbefuellung (Seed + Migration zusammengefasst). Voraussetzung Login gebaut.
+- **Phase:** Erstbefuellung abgeschlossen. Als Naechstes Phase 1 (globaler Look).
 - **Erledigt:** Phase 0 abgeschlossen (Fundament, Schema/RLS, Engine, Zod-Schemas, UI-Fundament,
   Offline-Grundgeruest, Live-Deploy). Schlichter Login als Voraussetzung fuer alle
-  Schreibzugriffe gebaut: E-Mail/Passwort ueber Supabase Auth (Anmelden, Konto anlegen,
-  Abmelden), AuthProvider + useAuth-Hook, AuthGate vor dem Router, wiederverwendbares
-  Input-Primitive. Startseite zeigt angemeldete E-Mail und Abmelden. Konto angelegt,
-  Anmeldung steht. Definitionen-Seed gebaut: 7 Journey-Vorlagen (+ Phasen) und 2 Skill-
-  Progressionen (+ Phasen, Uebungen, Equipment) als Code (src/seed/definitions.ts), idempotenter
-  Runner (src/lib/seed.ts) legt sie beim ersten Start mit user_id an. Temporaere Datenstand-
-  Anzeige (src/components/Datenstand.tsx) auf der Startseite zeigt die Zeilenzahl je Tabelle
-  zum Pruefen ohne Code.
-- **Entscheidung:** Auf Wunsch werden der reine Seed (Definitionen) und die Migration
-  (persoenliche Daten) zu einer Erstbefuellung zusammengefasst. Definitionen (7 Journey-
-  Vorlagen, 2 Skill-Progressionen) befuellen sich automatisch beim ersten Start nach Login;
-  die kompletten V1-Daten kommen einmalig per Import-Knopf rein (dieser ist zugleich die
-  spaetere Import/Export-Funktion). Aktive Journey wird die echte "Rueckkehr 2026".
-- **Als Naechstes:** Import-Knopf fuer die kompletten V1-Daten (Uebungen + Muskel-Zuordnung,
-  Vorlagen, Inventar, Einstellungen, Journey "Rueckkehr 2026" + Phasen, Einheiten +
-  Saetze, Skill-Fortschritt, Body-Log, Messungen). Danach Phase 1 (globaler Look).
-- **Bewusst noch nicht dabei:** vollstaendiges Konto-Panel (Phase 10), App-Huelle offline
+  Schreibzugriffe (E-Mail/Passwort ueber Supabase Auth, AuthProvider + useAuth, AuthGate vor
+  dem Router, Input-Primitive; Startseite zeigt angemeldete E-Mail und Abmelden). Definitionen-
+  Seed: 7 Journey-Vorlagen (+ Phasen) und 2 Skill-Progressionen als Code, idempotenter Runner
+  legt sie beim ersten Start mit user_id an. Datenstand-Anzeige auf der Startseite. V1-Import:
+  uebersetzt den kompletten V1-Blob (camelCase) in die 23 normalisierten Tabellen (snake_case)
+  und schluesselt jede Text-ID auf eine neue, client-seitig vergebene UUID um, in Fremd-
+  schluessel-sicherer Reihenfolge; der Skill-Fortschritt haengt sich ueber den Skill-Schluessel
+  an die geseedeten Skills. Knopf auf der Startseite: Datei waehlen, Vorschau (Zeilenzahl je
+  Block) pruefen, bestaetigen; gesperrt, sobald schon Uebungen/Einheiten vorhanden sind.
+- **Entscheidung:** Import laeuft client-seitig in der angemeldeten Sitzung (RLS), per JSON-
+  Datei aus dem V1-Export. Vorschau vor dem Schreiben, Sperre gegen Doppel-Import, vorerst auf
+  der Startseite (wandert spaeter nach Einstellungen). Aktive Journey ist die echte
+  "Rueckkehr 2026".
+- **Als Naechstes:** Phase 1 - globaler Look (Theme/Stimmung, Schriften, Farben, Spacing,
+  Grundelemente) gemeinsam abstimmen, dann umsetzen. Danach Navigation/Shell (Phase 2).
+- **Bewusst noch nicht dabei:** JSON-Export-Haelfte und Import/Export-Politur (Phase 12),
+  Abgleich alt/neu (Stichproben), vollstaendiges Konto-Panel (Phase 10), App-Huelle offline
   laden (PWA, Phase 13), sichtbare Offline-Anzeige (Phase 1/2).
 - **Offene Grundsatzfragen:** Deploy/Test geklaert. In-App-Versionsanzeige (dreistellig,
   schlank) als spaeterer Komfort-Block vorgemerkt. Login ist eine Minimalversion; das
@@ -165,8 +165,10 @@ alle Bloecke und wird einmal bewusst entschieden, bevor einzelne Seiten entstehe
 - [ ] Konzept abgestimmt
 - [x] Definitionen aus V1-Code als DB-Seed (Journey-Vorlagen, Skills; idempotent, beim
       ersten Start mit user_id; temporaere Datenstand-Anzeige zum Pruefen)
-- [ ] Migrationsskript: V1-Blob -> normalisierte Zeilen, IDs umschluesseln
-- [ ] JSON-Import/Export
+- [x] Migrationsskript: V1-Blob -> normalisierte Zeilen, IDs umschluesseln (Import-
+      Knopf auf der Startseite: Datei waehlen, Vorschau, bestaetigen; gesperrt, sobald
+      Daten da sind)
+- [ ] JSON-Import/Export (Export-Haelfte + Politur, wandert nach Einstellungen)
 - [ ] Abgleich alt/neu (Anzahl Sessions/Saetze/Journeys + Stichproben)
 
 ## Phase 13 – Politur
@@ -181,6 +183,23 @@ alle Bloecke und wird einmal bewusst entschieden, bevor einzelne Seiten entstehe
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-22 - V1-Import gebaut (Migrationsskript): src/lib/v1import.ts uebersetzt den kompletten
+  V1-Blob (verschachtelt, camelCase) in die 23 normalisierten Tabellen (snake_case). analysiereV1
+  parst und zaehlt je Themenblock fuer eine Vorschau (schreibt nichts); importiereV1 vergibt alle
+  id-Werte client-seitig (crypto.randomUUID) und schluesselt jede V1-Text-ID auf die neue UUID um,
+  in Fremdschluessel-sicherer Reihenfolge (Inventar -> Uebungen + feine Muskel-Map -> Vorlagen ->
+  Journeys + Phasen -> Einheiten + Einheit-Uebungen + Saetze -> Skill-Fortschritt -> Body-Log ->
+  Messungen). Drei Einheit-Typen behandelt: Kraft (entries -> session_exercises, warmup + work ->
+  sets), Yoga (minutes, keine Saetze) und Skill (skillWork -> session_exercises ohne Katalogbezug,
+  value/met -> sets). Skill-Fortschritt wird ueber den Skill-Schluessel an die in Schritt 2
+  geseedeten Skills gehaengt; ohne Treffer wird der Eintrag uebersprungen und gemeldet. Defensive
+  Lese-Helfer tolerieren fehlende/fremde Felder und beide Schreibweisen (camelCase/snake_case);
+  Invariante \"genau eine aktive Journey\" wird beim Mappen durchgesetzt. UI src/components/V1Import.tsx
+  auf der Startseite: JSON-Datei waehlen, Vorschau (Zeilenzahl je Block) pruefen, bestaetigen;
+  bereitsImportiert() sperrt den Knopf, sobald schon Uebungen/Einheiten vorhanden sind, gegen
+  versehentlichen Doppel-Import. 8 Unit-Tests fuer die Vorschau-Zaehlung (src/lib/__tests__/
+  v1import.test.ts). Typecheck, Build und 109 Tests gruen.
 
 - 2026-06-22 – Definitionen-Seed + Datenstand: die kuratierten Journey-Vorlagen (7, mit
   Phasen) und Skill-Progressionen (2: Strict Pull-Up 10 Phasen, Pushup 6 Phasen, jeweils

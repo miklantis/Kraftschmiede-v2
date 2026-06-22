@@ -4,6 +4,7 @@ import { supabaseConfig } from "@/lib/supabase";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Datenstand } from "@/components/Datenstand";
+import { V1Import } from "@/components/V1Import";
 
 export const Route = createFileRoute("/")({
   component: StartPage,
@@ -59,6 +60,7 @@ function StartPage(): React.ReactElement {
       </div>
 
       <Datenstand />
+      <V1Import />
     </main>
   );
 }
