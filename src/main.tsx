@@ -1,12 +1,15 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
+import { queryClient } from "@/lib/queryClient";
+import {
+  offlinePersister,
+  CACHE_BUSTER,
+  CACHE_MAX_ALTER_MS,
+} from "@/lib/offline";
 import "./index.css";
-
-// Zentraler Query-Client fuer den Datenzugriff (TanStack Query).
-const queryClient = new QueryClient();
 
 // Router aus dem generierten Routenbaum. basepath folgt dem Vite-base,
 // damit Routing lokal (/) und auf GitHub Pages (/Kraftschmiede-v2/) gleich funktioniert.
@@ -30,8 +33,21 @@ if (rootElement === null) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
+    {/* Persistenter Provider: Cache liegt in IndexedDB und ueberlebt das
+        Schliessen der App. Nach dem Wiederherstellen werden ohne Netz
+        angefallene, pausierte Schreibvorgaenge fortgesetzt. */}
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{
+        persister: offlinePersister,
+        maxAge: CACHE_MAX_ALTER_MS,
+        buster: CACHE_BUSTER,
+      }}
+      onSuccess={() => {
+        void queryClient.resumePausedMutations();
+      }}
+    >
       <RouterProvider router={router} />
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   </StrictMode>,
 );

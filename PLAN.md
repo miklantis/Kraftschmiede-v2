@@ -17,7 +17,7 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Phase:** 0 (Schema und Fundament) – begonnen
+- **Phase:** 0 (Schema und Fundament) – abgeschlossen
 - **Erledigt:** Fundament steht (Vite + Pages-Deploy, Supabase-Projekt, Client/Query,
   Verbindung). Vollstaendiges DB-Schema in Supabase ausgefuehrt: 23 Tabellen mit RLS,
   Invariante aktiv. Masterplan Abschnitt 5 auf den umgesetzten Stand fortgeschrieben.
@@ -28,9 +28,14 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   UI-Fundament steht: TanStack Router file-based (src/routes, generierter Routenbaum),
   Tailwind v4 (Vite-Plugin) und shadcn/ui mit neutraler Basis (noch nicht auf den Look
   getrimmt – das ist Phase 1). Startseite ist erste Route; Health-Check dorthin ueberfuehrt.
-- **Als Naechstes:** Offline-Grundgeruest (persistenter Query-Cache + Mutations-Queue,
-  Skelett) – schliesst Phase 0 ab. Danach Seed (Definitionen aus V1). Dann Phase 1
+  Offline-Grundgeruest gelegt: zentraler Query-Client (src/lib/queryClient.ts) und
+  persistenter Cache in IndexedDB (src/lib/offline.ts) ueber den Persist-Provider in
+  main.tsx; Lese-Cache ueberlebt App-Neustart, ohne Netz angefallene Schreibvorgaenge
+  werden pausiert und nach Reconnect bzw. Neustart fortgesetzt. Damit ist Phase 0 fertig.
+- **Als Naechstes:** Seed (Definitionen aus V1 als DB-Seed). Dann Phase 1
   (Design-System / globaler Look).
+- **Bewusst noch nicht dabei:** App-Huelle komplett offline laden (Service Worker/PWA, Phase 13)
+  und sichtbare Offline-Anzeige (gehoert zum Look, Phase 1/2).
 - **Offene Grundsatzfragen:** Deploy/Test geklaert. In-App-Versionsanzeige (dreistellig,
   schlank) als spaeterer Komfort-Block vorgemerkt.
 
@@ -61,7 +66,8 @@ alle Bloecke und wird einmal bewusst entschieden, bevor einzelne Seiten entstehe
 - [x] Engine-Unit-Tests laufen (Vitest), gruen – 88 Tests in 7 Dateien, Paritaet zu V1 belegt
 - [x] Zod-Schemas fuer die Entitaeten (alle 23 Tabellen 1:1 gespiegelt: Row + Insert,
       jsonb-Wertobjekte; Typen abgeleitet; 13 Tests gruen)
-- [ ] Offline-Grundgeruest gelegt (persistenter Query-Cache + Mutations-Queue, Skelett)
+- [x] Offline-Grundgeruest gelegt (persistenter Query-Cache in IndexedDB + Fortsetzen
+      pausierter Mutationen, Skelett; Cache-Buster + Max-Alter 7 Tage)
 - [x] **Live-Test-Deploy eingerichtet** (Workflow gepusht; baut bei jedem Push auf main
       und veroeffentlicht auf Pages. Letzter Handgriff beim Nutzer: Pages-Quelle auf
       „GitHub Actions" stellen)
@@ -171,6 +177,18 @@ alle Bloecke und wird einmal bewusst entschieden, bevor einzelne Seiten entstehe
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-22 – Offline-Grundgeruest gelegt (Phase 0 abgeschlossen): zentraler Query-Client
+  unter src/lib/queryClient.ts (gcTime 7 Tage, staleTime 30 s, retry 1). Persistenter Cache
+  in IndexedDB ueber src/lib/offline.ts (Async-Storage-Persister auf idb-keyval, Cache-Buster
+  und Max-Alter 7 Tage). main.tsx auf PersistQueryClientProvider umgestellt; nach dem
+  Wiederherstellen werden pausierte Mutationen fortgesetzt (resumePausedMutations). Damit
+  ueberlebt der Lese-Cache einen App-Neustart, und ohne Netz angefallene Schreibvorgaenge
+  werden bei Reconnect bzw. Neustart nachgeschickt – als Geruest; die echten Entitaets-Hooks
+  folgen in den Feature-Phasen. Bewusst nicht dabei: App-Huelle offline laden (PWA, Phase 13)
+  und sichtbare Offline-Anzeige (Phase 1/2). Neue Abhaengigkeiten:
+  @tanstack/react-query-persist-client, @tanstack/query-async-storage-persister (beide 5.101.0),
+  idb-keyval 6.2.5. Typecheck, Build und 101 Tests gruen.
 
 - 2026-06-22 – UI-Fundament aufgesetzt: TanStack Router file-based (src/routes mit
   __root + index, automatisch generierter Routenbaum, Router-Devtools nur im Dev,
