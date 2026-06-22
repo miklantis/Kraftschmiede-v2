@@ -25,7 +25,7 @@ export function JourneyStrip({
         <Map className="size-5" />
       </div>
       <div className="min-w-0 flex-1">
-        <div className="truncate text-[15px] font-semibold text-foreground min-[960px]:text-base">
+        <div className="truncate text-[15px] font-semibold text-foreground min-[960px]:text-[16px]">
           {title}
         </div>
         <div className="truncate text-[13px] text-muted-foreground">

@@ -19,7 +19,7 @@ export function PageHeader({
       className={cn("mb-4 pt-1.5 min-[960px]:mb-[26px] min-[960px]:pt-0", className)}
     >
       {date != null && (
-        <div className="text-[13px] font-medium text-muted-foreground min-[960px]:text-sm">
+        <div className="text-[13px] font-medium text-muted-foreground min-[960px]:text-[14px]">
           {date}
         </div>
       )}

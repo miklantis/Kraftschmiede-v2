@@ -141,5 +141,10 @@
   }
   body {
     @apply bg-background text-foreground font-sans;
+    /* V1 setzt auf dem ganzen Screen line-height:normal (rund 1.2). Tailwinds
+       Default 1.5 baut jede Textzeile hoeher und schiebt alles nach unten;
+       hier auf den V1-Wert zurueck. Stellen, die bewusst mehr Zeilenabstand
+       brauchen (z. B. Hero-Lifts), setzen ihn lokal selbst. */
+    line-height: normal;
   }
 }

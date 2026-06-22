@@ -28,8 +28,11 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   Skills-Seite zu navigieren - Paritaet zu V1. Dritte Live-Runde: Oberflaechen-Schrift von
   Sora auf System-UI umgestellt (wie V1) - loest den "zu fett/zu gross"-Eindruck der
   Ueberschriften, Sora baute wuchtiger; Hero-Start-Knopf auf V1-Hoehe (enge Zeilenhoehe,
-  kein Rand). Sora wird nicht mehr geladen, Spline Sans Mono (Zahlen) bleibt. Als Naechstes
-  Phase 3 weiter live pruefen, danach Phase 4 (Verlauf).
+  kein Rand). Sora wird nicht mehr geladen, Spline Sans Mono (Zahlen) bleibt. Vierte
+  Live-Runde: globale Zeilenhoehe auf V1-Wert (normal statt Tailwind 1.5) - vertikale
+  Abstaende zwischen Texten waren ueberall leicht zu hoch und schoben den Inhalt nach unten;
+  betroffene Groessenklassen (text-base/sm/xs) auf feste px umgestellt, damit sie die
+  Zeilenhoehe erben. Als Naechstes Phase 3 weiter live pruefen, danach Phase 4 (Verlauf).
 - **Erledigt:** Phase 0 abgeschlossen (Fundament, Schema/RLS, Engine, Zod-Schemas, UI-Fundament,
   Offline-Grundgeruest, Live-Deploy). Schlichter Login als Voraussetzung fuer alle
   Schreibzugriffe (E-Mail/Passwort ueber Supabase Auth, AuthProvider + useAuth, AuthGate vor
