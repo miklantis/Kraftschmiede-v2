@@ -5,8 +5,8 @@
    Quelle: V1-Dateien klar-tokens.css und klar-app.css (Referenz-Repo, nur lesen).
    Reines Hell-Theme wie V1 (kein Dunkelmodus). Feste Hex-Werte aus V1, keine
    geschaetzten Toene. shadcn-Token-Namen werden auf die V1-Bedeutung gemappt;
-   darueber die Marken-Nebenfarben mit fester Bedeutung. Schrift: Sora (UI),
-   Spline Sans Mono (Zahlen). */
+   darueber die Marken-Nebenfarben mit fester Bedeutung. Schrift: System-UI (UI,
+   wie V1), Spline Sans Mono (Zahlen). */
 
 :root {
   /* Flaechen (V1: --bg/--panel/--panel2). */
@@ -82,10 +82,12 @@
     0 0 0 1px rgba(12, 157, 119, 0.16);
   --shadow-pop: 0 30px 80px -30px rgba(20, 24, 40, 0.6);
 
-  /* Schrift: Sora fuer die Oberflaeche, Spline Sans Mono fuer Zahlen. */
+  /* Schrift: System-UI fuer die Oberflaeche (1:1 wie V1), Spline Sans Mono fuer
+     Zahlen. V1 nutzt bewusst die System-Schrift; sie wirkt schlanker als Sora und
+     macht Ueberschriften nicht zu wuchtig. */
   --font-sans:
-    "Sora Variable", ui-sans-serif, system-ui, -apple-system,
-    BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, ui-sans-serif,
+    system-ui, sans-serif;
   --font-mono:
     "Spline Sans Mono Variable", ui-monospace, SFMono-Regular, "SF Mono",
     Menlo, monospace;

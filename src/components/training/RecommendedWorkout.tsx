@@ -53,7 +53,7 @@ export function RecommendedWorkout({
       <Button
         onClick={onStart}
         disabled={excluded}
-        className="h-auto w-full rounded-[14px] py-3.5 text-base min-[960px]:py-4 min-[960px]:text-[17px]"
+        className="h-auto w-full rounded-[14px] border-0 py-3.5 text-base leading-tight min-[960px]:py-4 min-[960px]:text-[17px]"
       >
         Session starten
       </Button>

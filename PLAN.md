@@ -25,9 +25,11 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   AppShell + PageHeader auf alle Seiten. Zweite Live-Runde: Titelgroesse korrigiert (war
   versehentlich invertiert), Hero-Karte am Desktop auf V1-Hoehe (Padding 26px vertikal),
   Klick auf aktiven Skill startet jetzt die Skill-Session (Phase-11-Platzhalter) statt zur
-  Skills-Seite zu navigieren - Paritaet zu V1. OFFEN: Oberflaechen-Schrift ist Sora, V1 nutzt
-  System-UI - Entscheidung steht aus (siehe unten). Als Naechstes Phase 3 weiter live pruefen,
-  danach Phase 4 (Verlauf).
+  Skills-Seite zu navigieren - Paritaet zu V1. Dritte Live-Runde: Oberflaechen-Schrift von
+  Sora auf System-UI umgestellt (wie V1) - loest den "zu fett/zu gross"-Eindruck der
+  Ueberschriften, Sora baute wuchtiger; Hero-Start-Knopf auf V1-Hoehe (enge Zeilenhoehe,
+  kein Rand). Sora wird nicht mehr geladen, Spline Sans Mono (Zahlen) bleibt. Als Naechstes
+  Phase 3 weiter live pruefen, danach Phase 4 (Verlauf).
 - **Erledigt:** Phase 0 abgeschlossen (Fundament, Schema/RLS, Engine, Zod-Schemas, UI-Fundament,
   Offline-Grundgeruest, Live-Deploy). Schlichter Login als Voraussetzung fuer alle
   Schreibzugriffe (E-Mail/Passwort ueber Supabase Auth, AuthProvider + useAuth, AuthGate vor
@@ -122,8 +124,9 @@ zurueckgedreht). Quelle: V1-Dateien klar-tokens.css und klar-app.css (nur lesen)
       16/11/20px, weiche Schatten `--shadow-card`/`-hi`/`-pop`, reines Hell-Theme)
 - [x] shadcn-Primitives (Button/Input/Card) von Luma-Geometrie auf V1-Optik zurueckgedreht
       (Karte 16px statt 32px, V1-Schatten statt Luma-Elevation, V1-Button/-Feld)
-- [x] Schrift auf Sora (Oberflaeche) + Spline Sans Mono (Zahlen) umgestellt (Inter raus);
-      Dunkelmodus entfernt (V1 hat keinen)
+- [x] Schrift auf System-UI (Oberflaeche, 1:1 wie V1) + Spline Sans Mono (Zahlen); Inter
+      und Sora raus. (Sora war eine Zwischenstufe, wirkte aber zu wuchtig - in der dritten
+      Live-Runde auf die V1-System-Schrift zurueckgedreht.) Dunkelmodus entfernt (V1 hat keinen)
 
 ## Phase 2 – Navigation / Shell
 

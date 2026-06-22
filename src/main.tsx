@@ -11,7 +11,6 @@ import {
 } from "@/lib/offline";
 import { AuthProvider } from "@/lib/auth";
 import { AuthGate } from "@/components/AuthGate";
-import "@fontsource-variable/sora/wght.css";
 import "@fontsource-variable/spline-sans-mono/wght.css";
 import "./index.css";
 
