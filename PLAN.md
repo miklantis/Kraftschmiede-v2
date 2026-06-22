@@ -40,7 +40,9 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   (rounded-4xl), gerundete gefuellte Felder (rounded-3xl), luftiges Padding (--card-spacing
   24px, kompakt 16px) - die echten Werte aus dem Luma-Quellcode, nicht geschaetzt. Akzent
   bleibt Marken-#0c9d77 (nicht das Gruen aus dem Token-Paste). Dunkelmodus ist von Anfang an
-  umschaltbar. Schrift Inter statt Sora. Import laeuft client-seitig in der angemeldeten
+  umschaltbar. Hell-Hintergrund zart warm abgetoent (Stone-Hue) statt reinweiss, damit die
+  reinweissen Karten sich ueber die Flaeche abheben (Luma-Prinzip); nur --background hell
+  geaendert, Karten-Token und Dunkelmodus unberuehrt. Schrift Inter statt Sora. Import laeuft client-seitig in der angemeldeten
   Sitzung (RLS), per JSON-Datei aus dem V1-Export. Vorschau vor dem Schreiben, Sperre gegen
   Doppel-Import, vorerst auf der Startseite (wandert spaeter nach Einstellungen). Aktive
   Journey ist die echte "Rueckkehr 2026".
