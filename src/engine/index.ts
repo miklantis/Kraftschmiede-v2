@@ -14,3 +14,4 @@ export * from "./suitability";
 export * from "./volume";
 export * from "./recovery";
 export * from "./skills";
+export * from "./journey";

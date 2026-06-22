@@ -17,10 +17,10 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Phase:** Phase 1 (V1-Look) und Navigations-Feinschliff abgeschlossen. Plan praezisiert:
-  Training (Phase 3) und Live-Session (Phase 11) sauber getrennt - Phase 3 ist die reine
-  Uebersichts-/Empfehlungsseite (Coach/Eignung nur als Anzeige), die gesamte gefuehrte
-  Durchfuehrung samt Timer/Sheet/Wake-Lock liegt in Phase 11. Als Naechstes Phase 3.
+- **Phase:** Phase 3 (Training - Uebersicht & Empfehlung) gebaut und gepusht; steht zum
+  Live-Test aus. Erste echte Inhaltsseite und erstes echtes Datenfundament: Daten-Hooks,
+  Coach- und Journey-Logik laufen gegen den DB-Stand. Als Naechstes Phase 3 live pruefen,
+  danach Phase 4 (Verlauf).
 - **Erledigt:** Phase 0 abgeschlossen (Fundament, Schema/RLS, Engine, Zod-Schemas, UI-Fundament,
   Offline-Grundgeruest, Live-Deploy). Schlichter Login als Voraussetzung fuer alle
   Schreibzugriffe (E-Mail/Passwort ueber Supabase Auth, AuthProvider + useAuth, AuthGate vor
@@ -61,10 +61,9 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   bleibt kein eigener Punkt (spaeter Karte im Training). Umschaltpunkt 960px. / zeigt direkt
   Training (kein eigener Startbildschirm). Sidebar und Bottom-Nav teilen sich eine Nav-Liste,
   damit sie nicht auseinanderlaufen.
-- **Als Naechstes:** Phase 3 - Training (Uebersicht & Empfehlung). Funktionsschnitt
-  gegenueber Live ist geklaert; offen sind Layout (Mobile/Desktop, Zwei-Spalten wie V1?)
-  und Komponentenschnitt (Hero-Karte, Workout-Zeile, Journey-Streifen als wiederverwendbare
-  Bausteine). Erst abstimmen, dann bauen.
+- **Als Naechstes:** Phase 3 live pruefen (Streifen, Hero-Score, weitere Workouts, Skills,
+  Yoga, Verhalten Mobile/Desktop). Danach Phase 4 - Verlauf (Kalender + Liste + Session-
+  Zusammenfassung + erste Charts); Konzept zuerst abstimmen.
 - **Bewusst noch nicht dabei:** JSON-Export-Haelfte und Import/Export-Politur (Phase 12),
   Abgleich alt/neu (Stichproben), vollstaendiges Konto-Panel (Phase 10), App-Huelle offline
   laden (PWA, Phase 13), sichtbare Offline-Anzeige (Phase 1/2).
@@ -136,11 +135,11 @@ ist bewusst Phase 11 (Live-Session). Eignung/Erholung und Coach-Empfehlung ersch
 hier nur als Anzeige - Engine und Coach rechnen bereits (Phase 0). "Session starten"
 fuehrt vorerst zu einem Platzhalter, bis Live steht.
 
-- [ ] Konzept abgestimmt (Funktionsschnitt Training/Live geklaert; Layout + Komponenten offen)
-- [ ] Journey-Streifen (Fortschritt) + Hero "Heute empfohlen" (Workout, Score, Lifts)
-- [ ] Liste weiterer Workouts (mit Score), aktive Skills, Yoga-Einstieg
-- [ ] Eignung/Erholung + Coach-Empfehlung als reine Anzeige (kein Eingriff in die Logik)
-- [ ] "Session starten" verdrahtet (vorerst Platzhalter bis Phase 11)
+- [x] Konzept abgestimmt (Funktionsschnitt Training/Live geklaert; Paritaet zu V1, Zwei-Spalten)
+- [x] Journey-Streifen (Fortschritt) + Hero "Heute empfohlen" (Workout, Score, Lifts)
+- [x] Liste weiterer Workouts (mit Score), aktive Skills, Yoga-Einstieg
+- [x] Eignung/Erholung + Coach-Empfehlung als reine Anzeige (kein Eingriff in die Logik)
+- [x] "Session starten" verdrahtet (vorerst Platzhalter bis Phase 11)
 - [ ] Live getestet (auf der Deploy-Seite)
 
 ## Phase 4 – Verlauf
@@ -237,6 +236,28 @@ getrennt: was hier liegt, gehoert nicht auf den Trainings-Screen.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-22 - Phase 3 (Training - Uebersicht & Empfehlung) gebaut. Erste echte Inhaltsseite
+  und erstes echtes Datenfundament. Reine Logik (getestet): Journey-Platzierung
+  src/engine/journey.ts (isoWeekKey, phasePlacement, journeyPlacement, weekProgress - leitet
+  Phase/Woche-in-Phase/Wochenfortschritt aus dem Verlauf ab, 1:1 aus V1) und Coach-Modul
+  src/lib/coach.ts (lastByExercise, weekCounts, recoveryGreen, buildSuitabilityCtx,
+  rankWorkouts - komponiert die Engine-Suitability, nimmt Zustand explizit herein, kein
+  DB-/DOM-Bezug). Label-/Formathelfer src/lib/labels.ts (focusLabel) und src/lib/format.ts
+  (todayISO, longDateDE, fmtScore mit deutschem Komma). Daten-Hooks (TanStack Query, je
+  Entitaet, Supabase gekapselt, Komponenten Supabase-frei): useExercises, useTemplates,
+  useSessions, useActiveJourney, useSkills/useSkillProgress, useSettings,
+  useOwnedEquipmentKeys, useLatestBody, plus useUserId. View-Model-Hook useTrainingOverview
+  buendelt alles zur anzeigefertigen Uebersicht (Datum, Journey-Streifen, Hero, weitere
+  Workouts, aktive Skills, Yoga). Generische Primitives (src/components/ui, einmal bauen -
+  ueberall nutzen): PageHeader, Section (Eyebrow), List + ListRow (das Arbeitspferd:
+  Titel/Unterzeile/Anhaengsel/Pfeil, klickbar + disabled/excl), ScoreBadge (row/hero),
+  ProgressDots, TwoColumn (1.6fr/1fr ab 960px). Trainingsspezifisch (src/components/training):
+  JourneyStrip (Link zur Journey), RecommendedWorkout (Hero mit Akzent-Elevation). Seite
+  src/routes/index.tsx setzt alles zusammen, mit Lade-/Fehler-/Leerzustaenden. "Session
+  starten" und Yoga sind bis Phase 11/7 Platzhalter; Eignung/Erholung erscheinen als Anzeige
+  (Score = Eignung, Ausschluss = Kater=3). Optik 1:1 aus V1 (jstrip/rec-hero/ks-list/ks-row).
+  19 neue Tests (Journey 13, Coach 6); Typecheck, Build und 128 Tests gruen. Offen: Live-Test.
 
 - 2026-06-22 - Plan praezisiert: Training und Live-Session sauber getrennt (nur Doku, kein
   Code). Vergleich gegen V1 (viewTraining in app.js vs. live.js): der Trainings-Screen ist
