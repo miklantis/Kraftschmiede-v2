@@ -34,37 +34,32 @@ Konsequenzen:
   granulares Caching und Invalidierung.
 - Das last-write-wins-Problem des Blob-Sync entfaellt weitgehend – Aenderungen
   betreffen einzelne Zeilen, nicht den ganzen Zustand.
-- Pragmatischer Mittelweg: Kern-Entitaeten (Sessions, Saetze, Uebungen, Journeys)
+- Pragmatischer Mittelweg: Kern-Nutzerdaten (Sessions, Saetze, Journeys/Phasen)
   werden echte Relationen. Kleine, attributarme Wertobjekte (InBody-Composition,
   Timer-Einstellungen) duerfen als jsonb-Spalte in ihrer Tabelle bleiben – das ist
   sauber und kein verkapptes Blob-Modell.
 
 ---
 
-## 3. Offene strategische Entscheidungen (vor dem Bau zu klaeren)
+## 3. Getroffene strategische Entscheidungen
 
-### 3.1 Offline-Faehigkeit (wichtigste Entscheidung)
+### 3.1 Offline-Faehigkeit – ENTSCHIEDEN: Offline-first mit Sync
 
-Heute laeuft die App komplett lokal (localStorage), Sync ist optional. Eine
-relationale Server-DB ist standardmaessig online-first. Die Live-Session wird aber
-im Gym genutzt, oft ohne stabiles Netz.
+Im Gym soll ohne Netz trainiert und aufgezeichnet werden; spaeter synchronisiert die
+App in die Datenbank. Das ist Offline-first mit Sync: lokale Persistenz (IndexedDB /
+persistenter TanStack-Query-Cache) plus Mutations-Queue, die bei Verbindung hochlaedt.
 
-Optionen:
-- **A) Online-first.** Einfachste Variante. App braucht Verbindung. Risiko: mitten im
-  Satz kein Netz.
-- **B) Offline-first mit Sync.** Lokale Persistenz (IndexedDB / persistenter
-  TanStack-Query-Cache) plus Mutations-Queue, die bei Verbindung hochlaedt. Passt zum
-  Use-Case, ist aber der groesste einzelne Aufwandstreiber des Projekts.
-- **C) Hybrid.** Lesen offline aus Cache, Schreiben nur online. Mittlerer Aufwand,
-  aber im Gym genau die falsche Einschraenkung (man will dort schreiben).
+Pragmatischer Zuschnitt: Die Live-Session muss voll offline laufen (dort wird
+aufgezeichnet). Beim Rest der App reicht ein offline-Lesecache. Das ist der groesste
+einzelne Aufwandstreiber des Projekts und der Grund, warum die Schaetzung am oberen
+Rand der Spanne liegt.
 
-Empfehlung: B, mindestens fuer die Live-Session. Endgueltig vor Phase 0 entscheiden.
+### 3.2 Uebungen/Vorlagen – ENTSCHIEDEN: Stammdaten wie heute
 
-### 3.2 Sind Uebungen/Vorlagen pro Nutzer oder global?
-
-In V1 sind Uebungen im Code-Seed global definiert. In V2 mit DB stellt sich die Frage,
-ob sie pro Nutzer editierbar werden (eigene Tabelle, RLS) oder weiter als Stammdaten
-ausgeliefert werden. Empfehlung: pro Nutzer in der DB, mit einem Seed beim ersten Start.
+Uebungen und Vorlagen bleiben im Code definiert (kein Nutzer-Editieren in der ersten Runde).
+Folge fuers Schema: Stammdaten leben im Code, die Datenbank enthaelt ausschliesslich
+Nutzerdaten (Sessions, Saetze, aktive Journey/Phasen, Skill-Fortschritt, Body-Log,
+Inventar, Settings). Siehe Abschnitt 5.
 
 ### 3.3 Skill-Definitionen
 
@@ -91,23 +86,26 @@ ein gutes Muster und sollte so bleiben: Definitionen im Code, `skill_progress` i
 
 ## 5. Datenbank-Schema (Entwurf)
 
-Alle Tabellen mit `user_id` und RLS (jede Person sieht/aendert nur ihre Zeilen).
-Konkrete Felder verfeinern wir beim Bau; dies ist die Struktur.
+Nach Entscheidung 3.2 enthaelt die Datenbank **nur Nutzerdaten**. Stammdaten bleiben
+im Code und werden nicht gespeichert:
 
-- **exercises** – id, user_id, name, profile (strength/core), slot_role (lift1/lift2),
-  kind (main/accessory/core), bar_id (FK inventory_bars), rep_range_min, rep_range_max,
-  start_weight, recovery_hours
-- **exercise_muscles** – exercise_id (FK), region_id, kategorie (primaer/sekundaer/
-  stabilisierend). Loest die Muskel-Beteiligung sauber relational (statt Map im Blob).
-- **templates** – id, user_id, name
-- **template_exercises** – template_id (FK), exercise_id (FK), position
+- **Im Code (Stammdaten, keine Tabellen):** Uebungs-Definitionen inkl. Muskel-Beteiligung
+  (region_id -> primaer/sekundaer/stabilisierend), Workout-Vorlagen, Skill-Definitionen,
+  Journey-Vorlagen. Sessions/Saetze referenzieren Uebungen und Vorlagen ueber deren
+  stabile Code-ID (String-Key), nicht ueber einen Fremdschluessel auf eine Tabelle.
+
+Alle folgenden Tabellen mit `user_id` und RLS (jede Person sieht/aendert nur ihre Zeilen).
+Konkrete Felder verfeinern wir beim Bau; dies ist die Struktur:
+
 - **journeys** – id, user_id, name, active (bool), created_at
 - **phases** – id, journey_id (FK), name, focus (reentry/hypertrophy/strength/test),
   weeks, sets_start, sets_end, deload_week (nullable), position
 - **sessions** – id, user_id, date, type (strength/yoga/skill), journey_id (FK,
-  nullable), template_id (FK, nullable), skill_id (nullable), duration_min (fuer yoga)
-- **sets** – id, session_id (FK), exercise_id (FK), weight, reps, done, score, position
-- **skill_progress** – id, user_id, skill_id, current_phase, counter
+  nullable), template_key (Code-ID, nullable), skill_key (Code-ID, nullable),
+  duration_min (fuer yoga)
+- **sets** – id, session_id (FK), exercise_key (Code-ID), weight, reps, done, score,
+  position
+- **skill_progress** – id, user_id, skill_key (Code-ID), current_phase, counter
 - **body_log** – id, user_id, date, weight, composition (jsonb fuer InBody-Messwerte)
 - **inventory_bars** – id, user_id, name, weight
 - **inventory_plates** – id, user_id, weight, count
