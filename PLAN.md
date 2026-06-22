@@ -17,6 +17,11 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
+- **Naechste Sitzung (Einstieg):** Phase 5 Schritt 1 (Journey-Seite + Phasen + Vorlagen-
+  Waehler) ist gebaut und live ausgeliefert. Offen: (1) Live-Test von Schritt 1 - wenn etwas
+  zu schaerfen ist, der Nutzer sagt es; sonst Phase-5-Haken "Live getestet" abhaken. (2) Dann
+  Schritt 2 bauen: die Periodisierungskurve (Details unter "Als Naechstes"). Einfach hier
+  ansetzen, der Nutzer muss nichts wiederholen.
 - **Phase:** Phase 5 (Journey) **Schritt 1 gebaut, wartet auf Live-Test.** Dritte echte
   Inhaltsseite, strikt Paritaet zu V1 und einspaltig. Aktive-Journey-Karte (Eyebrow, Name,
   Vorlage + Startdatum, Bearbeiten-Knopf). Phasen-Ablauf mit Status (vergangen = grauer Punkt
