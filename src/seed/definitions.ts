@@ -322,3 +322,23 @@ export const skillSeeds: SeedSkill[] = [
     ],
   },
 ];
+
+// --- Equipment (Skill-Tor) ----------------------------------------------------
+
+export interface SeedEquipment {
+  key: string;
+  label: string;
+  active: boolean;
+}
+
+// Standard-Geraete fuer das Skill-Equipment-Tor. Beim ersten Start angelegt;
+// die Auswahl (active) ist spaeter in den Einstellungen anpassbar (Phase 10).
+// Schluessel muessen zu den equipment-Referenzen der Skill-Phasen passen.
+export const equipmentSeeds: SeedEquipment[] = [
+  { key: "band-heavy", label: "Band stark", active: true },
+  { key: "band-medium", label: "Band mittel", active: true },
+  { key: "band-light", label: "Band leicht", active: false },
+  { key: "pullup-bar", label: "Klimmzugstange", active: true },
+  { key: "rings", label: "Ringe", active: false },
+  { key: "parallettes", label: "Parallettes", active: false },
+];

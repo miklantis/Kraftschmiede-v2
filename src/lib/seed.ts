@@ -3,7 +3,11 @@
 // Alles wird mit der user_id des angemeldeten Nutzers angelegt (RLS).
 
 import { supabase } from "@/lib/supabase";
-import { journeyTemplateSeeds, skillSeeds } from "@/seed/definitions";
+import {
+  journeyTemplateSeeds,
+  skillSeeds,
+  equipmentSeeds,
+} from "@/seed/definitions";
 import type {
   JourneyTemplateInsert,
   JourneyTemplatePhaseInsert,
@@ -11,6 +15,7 @@ import type {
   SkillPhaseInsert,
   SkillPhaseExerciseInsert,
   SkillPhaseEquipmentInsert,
+  InventoryEquipmentInsert,
 } from "@/schemas";
 
 export interface SeedErgebnis {
@@ -27,11 +32,52 @@ export async function ensureDefinitionsSeeded(
   if (error) {
     throw new Error(`Pruefung des Datenstands fehlgeschlagen: ${error.message}`);
   }
-  if ((count ?? 0) > 0) return { seeded: false };
+  const definitionsSeeded = (count ?? 0) === 0;
+  if (definitionsSeeded) {
+    await seedJourneyTemplates(userId);
+    await seedSkills(userId);
+  }
 
-  await seedJourneyTemplates(userId);
-  await seedSkills(userId);
-  return { seeded: true };
+  // Equipment laeuft unabhaengig und idempotent: nur fehlende Standardgeraete
+  // werden ergaenzt, bestehende (auch per V1-Import) bleiben unangetastet. So
+  // bekommen auch frueher angelegte Nutzer das Skill-Tor-Inventar.
+  const equipmentAdded = await ensureEquipmentSeeded(userId);
+
+  return { seeded: definitionsSeeded || equipmentAdded > 0 };
+}
+
+// Fuegt fehlende Standardgeraete hinzu, ohne vorhandene zu ueberschreiben.
+// Gibt die Zahl neu angelegter Geraete zurueck.
+async function ensureEquipmentSeeded(userId: string): Promise<number> {
+  const { data, error } = await supabase
+    .from("inventory_equipment")
+    .select("key");
+  if (error) {
+    throw new Error(`Equipment pruefen fehlgeschlagen: ${error.message}`);
+  }
+  const vorhanden = new Set(
+    ((data ?? []) as Array<{ key: string }>).map((e) => e.key),
+  );
+
+  const fehlende: InventoryEquipmentInsert[] = equipmentSeeds
+    .map((e, i) => ({
+      user_id: userId,
+      key: e.key,
+      label: e.label,
+      active: e.active,
+      position: i,
+    }))
+    .filter((e) => !vorhanden.has(e.key));
+
+  if (fehlende.length === 0) return 0;
+
+  const { error: insError } = await supabase
+    .from("inventory_equipment")
+    .insert(fehlende);
+  if (insError) {
+    throw new Error(`Equipment anlegen fehlgeschlagen: ${insError.message}`);
+  }
+  return fehlende.length;
 }
 
 async function seedJourneyTemplates(userId: string): Promise<void> {
