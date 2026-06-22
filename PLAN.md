@@ -17,12 +17,18 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Phase:** 0 (Schema und Fundament) – noch nicht begonnen
-- **Als Naechstes:** Phase 0 durchsprechen – Schema, Stack-Setup, Offline-Grundsatz,
-  und vor allem eine Live-Test-URL einrichten (damit ohne Code-Lesen direkt getestet
-  werden kann).
-- **Offene Grundsatzfragen:** Wie wird V2 live deployt und getestet? (Vite braucht einen
-  Build-Schritt – anders als V1.) Vorschlag: GitHub Pages via Build-Action.
+- **Phase:** 0 (Schema und Fundament) – begonnen
+- **Erledigt:** Minimales Vite-Skelett (React 19, TS strict). Typecheck und Build laufen
+  lokal gruen.
+- **Blockiert:** Der Deploy-Workflow ist vorbereitet, kann aber noch nicht gepusht werden
+  – der Token darf keine Workflow-Dateien anlegen (fehlende Berechtigung „Workflows").
+- **Als Naechstes / Aktion beim Nutzer:** Dem bestehenden Token die Berechtigung
+  „Workflows: Read and write" geben (Token-Wert bleibt gleich). Danach pushe ich den
+  Workflow; anschliessend Pages-Quelle einmalig auf „GitHub Actions" stellen. Test-URL
+  dann: https://miklantis.github.io/Kraftschmiede-v2/
+- **Danach im Projekt:** Supabase-Projekt fuer V2 anlegen (eigene DB), dann Schema/RLS,
+  restliches Stack-Setup (Router, Tailwind/shadcn, Query, Zod) und Engine-Portierung.
+- **Offene Grundsatzfragen:** Deploy/Test geklaert (GitHub Pages via Action).
 
 ---
 
@@ -39,7 +45,7 @@ alle Bloecke und wird einmal bewusst entschieden, bevor einzelne Seiten entstehe
 - [ ] Supabase-Projekt fuer V2 angelegt (eigene DB, getrennt von V1)
 - [ ] Schema/Tabellen/RLS umgesetzt (Definitionen + Nutzerzustand, siehe Masterplan 5)
 - [ ] Invarianten als DB-Constraints (z. B. genau eine aktive Journey pro Nutzer)
-- [ ] Vite + TypeScript (strict) aufgesetzt
+- [x] Vite + TypeScript (strict) aufgesetzt (minimales Skelett)
 - [ ] TanStack Router (file-based) eingerichtet
 - [ ] Tailwind + shadcn/ui aufgesetzt
 - [ ] Supabase-Client + TanStack-Query-Setup
@@ -48,7 +54,9 @@ alle Bloecke und wird einmal bewusst entschieden, bevor einzelne Seiten entstehe
 - [ ] Engine-Unit-Tests laufen (z. B. Vitest), gruen
 - [ ] Zod-Schemas fuer die Entitaeten
 - [ ] Offline-Grundgeruest gelegt (persistenter Query-Cache + Mutations-Queue, Skelett)
-- [ ] **Live-Test-Deploy eingerichtet** (Test-URL fuer direktes Testen ohne Code-Lesen)
+- [ ] **Live-Test-Deploy eingerichtet** (Workflow vorbereitet; Push noch blockiert, weil
+      dem Token die Berechtigung „Workflows" fehlt – danach Pages-Quelle auf
+      „GitHub Actions" stellen)
 
 ## Phase 1 – Design-System (globaler Look)
 

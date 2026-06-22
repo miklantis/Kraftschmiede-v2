@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Build-Ausgabe
+dist/
+
+# Lokale Env-Dateien (Secrets nie committen)
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor/OS
+.DS_Store
+.vscode/
+.idea/
