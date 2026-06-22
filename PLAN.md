@@ -17,7 +17,7 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Phase:** Erstbefuellung abgeschlossen. Als Naechstes Phase 1 (globaler Look).
+- **Phase:** Phase 1 (globaler Look) abgeschlossen. Als Naechstes Phase 2 (Navigation/Shell).
 - **Erledigt:** Phase 0 abgeschlossen (Fundament, Schema/RLS, Engine, Zod-Schemas, UI-Fundament,
   Offline-Grundgeruest, Live-Deploy). Schlichter Login als Voraussetzung fuer alle
   Schreibzugriffe (E-Mail/Passwort ueber Supabase Auth, AuthProvider + useAuth, AuthGate vor
@@ -29,12 +29,20 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   schluessel-sicherer Reihenfolge; der Skill-Fortschritt haengt sich ueber den Skill-Schluessel
   an die geseedeten Skills. Knopf auf der Startseite: Datei waehlen, Vorschau (Zeilenzahl je
   Block) pruefen, bestaetigen; gesperrt, sobald schon Uebungen/Einheiten vorhanden sind.
-- **Entscheidung:** Import laeuft client-seitig in der angemeldeten Sitzung (RLS), per JSON-
-  Datei aus dem V1-Export. Vorschau vor dem Schreiben, Sperre gegen Doppel-Import, vorerst auf
-  der Startseite (wandert spaeter nach Einstellungen). Aktive Journey ist die echte
-  "Rueckkehr 2026".
-- **Als Naechstes:** Phase 1 - globaler Look (Theme/Stimmung, Schriften, Farben, Spacing,
-  Grundelemente) gemeinsam abstimmen, dann umsetzen. Danach Navigation/Shell (Phase 2).
+  Phase 1 - Design-System: Token-Set (warmes Stone-Grau, weisser Hintergrund, Radius 10px,
+  Charts, hell+dunkel) als Basis; Akzent = Markengruen #0c9d77; Nebenakzente Intensitaet/Teal,
+  Skill/Blau, Yoga/Lila plus Ampel (gut/Warnung/Abweichung/Gefahr) als eigene Tokens; Schrift
+  Inter (UI) + Spline Sans Mono (Zahlen) selbst gehostet (offline-fest); Dunkelmodus
+  umschaltbar (hell/dunkel/system, gemerkt) ueber ThemeProvider + ThemeToggle.
+- **Entscheidung:** Look folgt dem V1-"Klar"-Geist, aber weisser Hintergrund und engere Ecken
+  (10px) aus dem abgestimmten shadcn-Token-Set; Akzent bleibt Marken-#0c9d77 (nicht das Gruen
+  aus dem Token-Paste). Dunkelmodus ist von Anfang an umschaltbar. Schrift Inter statt Sora.
+  Import laeuft client-seitig in der angemeldeten Sitzung (RLS), per JSON-Datei aus dem
+  V1-Export. Vorschau vor dem Schreiben, Sperre gegen Doppel-Import, vorerst auf der Startseite
+  (wandert spaeter nach Einstellungen). Aktive Journey ist die echte "Rueckkehr 2026".
+- **Als Naechstes:** Phase 2 - Navigation/Shell (Seitenstruktur, Sidebar Desktop + Bottom-Nav
+  Mobile, Verhalten) gemeinsam abstimmen, dann umsetzen. Der Theme-Umschalter sitzt vorlaeufig
+  auf der Startseite und wandert dann an seinen endgueltigen Platz.
 - **Bewusst noch nicht dabei:** JSON-Export-Haelfte und Import/Export-Politur (Phase 12),
   Abgleich alt/neu (Stichproben), vollstaendiges Konto-Panel (Phase 10), App-Huelle offline
   laden (PWA, Phase 13), sichtbare Offline-Anzeige (Phase 1/2).
@@ -77,10 +85,10 @@ alle Bloecke und wird einmal bewusst entschieden, bevor einzelne Seiten entstehe
 
 ## Phase 1 – Design-System (globaler Look)
 
-- [ ] Konzept abgestimmt (Theme/Stimmung, Schriften, Farben, Spacing, Grundelemente)
-- [ ] Klar-Tokens (`--accent #0c9d77` etc.) als Tailwind-Theme
-- [ ] shadcn/ui auf das Aussehen getrimmt
-- [ ] Sora / Spline Sans Mono eingebunden
+- [x] Konzept abgestimmt (Theme/Stimmung, Schriften, Farben, Spacing, Grundelemente)
+- [x] Klar-Tokens (`--primary #0c9d77` etc.) als Tailwind-Theme
+- [x] shadcn/ui auf das Aussehen getrimmt
+- [x] Inter (UI) / Spline Sans Mono (Zahlen) eingebunden; Dunkelmodus umschaltbar
 
 ## Phase 2 – Navigation / Shell
 
@@ -183,6 +191,22 @@ alle Bloecke und wird einmal bewusst entschieden, bevor einzelne Seiten entstehe
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-22 - Phase 1 Design-System (globaler Look): src/index.css auf das abgestimmte
+  Token-Set umgestellt (warmes Stone-Grau, weisser Hintergrund, Radius 0.625rem/10px, Chart-
+  Ramp, vollstaendig hell und dunkel). Akzent bewusst auf Markengruen #0c9d77 gesetzt (ersetzt
+  das Gruen aus dem Token-Paste), Gefahr auf #ef5b5b. Markenfarben als eigene Tokens mit fester
+  Bedeutung ergaenzt und in @theme inline als Tailwind-Utilities verfuegbar gemacht: good,
+  warning, deviation, danger, intensity (Teal), skill (Blau), yoga (Lila), je mit Foreground-
+  Ton (im Dunkelmodus heller). Schrift Inter (UI) und Spline Sans Mono (Zahlen) selbst gehostet
+  ueber @fontsource-variable (offline-fest), in @theme inline als --font-sans/--font-mono
+  gesetzt, body auf font-sans. Umschaltbarer Dunkelmodus: src/lib/theme.tsx (ThemeProvider +
+  useTheme, hell/dunkel/system, in localStorage gemerkt, reagiert auf Systemwechsel, setzt die
+  dark-Klasse am html-Element); ThemeProvider aussen in main.tsx. src/components/ThemeToggle.tsx
+  schaltet hell -> dunkel -> system durch (Lucide-Icons). Vorlaeufig auf der Startseite, dazu ein
+  Markenfarben-Streifen zum Sichtpruefen; beides wandert mit Navigation/Einstellungen weiter.
+  Neue Abhaengigkeiten: @fontsource-variable/inter, @fontsource-variable/spline-sans-mono.
+  Typecheck, Build und Tests gruen.
 
 - 2026-06-22 - V1-Import gebaut (Migrationsskript): src/lib/v1import.ts uebersetzt den kompletten
   V1-Blob (verschachtelt, camelCase) in die 23 normalisierten Tabellen (snake_case). analysiereV1

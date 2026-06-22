@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Datenstand } from "@/components/Datenstand";
 import { V1Import } from "@/components/V1Import";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const Route = createFileRoute("/")({
   component: StartPage,
@@ -44,6 +45,32 @@ function StartPage(): React.ReactElement {
       <h1 className="text-2xl font-semibold tracking-tight">Kraftschmiede V2</h1>
       <p className="text-muted-foreground">Fundament steht. Aufbau laeuft.</p>
       <p className="text-muted-foreground">{status}</p>
+
+      <ThemeToggle />
+
+      {/* Vorlaeufige Schau der Markenfarben zum Sichtpruefen (entfaellt mit der
+          echten Navigation/Einstellungen in spaeteren Phasen). */}
+      <div className="flex flex-wrap items-center justify-center gap-2">
+        <span className="bg-primary/12 text-primary rounded-full px-3 py-1 font-mono text-sm">
+          +2,5 kg
+        </span>
+        <span className="bg-intensity/15 text-intensity-foreground rounded-full px-3 py-1 text-sm">
+          Intensitaet
+        </span>
+        <span className="bg-skill/15 text-skill-foreground rounded-full px-3 py-1 text-sm">
+          Skill
+        </span>
+        <span className="bg-yoga/15 text-yoga-foreground rounded-full px-3 py-1 text-sm">
+          Yoga
+        </span>
+        <span className="bg-warning/15 text-warning-foreground rounded-full px-3 py-1 text-sm">
+          Warnung
+        </span>
+        <span className="bg-danger/15 text-danger rounded-full px-3 py-1 text-sm">
+          Gefahr
+        </span>
+      </div>
+
       <Button
         variant="outline"
         onClick={() => void connection.refetch()}
