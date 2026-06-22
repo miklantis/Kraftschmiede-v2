@@ -34,8 +34,9 @@ Konsequenzen:
   granulares Caching und Invalidierung.
 - Das last-write-wins-Problem des Blob-Sync entfaellt weitgehend – Aenderungen
   betreffen einzelne Zeilen, nicht den ganzen Zustand.
-- Pragmatischer Mittelweg: Kern-Nutzerdaten (Sessions, Saetze, Journeys/Phasen)
-  werden echte Relationen. Kleine, attributarme Wertobjekte (InBody-Composition,
+- Pragmatischer Mittelweg: Alle Entitaeten (Definitionen wie Uebungen/Vorlagen/Skills
+  und Nutzerdaten wie Sessions/Saetze/Journeys) werden echte Relationen. Kleine,
+  attributarme Wertobjekte (InBody-Composition,
   Timer-Einstellungen) duerfen als jsonb-Spalte in ihrer Tabelle bleiben – das ist
   sauber und kein verkapptes Blob-Modell.
 
@@ -54,12 +55,18 @@ aufgezeichnet). Beim Rest der App reicht ein offline-Lesecache. Das ist der groe
 einzelne Aufwandstreiber des Projekts und der Grund, warum die Schaetzung am oberen
 Rand der Spanne liegt.
 
-### 3.2 Uebungen/Vorlagen – ENTSCHIEDEN: Stammdaten wie heute
+### 3.2 Definitionen – ENTSCHIEDEN: alles in die Datenbank
 
-Uebungen und Vorlagen bleiben im Code definiert (kein Nutzer-Editieren in der ersten Runde).
-Folge fuers Schema: Stammdaten leben im Code, die Datenbank enthaelt ausschliesslich
-Nutzerdaten (Sessions, Saetze, aktive Journey/Phasen, Skill-Fortschritt, Body-Log,
-Inventar, Settings). Siehe Abschnitt 5.
+Uebungen, Vorlagen, Skill- und Journey-Definitionen liegen in der Datenbank, nicht im
+Code. Damit ist die App voll datengetrieben: alle Daten kommen ueber dasselbe
+Zugriffsmuster (Query-Hooks), keine Mischung aus Code-Imports und DB-Abfragen. Das
+dient der Wartbarkeit.
+
+Annahme: Die Definitionen liegen pro Nutzer (`user_id`/RLS) und werden beim ersten Start
+aus einem Seed befuellt; damit sind sie spaeter editierbar, falls gewuenscht.
+
+Kosten: mehr Schema, vor allem bei den Skills (verschachtelt: Skill -> Phasen ->
+Uebungen + Equipment-Voraussetzungen) – mehrere verbundene Tabellen. Siehe Abschnitt 5.
 
 ### 3.3 Skill-Definitionen
 
@@ -86,26 +93,38 @@ ein gutes Muster und sollte so bleiben: Definitionen im Code, `skill_progress` i
 
 ## 5. Datenbank-Schema (Entwurf)
 
-Nach Entscheidung 3.2 enthaelt die Datenbank **nur Nutzerdaten**. Stammdaten bleiben
-im Code und werden nicht gespeichert:
+Nach Entscheidung 3.2 liegen **alle Daten in der Datenbank** – auch die Definitionen.
+Alle Tabellen mit `user_id` und RLS (jede Person sieht/aendert nur ihre Zeilen),
+beim ersten Start aus einem Seed befuellt. Konkrete Felder verfeinern wir beim Bau.
 
-- **Im Code (Stammdaten, keine Tabellen):** Uebungs-Definitionen inkl. Muskel-Beteiligung
-  (region_id -> primaer/sekundaer/stabilisierend), Workout-Vorlagen, Skill-Definitionen,
-  Journey-Vorlagen. Sessions/Saetze referenzieren Uebungen und Vorlagen ueber deren
-  stabile Code-ID (String-Key), nicht ueber einen Fremdschluessel auf eine Tabelle.
+### 5.1 Definitionen (Stammdaten in der DB, per Seed)
 
-Alle folgenden Tabellen mit `user_id` und RLS (jede Person sieht/aendert nur ihre Zeilen).
-Konkrete Felder verfeinern wir beim Bau; dies ist die Struktur:
+- **exercises** – id, user_id, name, profile (strength/core), slot_role (lift1/lift2),
+  kind (main/accessory/core), bar_id (FK inventory_bars, nullable), rep_range_min,
+  rep_range_max, start_weight, recovery_hours
+- **exercise_muscles** – id, exercise_id (FK), region_id, kategorie (primaer/sekundaer/
+  stabilisierend)
+- **templates** – id, user_id, name, position
+- **template_exercises** – id, template_id (FK), exercise_id (FK), position
+- **skills** – id, user_id, name, position
+- **skill_phases** – id, skill_id (FK), name, position, required_sessions
+- **skill_phase_exercises** – id, skill_phase_id (FK), name, metric (reps/duration),
+  target, position
+- **skill_phase_equipment** – id, skill_phase_id (FK), equipment_key (Voraussetzung)
+- **journey_templates** – id, user_id, name, position
+- **journey_template_phases** – id, journey_template_id (FK), name, focus, weeks,
+  sets_start, sets_end, deload_week (nullable), position
 
-- **journeys** – id, user_id, name, active (bool), created_at
+### 5.2 Nutzerzustand
+
+- **journeys** – id, user_id, name, active (bool), created_at, source_template_id (FK,
+  nullable)
 - **phases** – id, journey_id (FK), name, focus (reentry/hypertrophy/strength/test),
   weeks, sets_start, sets_end, deload_week (nullable), position
 - **sessions** – id, user_id, date, type (strength/yoga/skill), journey_id (FK,
-  nullable), template_key (Code-ID, nullable), skill_key (Code-ID, nullable),
-  duration_min (fuer yoga)
-- **sets** – id, session_id (FK), exercise_key (Code-ID), weight, reps, done, score,
-  position
-- **skill_progress** – id, user_id, skill_key (Code-ID), current_phase, counter
+  nullable), template_id (FK, nullable), skill_id (FK, nullable), duration_min (yoga)
+- **sets** – id, session_id (FK), exercise_id (FK), weight, reps, done, score, position
+- **skill_progress** – id, user_id, skill_id (FK), current_phase, counter
 - **body_log** – id, user_id, date, weight, composition (jsonb fuer InBody-Messwerte)
 - **inventory_bars** – id, user_id, name, weight
 - **inventory_plates** – id, user_id, weight, count
@@ -140,12 +159,16 @@ ueber Partial Unique Index auf `active = true`).
 
 ## 7. Migration des Bestands (kritischer Einmal-Schritt)
 
-Der jetzige jsonb-Blob muss verlustfrei in die neuen Tabellen ueberfuehrt werden.
+Der jetzige Bestand muss verlustfrei in die neuen Tabellen ueberfuehrt werden. Zwei
+Quellen: die Definitionen stehen im V1-Code (Seed), die Nutzerdaten im jsonb-Blob.
 
-- Einmaliges Skript: Blob auslesen, in normalisierte Zeilen zerlegen, in neue DB
-  schreiben.
-- Reihenfolge wegen Foreign Keys: erst inventory/exercises/templates, dann journeys/
-  phases, dann sessions/sets, dann skill_progress/body_log/settings.
+- Definitionen aus dem V1-Code (Uebungen, Vorlagen, Skills, Journey-Vorlagen) als
+  DB-Seed ueberfuehren.
+- Einmaliges Skript fuer die Nutzerdaten: Blob auslesen, in normalisierte Zeilen
+  zerlegen, in die neue DB schreiben. Referenzen auf Uebungen/Vorlagen/Skills auf die
+  neuen DB-IDs umschluesseln (Mapping ueber die stabilen V1-Keys).
+- Reihenfolge wegen Foreign Keys: erst Definitionen + inventory, dann journeys/phases,
+  dann sessions/sets, dann skill_progress/body_log/settings.
 - Validierung: Anzahl Sessions, Saetze, Journeys vorher/nachher abgleichen; Stichproben
   visuell vergleichen.
 - Sicher fahren: alte App und Daten bleiben unangetastet; Migration laeuft in die neue
