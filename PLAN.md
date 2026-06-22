@@ -18,11 +18,11 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 ## Aktueller Stand
 
 - **Naechste Sitzung (Einstieg):** Phase 5 Schritt 1 (Journey-Seite + Phasen + Vorlagen-
-  Waehler) ist gebaut und live ausgeliefert. Offen: (1) Live-Test von Schritt 1 - wenn etwas
-  zu schaerfen ist, der Nutzer sagt es; sonst Phase-5-Haken "Live getestet" abhaken. (2) Dann
-  Schritt 2 bauen: die Periodisierungskurve (Details unter "Als Naechstes"). Einfach hier
-  ansetzen, der Nutzer muss nichts wiederholen.
-- **Phase:** Phase 5 (Journey) **Schritt 1 gebaut, wartet auf Live-Test.** Dritte echte
+  Waehler) ist gebaut, live getestet und freigegeben. Jetzt Schritt 2: erst das Konzept der
+  Periodisierungskurve gemeinsam besprechen (groesserer Schritt, weil es das erste wieder-
+  verwendbare Chart-Primitive wird, das spaeter Phase 8 mitnutzt), dann bauen. Details unter
+  "Als Naechstes". Einfach hier ansetzen, der Nutzer muss nichts wiederholen.
+- **Phase:** Phase 5 (Journey) **Schritt 1 gebaut, live getestet und freigegeben.** Dritte echte
   Inhaltsseite, strikt Paritaet zu V1 und einspaltig. Aktive-Journey-Karte (Eyebrow, Name,
   Vorlage + Startdatum, Bearbeiten-Knopf). Phasen-Ablauf mit Status (vergangen = grauer Punkt
   mit Haken, aktuell = gruener Punkt akzent-getoent, kuenftig = gedimmt) und den drei
@@ -232,9 +232,10 @@ fuehrt vorerst zu einem Platzhalter, bis Live steht.
 - [x] Phasen + Wochen-Platzierung (automatisch) – aktive-Journey-Karte, Phasen-Ablauf mit
       Status (vergangen/aktuell/kuenftig) aus der Engine-Platzierung, Vorlagen-Waehler mit
       Anlegen und Umbenennen. Platzierung/Volumen rechnen aus Phase 0.
+      **(Schritt 1 live getestet und freigegeben 2026-06-22.)**
 - [ ] Periodisierungschart (Schritt 2 – wiederverwendbares Chart-Fundament, das spaeter
       die Uebungs-Verlaufscharts in Phase 8 mitnutzen)
-- [ ] Live getestet
+- [ ] Live getestet (Gesamttest der Phase inkl. Kurve; Schritt 1 ist bereits freigegeben)
 
 ## Phase 6 – Skills
 
@@ -315,6 +316,12 @@ getrennt: was hier liegt, gehoert nicht auf den Trainings-Screen.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-22 - Phase 5 (Journey) Schritt 1 live getestet und freigegeben. Journey-Seite
+  (aktive-Journey-Karte, Phasen-Ablauf, Vorlagen-Waehler mit Anlegen/Umbenennen) auf der
+  Deploy-Seite gegen V1 geprueft und fuer gut befunden, keine Schliff-Punkte. Das phasen-
+  weite "Live getestet" bleibt offen, bis Schritt 2 (Periodisierungskurve) mitgetestet ist.
+  Nur Doku, kein Code.
 
 - 2026-06-22 - Phase 5 (Journey) Schritt 1 gebaut (wartet auf Live-Test): dritte echte
   Inhaltsseite, strikt Paritaet zu V1, einspaltig. Reine, getestete Aufbereitung
