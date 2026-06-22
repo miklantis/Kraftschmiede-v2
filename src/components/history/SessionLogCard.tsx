@@ -15,13 +15,6 @@ const DOT: Record<HistoryKind, string> = {
   dev: "bg-deviation",
 };
 
-const TAG: Record<HistoryKind, string> = {
-  kraft: "text-primary bg-primary/12",
-  skill: "text-skill-foreground bg-skill/15",
-  yoga: "text-yoga-foreground bg-yoga/15",
-  dev: "text-deviation-foreground bg-deviation/20",
-};
-
 export function SessionLogCard({
   session,
   onDelete,
@@ -43,18 +36,8 @@ export function SessionLogCard({
         className="flex w-full items-center gap-3 px-4 py-3.5 text-left hover:bg-primary/5"
       >
         <span className={"size-2.5 flex-none rounded-full " + DOT[session.kind]} />
-        <span className="flex min-w-0 flex-1 items-center gap-2">
-          <span className="truncate text-[15px] font-semibold text-foreground">
-            {session.title}
-          </span>
-          <span
-            className={
-              "flex-none rounded-md px-[7px] py-0.5 text-[10px] font-bold " +
-              TAG[session.kind]
-            }
-          >
-            {session.tagLabel}
-          </span>
+        <span className="min-w-0 flex-1 truncate text-[15px] font-semibold text-foreground">
+          {session.title}
         </span>
         <span className="flex-none text-[12px] whitespace-nowrap text-[#b0b0b6]">
           {session.dateLabel}

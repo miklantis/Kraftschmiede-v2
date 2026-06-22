@@ -17,7 +17,7 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Phase:** Phase 4 (Verlauf) **gebaut, Live-Test offen.** Zweite echte Inhaltsseite,
+- **Phase:** Phase 4 (Verlauf) **live getestet und freigegeben.** Zweite echte Inhaltsseite,
   baut auf dem Datenfundament und den Bausteinen aus Phase 3 auf. Navigierbarer
   Monatskalender mit farbigen Tagespunkten je Einheit (Kraft gruen, Skill blau, Yoga
   lila, Abweichung gelb) und Liste der letzten Einheiten mit aufklappbarer Session-
@@ -25,8 +25,9 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   Kalender und Liste nebeneinander (1.35/1 wie V1), Handy hat einen Umschalter Liste/
   Kalender. Strikt Paritaet zu V1: keine Statistik-Reihe, keine Charts (V1 hatte im
   Verlauf nie Charts - aus Plan und Masterplan entfernt, weil es nur verwirrt). Erster
-  Schreibzugriff einer Inhaltsseite (Loeschen ueber Mutations-Hook). Als Naechstes der
-  Live-Test; danach Phase 5 (Journey).
+  Schreibzugriff einer Inhaltsseite (Loeschen ueber Mutations-Hook). Nach der Freigabe ein
+  kleiner Schliff: die Typ-Pillen in den Listeneintraegen entfernt (Farbpunkt reicht). Als
+  Naechstes Phase 5 (Journey) - Konzept zuerst abstimmen.
 - **Erledigt:** Phase 0 abgeschlossen (Fundament, Schema/RLS, Engine, Zod-Schemas, UI-Fundament,
   Offline-Grundgeruest, Live-Deploy). Schlichter Login als Voraussetzung fuer alle
   Schreibzugriffe (E-Mail/Passwort ueber Supabase Auth, AuthProvider + useAuth, AuthGate vor
@@ -67,9 +68,9 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   bleibt kein eigener Punkt (spaeter Karte im Training). Umschaltpunkt 960px. / zeigt direkt
   Training (kein eigener Startbildschirm). Sidebar und Bottom-Nav teilen sich eine Nav-Liste,
   damit sie nicht auseinanderlaufen.
-- **Als Naechstes:** Phase 4 (Verlauf) live testen und freigeben; danach Phase 5 - Journey
-  (Phasen, Wochen-Platzierung, Periodisierungschart); Konzept zuerst abstimmen. Neue Seiten
-  halten sich an den Look-Kanon und die vorhandenen Bausteine.
+- **Als Naechstes:** Phase 5 - Journey (Phasen, Wochen-Platzierung, Periodisierungschart);
+  Konzept zuerst abstimmen. Neue Seiten halten sich an den Look-Kanon und die vorhandenen
+  Bausteine.
 - **Bewusst noch nicht dabei:** JSON-Export-Haelfte und Import/Export-Politur (Phase 12),
   Abgleich alt/neu (Stichproben), vollstaendiges Konto-Panel (Phase 10), App-Huelle offline
   laden (PWA, Phase 13), sichtbare Offline-Anzeige (Phase 1/2).
@@ -210,7 +211,9 @@ fuehrt vorerst zu einem Platzhalter, bis Live steht.
       Verlauf nie Charts, daher bewusst nicht dabei und aus dem Plan entfernt.)
 - [x] Kalender + Listenansicht
 - [x] Session-Zusammenfassung
-- [ ] Live getestet
+- [x] Live getestet und freigegeben. Schliff nach dem Bau: die Typ-Pillen (Kraft/Skill/
+      Yoga/Abweichung) in den Listeneintraegen wieder entfernt - der farbige Punkt kodiert
+      den Typ, die Chips wirkten ueberfluessig.
 
 ## Phase 5 – Journey
 
@@ -299,7 +302,8 @@ getrennt: was hier liegt, gehoert nicht auf den Trainings-Screen.
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
 
-- 2026-06-22 - Phase 4 (Verlauf) gebaut (Live-Test offen). Zweite echte Inhaltsseite.
+- 2026-06-22 - Phase 4 (Verlauf) gebaut, live getestet und freigegeben. Zweite echte
+  Inhaltsseite.
   Reine, getestete Aufbereitungslogik src/lib/history.ts (kindOf/tagLabel/calLabel/
   sessionTitle, Detail-Aufbereitung strengthInfo/skillInfo, buildHistoryModel - 1:1 aus
   V1 history.js, auf das normalisierte Schema umgestellt: Abweichung = Satz mit
@@ -315,7 +319,9 @@ Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
   Rueckfrage). Seite src/routes/verlauf.tsx: Desktop Kalender+Liste nebeneinander (1.35/1
   wie V1), Handy Umschalter. Format-Helfer longDateShort/fmtKg ergaenzt. Bewusst weggelassen:
   Statistik-Reihe und Charts (Paritaet zu V1; "erste Charts" aus Plan+Masterplan entfernt).
-  10 neue Tests; Typecheck, Build und 138 Tests gruen. Offen: Live-Test.
+  10 neue Tests; Typecheck, Build und 138 Tests gruen. Nach der Freigabe ein kleiner
+  Schliff: die Typ-Pillen (Kraft/Skill/Yoga/Abweichung) in den Listeneintraegen entfernt
+  (der Farbpunkt kodiert den Typ; tagLabel-Feld aus dem Anzeigemodell raus, Funktion bleibt).
 
 - 2026-06-22 - Phase 3 (Training - Uebersicht & Empfehlung) gebaut. Erste echte Inhaltsseite
   und erstes echtes Datenfundament. Reine Logik (getestet): Journey-Platzierung

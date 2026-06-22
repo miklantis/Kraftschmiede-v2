@@ -61,7 +61,6 @@ export interface HistorySession {
   date: string; // ISO, fuer Sortierung/Kalender
   kind: HistoryKind;
   title: string;
-  tagLabel: string;
   dateLabel: string; // "Mo., 22. Juni"
   durationLabel: string; // "45 min" oder ""
   detail: DetailRow[];
@@ -195,7 +194,6 @@ export function buildHistorySession(
     date: s.date,
     kind: kindOf(s),
     title: sessionTitle(s, lk),
-    tagLabel: tagLabel(s),
     dateLabel: longDateShort(s.date),
     durationLabel: durationLabel(s),
     detail: detailRows(s, lk),
