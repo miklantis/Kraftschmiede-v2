@@ -25,8 +25,12 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   src/engine/) mit 88 gruenen Vitest-Tests, Paritaet zu V1 belegt. Zod-Schemas der
   Entitaeten gebaut (alle 23 Tabellen 1:1 gespiegelt, je Lese- und Schreib-Form, plus
   jsonb-Wertobjekte) unter src/schemas/; Typen daraus abgeleitet. 13 Schema-Tests gruen.
-- **Als Naechstes:** UI-Fundament (TanStack Router file-based + Tailwind/shadcn),
-  danach Offline-Grundgeruest. Seed (Definitionen aus V1) danach.
+  UI-Fundament steht: TanStack Router file-based (src/routes, generierter Routenbaum),
+  Tailwind v4 (Vite-Plugin) und shadcn/ui mit neutraler Basis (noch nicht auf den Look
+  getrimmt – das ist Phase 1). Startseite ist erste Route; Health-Check dorthin ueberfuehrt.
+- **Als Naechstes:** Offline-Grundgeruest (persistenter Query-Cache + Mutations-Queue,
+  Skelett) – schliesst Phase 0 ab. Danach Seed (Definitionen aus V1). Dann Phase 1
+  (Design-System / globaler Look).
 - **Offene Grundsatzfragen:** Deploy/Test geklaert. In-App-Versionsanzeige (dreistellig,
   schlank) als spaeterer Komfort-Block vorgemerkt.
 
@@ -46,8 +50,10 @@ alle Bloecke und wird einmal bewusst entschieden, bevor einzelne Seiten entstehe
 - [x] Schema/Tabellen/RLS umgesetzt (Skript in Supabase ausgefuehrt; 23 Tabellen mit RLS)
 - [x] Invarianten als DB-Constraints (genau eine aktive Journey pro Nutzer, aktiv)
 - [x] Vite + TypeScript (strict) aufgesetzt (minimales Skelett)
-- [ ] TanStack Router (file-based) eingerichtet
-- [ ] Tailwind + shadcn/ui aufgesetzt
+- [x] TanStack Router (file-based) eingerichtet (src/routes mit __root + index,
+      generierter Routenbaum, Devtools nur im Dev)
+- [x] Tailwind + shadcn/ui aufgesetzt (Tailwind v4 via Vite-Plugin; shadcn neutrale Basis,
+      components.json, cn-Helfer, Button-Primitive, @-Pfadalias)
 - [x] Supabase-Client + TanStack-Query-Setup (Verbindung steht, Health-Check sichtbar)
 - [x] Engine nach TypeScript portiert (1RM, Plate-Loader, Aufwaerm-Generator,
       Doppelprogression, Phasenwechsel, Suitability, Volumen/Deload, Erholungs-Check,
@@ -165,6 +171,14 @@ alle Bloecke und wird einmal bewusst entschieden, bevor einzelne Seiten entstehe
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-22 – UI-Fundament aufgesetzt: TanStack Router file-based (src/routes mit
+  __root + index, automatisch generierter Routenbaum, Router-Devtools nur im Dev,
+  basepath an Vite-base gekoppelt fuer Pages). Tailwind v4 ueber @tailwindcss/vite,
+  shadcn/ui mit neutraler Standardbasis (components.json, cn-Helfer, Button-Primitive,
+  @-Pfadalias) – der eigentliche Look folgt bewusst erst in Phase 1. Startseite ist erste
+  Route; Health-Check aus App.tsx dorthin ueberfuehrt und auf Tailwind/Button umgestellt,
+  App.tsx entfernt. Typecheck, Build und 101 Tests gruen.
 
 - 2026-06-22 – Engine nach TypeScript portiert: reine Rechenlogik aus V1 als modulare
   Bausteine (1RM, Plate-Loader, Aufwaerm-Generator, Doppelprogression, Phasenwechsel,
