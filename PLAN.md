@@ -17,17 +17,21 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Phase:** Phase 4 (Verlauf) **live getestet und freigegeben.** Zweite echte Inhaltsseite,
-  baut auf dem Datenfundament und den Bausteinen aus Phase 3 auf. Navigierbarer
-  Monatskalender mit farbigen Tagespunkten je Einheit (Kraft gruen, Skill blau, Yoga
-  lila, Abweichung gelb) und Liste der letzten Einheiten mit aufklappbarer Session-
-  Zusammenfassung (Dauer + Zeile je Uebung) sowie Loeschen mit Rueckfrage. Desktop zeigt
-  Kalender und Liste nebeneinander (1.35/1 wie V1), Handy hat einen Umschalter Liste/
-  Kalender. Strikt Paritaet zu V1: keine Statistik-Reihe, keine Charts (V1 hatte im
-  Verlauf nie Charts - aus Plan und Masterplan entfernt, weil es nur verwirrt). Erster
-  Schreibzugriff einer Inhaltsseite (Loeschen ueber Mutations-Hook). Nach der Freigabe ein
-  kleiner Schliff: die Typ-Pillen in den Listeneintraegen entfernt (Farbpunkt reicht). Als
-  Naechstes Phase 5 (Journey) - Konzept zuerst abstimmen.
+- **Phase:** Phase 5 (Journey) **Schritt 1 gebaut, wartet auf Live-Test.** Dritte echte
+  Inhaltsseite, strikt Paritaet zu V1 und einspaltig. Aktive-Journey-Karte (Eyebrow, Name,
+  Vorlage + Startdatum, Bearbeiten-Knopf). Phasen-Ablauf mit Status (vergangen = grauer Punkt
+  mit Haken, aktuell = gruener Punkt akzent-getoent, kuenftig = gedimmt) und den drei
+  Kennzahlen je Phase (Wiederholungsband, Satz-Rampe/Woche, Deload); Desktop als Raster bis
+  vier Spalten, Handy als Liste mit nur der aktuellen Phase aufgeklappt. Vorlagen-Waehler als
+  eigene Unterseite (/journey/waehlen) mit Zurueck-Knopf, Inline-Umbenennen der aktiven
+  Journey und Vorlagenkarten (Name, Dauer, Kurzbeschreibung, "Fuer wen", Zusammenfassung,
+  Phasen-Chips); eine Vorlage waehlen legt eine neue aktive Journey an (deaktiviert die alte,
+  Invariante genau eine aktive Journey) und fuehrt zurueck ins Training. Die Status-Logik
+  steckt in einer reinen, getesteten Aufbereitung (lib/journey.ts); Platzierung/Volumen
+  rechnen aus Phase 0. Bewusst NICHT in der Journey-UI: Aktivieren/Abschliessen einer Journey
+  (in V1 nur ueber einen ungenutzten Block erreichbar) und ein Archiv abgeschlossener
+  Journeys. Als Naechstes Schritt 2: die Periodisierungskurve (Volumen + Intensitaet,
+  Phasen-Baender, Deload-Markierung, "jetzt"-Punkt) als wiederverwendbares Chart-Fundament.
 - **Erledigt:** Phase 0 abgeschlossen (Fundament, Schema/RLS, Engine, Zod-Schemas, UI-Fundament,
   Offline-Grundgeruest, Live-Deploy). Schlichter Login als Voraussetzung fuer alle
   Schreibzugriffe (E-Mail/Passwort ueber Supabase Auth, AuthProvider + useAuth, AuthGate vor
@@ -68,9 +72,10 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   bleibt kein eigener Punkt (spaeter Karte im Training). Umschaltpunkt 960px. / zeigt direkt
   Training (kein eigener Startbildschirm). Sidebar und Bottom-Nav teilen sich eine Nav-Liste,
   damit sie nicht auseinanderlaufen.
-- **Als Naechstes:** Phase 5 - Journey (Phasen, Wochen-Platzierung, Periodisierungschart);
-  Konzept zuerst abstimmen. Neue Seiten halten sich an den Look-Kanon und die vorhandenen
-  Bausteine.
+- **Als Naechstes:** Phase 5 Schritt 2 - Periodisierungskurve (Volumen + Intensitaet ueber
+  alle Wochen, Phasen-Baender, Deload-Markierung, "jetzt"-Punkt) als wiederverwendbares
+  Chart-Fundament, das spaeter die Uebungs-Verlaufscharts (Phase 8) mitnutzen. Davor der
+  Live-Test von Schritt 1.
 - **Bewusst noch nicht dabei:** JSON-Export-Haelfte und Import/Export-Politur (Phase 12),
   Abgleich alt/neu (Stichproben), vollstaendiges Konto-Panel (Phase 10), App-Huelle offline
   laden (PWA, Phase 13), sichtbare Offline-Anzeige (Phase 1/2).
@@ -217,9 +222,13 @@ fuehrt vorerst zu einem Platzhalter, bis Live steht.
 
 ## Phase 5 – Journey
 
-- [ ] Konzept abgestimmt
-- [ ] Phasen + Wochen-Platzierung (automatisch)
-- [ ] Periodisierungschart
+- [x] Konzept abgestimmt (strikt Paritaet zu V1; Seite einspaltig; Schritt 1 = Seite +
+      Phasen + Waehler, Periodisierungskurve als Schritt 2 danach)
+- [x] Phasen + Wochen-Platzierung (automatisch) – aktive-Journey-Karte, Phasen-Ablauf mit
+      Status (vergangen/aktuell/kuenftig) aus der Engine-Platzierung, Vorlagen-Waehler mit
+      Anlegen und Umbenennen. Platzierung/Volumen rechnen aus Phase 0.
+- [ ] Periodisierungschart (Schritt 2 – wiederverwendbares Chart-Fundament, das spaeter
+      die Uebungs-Verlaufscharts in Phase 8 mitnutzen)
 - [ ] Live getestet
 
 ## Phase 6 – Skills
@@ -302,6 +311,19 @@ getrennt: was hier liegt, gehoert nicht auf den Trainings-Screen.
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
 
+- 2026-06-22 - Phase 5 (Journey) Schritt 1 gebaut (wartet auf Live-Test): dritte echte
+  Inhaltsseite, strikt Paritaet zu V1, einspaltig. Reine, getestete Aufbereitung
+  src/lib/journey.ts (buildPhaseViews: Status vergangen/aktuell/kuenftig, Meta-Zeile,
+  Detailzeilen Band/Satz-Rampe/Deload; totalWeeks) mit src/lib/__tests__/journey.test.ts.
+  Anzeige-Modell ueber src/hooks/useJourneyView.ts (verdrahtet aktive Journey, Einheiten,
+  Einstellungen, Vorlagen und die Engine-Platzierung aus Phase 0). Schreibaktionen in
+  src/hooks/useJourneyActions.ts (Anlegen aus Vorlage: alte Journey deaktivieren, neue
+  aktive + Phasen einfuegen; Umbenennen) und Vorlagen-Lesehook src/hooks/useJourneyTemplates.ts.
+  Komponenten src/components/journey/ (ActiveJourneyCard, PhaseDot, PhaseList Raster+Liste,
+  JourneyEmpty, TemplateCard, JourneyNameEdit). Seite src/routes/journey.tsx neu gebaut,
+  Vorlagen-Waehler als Unterseite src/routes/journey.waehlen.tsx; Datumhelfer longDateYearDE
+  in src/lib/format.ts. Validiert: tsc gruen, vite build gruen, 145 Tests gruen (7 neue).
+  Periodisierungskurve und Live-Test stehen noch aus.
 - 2026-06-22 - Phase 4 (Verlauf) gebaut, live getestet und freigegeben. Zweite echte
   Inhaltsseite.
   Reine, getestete Aufbereitungslogik src/lib/history.ts (kindOf/tagLabel/calLabel/

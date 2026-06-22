@@ -19,6 +19,19 @@ export function longDateDE(dateStr: string): string {
   }
 }
 
+// Datum mit Jahr, z. B. "22. Juni 2026" (Journey-Startdatum, 1:1 wie V1).
+export function longDateYearDE(dateStr: string): string {
+  try {
+    return new Date(dateStr + "T12:00:00").toLocaleDateString("de-DE", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  } catch {
+    return dateStr;
+  }
+}
+
 // Zahl mit hoechstens zwei Nachkommastellen, ohne unnoetige Nullen.
 export function fmtNum(x: number | null | undefined): string {
   if (x == null) return "–";
