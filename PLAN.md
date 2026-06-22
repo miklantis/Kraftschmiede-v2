@@ -22,10 +22,11 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   Verbindung). Vollstaendiges DB-Schema in Supabase ausgefuehrt: 23 Tabellen mit RLS,
   Invariante aktiv. Masterplan Abschnitt 5 auf den umgesetzten Stand fortgeschrieben.
   Engine nach TypeScript portiert (reine Rechenlogik, modulare Bausteine unter
-  src/engine/) mit 88 gruenen Vitest-Tests, Paritaet zu V1 belegt.
-- **Als Naechstes:** Verbleibende Phase-0-Bausteine. Empfehlung der Reihenfolge: zuerst
-  Zod-Schemas der Entitaeten, dann UI-Fundament (TanStack Router + Tailwind/shadcn),
-  zuletzt Offline-Grundgeruest. Seed (Definitionen aus V1) danach.
+  src/engine/) mit 88 gruenen Vitest-Tests, Paritaet zu V1 belegt. Zod-Schemas der
+  Entitaeten gebaut (alle 23 Tabellen 1:1 gespiegelt, je Lese- und Schreib-Form, plus
+  jsonb-Wertobjekte) unter src/schemas/; Typen daraus abgeleitet. 13 Schema-Tests gruen.
+- **Als Naechstes:** UI-Fundament (TanStack Router file-based + Tailwind/shadcn),
+  danach Offline-Grundgeruest. Seed (Definitionen aus V1) danach.
 - **Offene Grundsatzfragen:** Deploy/Test geklaert. In-App-Versionsanzeige (dreistellig,
   schlank) als spaeterer Komfort-Block vorgemerkt.
 
@@ -52,7 +53,8 @@ alle Bloecke und wird einmal bewusst entschieden, bevor einzelne Seiten entstehe
       Doppelprogression, Phasenwechsel, Suitability, Volumen/Deload, Erholungs-Check,
       Skill-Advice) – modulare Bausteine unter src/engine/, Logik 1:1 aus V1
 - [x] Engine-Unit-Tests laufen (Vitest), gruen – 88 Tests in 7 Dateien, Paritaet zu V1 belegt
-- [ ] Zod-Schemas fuer die Entitaeten
+- [x] Zod-Schemas fuer die Entitaeten (alle 23 Tabellen 1:1 gespiegelt: Row + Insert,
+      jsonb-Wertobjekte; Typen abgeleitet; 13 Tests gruen)
 - [ ] Offline-Grundgeruest gelegt (persistenter Query-Cache + Mutations-Queue, Skelett)
 - [x] **Live-Test-Deploy eingerichtet** (Workflow gepusht; baut bei jedem Push auf main
       und veroeffentlicht auf Pages. Letzter Handgriff beim Nutzer: Pages-Quelle auf
@@ -168,3 +170,10 @@ Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
   Bausteine (1RM, Plate-Loader, Aufwaerm-Generator, Doppelprogression, Phasenwechsel,
   Suitability, Volumen/Deload, Erholungs-Check, Skills) unter src/engine/. 88 Vitest-Tests
   gruen; aus V1 portierte Tests belegen Paritaet. Typecheck und Build gruen.
+- 2026-06-22 – Zod-Schemas der Entitaeten gebaut: alle 23 Tabellen 1:1 zur Datenbank
+  gespiegelt (snake_case-Spaltennamen, Nullbarkeit, CHECK-Listen als Enums), je eine
+  Lese-Form (Row) und eine Schreib-Form (Insert ohne id/created_at, Defaults optional).
+  jsonb-Wertobjekte praezisiert (settings.timers/recovery_windows fest; body, general_warmup,
+  suggestion, skill_progress.log vorlaeufig als lockere Objekte). Typen via z.infer
+  abgeleitet. Abgelegt unter src/schemas/, gruppiert wie die DB-Abschnitte, mit Barrel.
+  13 Schema-Tests gruen; Typecheck und Build gruen.
