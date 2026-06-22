@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabaseConfig } from "@/lib/supabase";
+import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
@@ -20,6 +21,7 @@ async function checkConnection(): Promise<boolean> {
 }
 
 function StartPage(): React.ReactElement {
+  const { session, signOut } = useAuth();
   const connection = useQuery({
     queryKey: ["verbindung"],
     queryFn: checkConnection,
@@ -47,6 +49,13 @@ function StartPage(): React.ReactElement {
       >
         Verbindung neu pruefen
       </Button>
+
+      <div className="text-muted-foreground mt-2 flex flex-col items-center gap-2 text-sm">
+        <span>Angemeldet als {session?.user.email ?? "unbekannt"}</span>
+        <Button variant="ghost" size="sm" onClick={() => void signOut()}>
+          Abmelden
+        </Button>
+      </div>
     </main>
   );
 }

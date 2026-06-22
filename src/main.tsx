@@ -9,6 +9,8 @@ import {
   CACHE_BUSTER,
   CACHE_MAX_ALTER_MS,
 } from "@/lib/offline";
+import { AuthProvider } from "@/lib/auth";
+import { AuthGate } from "@/components/AuthGate";
 import "./index.css";
 
 // Router aus dem generierten Routenbaum. basepath folgt dem Vite-base,
@@ -47,7 +49,13 @@ createRoot(rootElement).render(
         void queryClient.resumePausedMutations();
       }}
     >
-      <RouterProvider router={router} />
+      {/* AuthProvider haelt die Sitzung; AuthGate laesst die App erst nach
+          Anmeldung durch, da alle Schreibzugriffe RLS-geschuetzt sind. */}
+      <AuthProvider>
+        <AuthGate>
+          <RouterProvider router={router} />
+        </AuthGate>
+      </AuthProvider>
     </PersistQueryClientProvider>
   </StrictMode>,
 );

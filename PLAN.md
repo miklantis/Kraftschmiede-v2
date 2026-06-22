@@ -17,27 +17,26 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Phase:** 0 (Schema und Fundament) – abgeschlossen
-- **Erledigt:** Fundament steht (Vite + Pages-Deploy, Supabase-Projekt, Client/Query,
-  Verbindung). Vollstaendiges DB-Schema in Supabase ausgefuehrt: 23 Tabellen mit RLS,
-  Invariante aktiv. Masterplan Abschnitt 5 auf den umgesetzten Stand fortgeschrieben.
-  Engine nach TypeScript portiert (reine Rechenlogik, modulare Bausteine unter
-  src/engine/) mit 88 gruenen Vitest-Tests, Paritaet zu V1 belegt. Zod-Schemas der
-  Entitaeten gebaut (alle 23 Tabellen 1:1 gespiegelt, je Lese- und Schreib-Form, plus
-  jsonb-Wertobjekte) unter src/schemas/; Typen daraus abgeleitet. 13 Schema-Tests gruen.
-  UI-Fundament steht: TanStack Router file-based (src/routes, generierter Routenbaum),
-  Tailwind v4 (Vite-Plugin) und shadcn/ui mit neutraler Basis (noch nicht auf den Look
-  getrimmt – das ist Phase 1). Startseite ist erste Route; Health-Check dorthin ueberfuehrt.
-  Offline-Grundgeruest gelegt: zentraler Query-Client (src/lib/queryClient.ts) und
-  persistenter Cache in IndexedDB (src/lib/offline.ts) ueber den Persist-Provider in
-  main.tsx; Lese-Cache ueberlebt App-Neustart, ohne Netz angefallene Schreibvorgaenge
-  werden pausiert und nach Reconnect bzw. Neustart fortgesetzt. Damit ist Phase 0 fertig.
-- **Als Naechstes:** Seed (Definitionen aus V1 als DB-Seed). Dann Phase 1
-  (Design-System / globaler Look).
-- **Bewusst noch nicht dabei:** App-Huelle komplett offline laden (Service Worker/PWA, Phase 13)
-  und sichtbare Offline-Anzeige (gehoert zum Look, Phase 1/2).
+- **Phase:** Erstbefuellung (Seed + Migration zusammengefasst). Voraussetzung Login gebaut.
+- **Erledigt:** Phase 0 abgeschlossen (Fundament, Schema/RLS, Engine, Zod-Schemas, UI-Fundament,
+  Offline-Grundgeruest, Live-Deploy). Schlichter Login als Voraussetzung fuer alle
+  Schreibzugriffe gebaut: E-Mail/Passwort ueber Supabase Auth (Anmelden, Konto anlegen,
+  Abmelden), AuthProvider + useAuth-Hook, AuthGate vor dem Router, wiederverwendbares
+  Input-Primitive. Startseite zeigt angemeldete E-Mail und Abmelden.
+- **Entscheidung:** Auf Wunsch werden der reine Seed (Definitionen) und die Migration
+  (persoenliche Daten) zu einer Erstbefuellung zusammengefasst. Definitionen (7 Journey-
+  Vorlagen, 2 Skill-Progressionen) befuellen sich automatisch beim ersten Start nach Login;
+  die kompletten V1-Daten kommen einmalig per Import-Knopf rein (dieser ist zugleich die
+  spaetere Import/Export-Funktion). Aktive Journey wird die echte "Rueckkehr 2026".
+- **Als Naechstes:** (1) Du legst auf der V2-Datenbank ein Konto an und meldest dich an
+  (E-Mail-Bestaetigung im Supabase-Projekt unter Authentication kurz ausschalten).
+  (2) Definitionen automatisch seeden + Datenstand-Anzeige (Zeilen je Tabelle) zum Pruefen.
+  (3) Import-Knopf fuer die kompletten V1-Daten. Danach Phase 1 (globaler Look).
+- **Bewusst noch nicht dabei:** vollstaendiges Konto-Panel (Phase 10), App-Huelle offline
+  laden (PWA, Phase 13), sichtbare Offline-Anzeige (Phase 1/2).
 - **Offene Grundsatzfragen:** Deploy/Test geklaert. In-App-Versionsanzeige (dreistellig,
-  schlank) als spaeterer Komfort-Block vorgemerkt.
+  schlank) als spaeterer Komfort-Block vorgemerkt. Login ist eine Minimalversion; das
+  vollstaendige Konto-/Sync-Panel bleibt Phase 10.
 
 ---
 
@@ -177,6 +176,18 @@ alle Bloecke und wird einmal bewusst entschieden, bevor einzelne Seiten entstehe
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-22 – Schlichter Login gebaut (Voraussetzung fuer alle RLS-geschuetzten
+  Schreibzugriffe): Auth-Schicht src/lib/auth.tsx (AuthProvider + useAuth) ueber Supabase
+  Auth mit Sitzungsverfolgung (getSession + onAuthStateChange), Anmelden
+  (signInWithPassword), Konto anlegen (signUp, erkennt ausstehende E-Mail-Bestaetigung)
+  und Abmelden; bekannte Fehlertexte ins Deutsche uebersetzt. Login-Bildschirm
+  src/components/LoginScreen.tsx (E-Mail/Passwort, Umschalten Anmelden/Registrieren,
+  Fehler-/Hinweiszeile). AuthGate src/components/AuthGate.tsx sitzt in main.tsx vor dem
+  RouterProvider und laesst die App erst nach Anmeldung durch. Wiederverwendbares
+  Input-Primitive src/components/ui/input.tsx. Startseite zeigt angemeldete E-Mail und
+  Abmelden-Knopf. Bewusst eine Minimalversion; das volle Konto-/Sync-Panel bleibt Phase 10.
+  Typecheck, Build und 101 Tests gruen.
 
 - 2026-06-22 – Offline-Grundgeruest gelegt (Phase 0 abgeschlossen): zentraler Query-Client
   unter src/lib/queryClient.ts (gcTime 7 Tage, staleTime 30 s, retry 1). Persistenter Cache
