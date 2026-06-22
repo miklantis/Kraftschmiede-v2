@@ -19,14 +19,15 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 - **Phase:** 0 (Schema und Fundament) – begonnen
 - **Erledigt:** Minimales Vite-Skelett (React 19, TS strict) und Deploy-Workflow auf
-  GitHub Pages gepusht. Typecheck und Build laufen lokal gruen.
-- **Als Naechstes / Aktion beim Nutzer:** In den Repo-Settings unter „Pages" die Quelle
-  einmalig auf „GitHub Actions" stellen. Danach baut jeder Push automatisch und die
-  Test-URL ist erreichbar: https://miklantis.github.io/Kraftschmiede-v2/
-- **Danach im Projekt:** Supabase-Projekt fuer V2 anlegen (eigene DB), dann Schema/RLS,
-  restliches Stack-Setup (Router, Tailwind/shadcn, Query, Zod) und Engine-Portierung.
-- **Offene Grundsatzfragen:** Deploy/Test geklaert (GitHub Pages via Action). Offen:
-  In-App-Versionsanzeige mit „Was ist neu"-Liste – Konzept noch zu entscheiden.
+  GitHub Pages. Pages-Quelle auf „GitHub Actions" gestellt; Build laeuft automatisch bei
+  jedem Push. Test-URL liefert die V2-Fassung aus: https://miklantis.github.io/Kraftschmiede-v2/
+- **Als Naechstes:** Supabase-Projekt fuer V2 anlegen (eigene DB, getrennt von V1). Ich
+  fuehre den Nutzer durch das Anlegen; danach gibt er Projekt-URL und anon-Key (beide
+  duerfen ins oeffentliche Repo, RLS schuetzt; service_role-Key niemals).
+- **Danach:** Schema/Tabellen/RLS (Masterplan 5), restliches Stack-Setup (Router,
+  Tailwind/shadcn, Query, Zod), Engine-Portierung samt Tests.
+- **Offene Grundsatzfragen:** Deploy/Test geklaert. In-App-Versionsanzeige (dreistellig,
+  schlank) als spaeterer Komfort-Block vorgemerkt – nicht jetzt.
 
 ---
 
