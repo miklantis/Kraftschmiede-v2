@@ -21,10 +21,11 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 - **Erledigt:** Fundament steht (Vite + Pages-Deploy, Supabase-Projekt, Client/Query,
   Verbindung). Vollstaendiges DB-Schema in Supabase ausgefuehrt: 23 Tabellen mit RLS,
   Invariante aktiv. Masterplan Abschnitt 5 auf den umgesetzten Stand fortgeschrieben.
+  Engine nach TypeScript portiert (reine Rechenlogik, modulare Bausteine unter
+  src/engine/) mit 88 gruenen Vitest-Tests, Paritaet zu V1 belegt.
 - **Als Naechstes:** Verbleibende Phase-0-Bausteine. Empfehlung der Reihenfolge: zuerst
-  Engine nach TypeScript portieren (reine Rechenlogik + Unit-Tests, vom Schema
-  unabhaengig), dann Zod-Schemas der Entitaeten, dann UI-Fundament (TanStack Router +
-  Tailwind/shadcn), zuletzt Offline-Grundgeruest. Seed (Definitionen aus V1) danach.
+  Zod-Schemas der Entitaeten, dann UI-Fundament (TanStack Router + Tailwind/shadcn),
+  zuletzt Offline-Grundgeruest. Seed (Definitionen aus V1) danach.
 - **Offene Grundsatzfragen:** Deploy/Test geklaert. In-App-Versionsanzeige (dreistellig,
   schlank) als spaeterer Komfort-Block vorgemerkt.
 
@@ -47,9 +48,10 @@ alle Bloecke und wird einmal bewusst entschieden, bevor einzelne Seiten entstehe
 - [ ] TanStack Router (file-based) eingerichtet
 - [ ] Tailwind + shadcn/ui aufgesetzt
 - [x] Supabase-Client + TanStack-Query-Setup (Verbindung steht, Health-Check sichtbar)
-- [ ] Engine nach TypeScript portiert (1RM, Plate-Loader, Aufwaerm-Generator,
-      Doppelprogression, Suitability, Volumen/Deload, Skill-Advice)
-- [ ] Engine-Unit-Tests laufen (z. B. Vitest), gruen
+- [x] Engine nach TypeScript portiert (1RM, Plate-Loader, Aufwaerm-Generator,
+      Doppelprogression, Phasenwechsel, Suitability, Volumen/Deload, Erholungs-Check,
+      Skill-Advice) – modulare Bausteine unter src/engine/, Logik 1:1 aus V1
+- [x] Engine-Unit-Tests laufen (Vitest), gruen – 88 Tests in 7 Dateien, Paritaet zu V1 belegt
 - [ ] Zod-Schemas fuer die Entitaeten
 - [ ] Offline-Grundgeruest gelegt (persistenter Query-Cache + Mutations-Queue, Skelett)
 - [x] **Live-Test-Deploy eingerichtet** (Workflow gepusht; baut bei jedem Push auf main
@@ -162,4 +164,7 @@ alle Bloecke und wird einmal bewusst entschieden, bevor einzelne Seiten entstehe
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
 
-- (noch nichts)
+- 2026-06-22 – Engine nach TypeScript portiert: reine Rechenlogik aus V1 als modulare
+  Bausteine (1RM, Plate-Loader, Aufwaerm-Generator, Doppelprogression, Phasenwechsel,
+  Suitability, Volumen/Deload, Erholungs-Check, Skills) unter src/engine/. 88 Vitest-Tests
+  gruen; aus V1 portierte Tests belegen Paritaet. Typecheck und Build gruen.

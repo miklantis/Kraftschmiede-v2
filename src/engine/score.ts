@@ -1,0 +1,20 @@
+// Score-Skala 1..5 und ihre Zuordnung zu RIR (Reps in Reserve) und RPE.
+// Score 1 ~ RIR 4+ ~ RPE <=6 ... Score 5 ~ RIR 0 ~ RPE 10 (Versagen).
+
+export interface ScoreInfo {
+  rir: string;
+  rpe: string;
+  label: string;
+}
+
+export const SCORE_MAP: Record<number, ScoreInfo> = {
+  1: { rir: "4+", rpe: "≤6", label: "sehr leicht" },
+  2: { rir: "3", rpe: "7", label: "leicht" },
+  3: { rir: "2", rpe: "8", label: "im Ziel" },
+  4: { rir: "1", rpe: "9", label: "im Ziel (hart)" },
+  5: { rir: "0", rpe: "10", label: "Versagen" },
+};
+
+export function scoreInfo(s: number): ScoreInfo | null {
+  return SCORE_MAP[s] ?? null;
+}
