@@ -21,9 +21,13 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   Live-Test aus. Erste echte Inhaltsseite und erstes echtes Datenfundament: Daten-Hooks,
   Coach- und Journey-Logik laufen gegen den DB-Stand. Nach erstem Live-Eindruck die globale
   Inhaltsflaeche an V1 angeglichen (Breite 1180px statt 768px, Desktop-Raender 52/40/72px,
-  Handy 22px seitlich, Seitenkopf-Groessen wie V1: Handy 34px / Desktop 28px). Greift ueber
-  AppShell + PageHeader auf alle Seiten. Als Naechstes Phase 3 erneut live pruefen, danach
-  Phase 4 (Verlauf).
+  Handy 22px seitlich, Seitenkopf-Groessen wie V1: Desktop 34px / Handy 28px). Greift ueber
+  AppShell + PageHeader auf alle Seiten. Zweite Live-Runde: Titelgroesse korrigiert (war
+  versehentlich invertiert), Hero-Karte am Desktop auf V1-Hoehe (Padding 26px vertikal),
+  Klick auf aktiven Skill startet jetzt die Skill-Session (Phase-11-Platzhalter) statt zur
+  Skills-Seite zu navigieren - Paritaet zu V1. OFFEN: Oberflaechen-Schrift ist Sora, V1 nutzt
+  System-UI - Entscheidung steht aus (siehe unten). Als Naechstes Phase 3 weiter live pruefen,
+  danach Phase 4 (Verlauf).
 - **Erledigt:** Phase 0 abgeschlossen (Fundament, Schema/RLS, Engine, Zod-Schemas, UI-Fundament,
   Offline-Grundgeruest, Live-Deploy). Schlichter Login als Voraussetzung fuer alle
   Schreibzugriffe (E-Mail/Passwort ueber Supabase Auth, AuthProvider + useAuth, AuthGate vor

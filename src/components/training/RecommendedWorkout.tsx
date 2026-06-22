@@ -22,7 +22,7 @@ export function RecommendedWorkout({
   return (
     <div
       className={cn(
-        "rounded-[22px] bg-card p-5 shadow-hi min-[960px]:p-7",
+        "rounded-[22px] bg-card p-5 shadow-hi min-[960px]:px-7 min-[960px]:py-[26px]",
         excluded && "opacity-60",
       )}
     >

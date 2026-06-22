@@ -98,9 +98,7 @@ function TrainingPage(): React.ReactElement {
                 subtitle={sk.subtitle}
                 chevron
                 disabled={sk.gated}
-                onClick={
-                  sk.gated ? undefined : () => navigate({ to: "/skills" })
-                }
+                onClick={sk.gated ? undefined : placeholder}
               />
             ))
           ) : (
