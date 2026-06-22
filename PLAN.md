@@ -19,8 +19,11 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 - **Phase:** Phase 3 (Training - Uebersicht & Empfehlung) gebaut und gepusht; steht zum
   Live-Test aus. Erste echte Inhaltsseite und erstes echtes Datenfundament: Daten-Hooks,
-  Coach- und Journey-Logik laufen gegen den DB-Stand. Als Naechstes Phase 3 live pruefen,
-  danach Phase 4 (Verlauf).
+  Coach- und Journey-Logik laufen gegen den DB-Stand. Nach erstem Live-Eindruck die globale
+  Inhaltsflaeche an V1 angeglichen (Breite 1180px statt 768px, Desktop-Raender 52/40/72px,
+  Handy 22px seitlich, Seitenkopf-Groessen wie V1: Handy 34px / Desktop 28px). Greift ueber
+  AppShell + PageHeader auf alle Seiten. Als Naechstes Phase 3 erneut live pruefen, danach
+  Phase 4 (Verlauf).
 - **Erledigt:** Phase 0 abgeschlossen (Fundament, Schema/RLS, Engine, Zod-Schemas, UI-Fundament,
   Offline-Grundgeruest, Live-Deploy). Schlichter Login als Voraussetzung fuer alle
   Schreibzugriffe (E-Mail/Passwort ueber Supabase Auth, AuthProvider + useAuth, AuthGate vor
@@ -126,6 +129,9 @@ zurueckgedreht). Quelle: V1-Dateien klar-tokens.css und klar-app.css (nur lesen)
       ueber Konto-Symbol, Theme-Umschalter in Sidebar-Fuss/Mobile-Kopf
 - [x] Shell-Optik auf V1 angeglichen (versaler Markenname, Nav 12px-Radius + warmes Grau,
       Bottom-Nav deckend weiss mit weichem Schatten, keine Luma-Transparenz)
+- [x] Globale Inhaltsflaeche auf V1-Mass gebracht (AppShell-Container 1180px statt 768px,
+      Desktop-Raender 52/40/72px, Handy 22px seitlich; PageHeader-Titel wie V1 Handy 34px /
+      Desktop 28px, einheitlicher Kopf-Abstand). Gilt fuer alle Seiten.
 
 ## Phase 3 – Training (Uebersicht & Empfehlung)
 

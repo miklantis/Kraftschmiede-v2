@@ -24,7 +24,7 @@ export function AppShell({
           <MobileHeader />
         </div>
 
-        <main className="mx-auto w-full max-w-3xl px-4 pt-2 pb-28 min-[960px]:px-8 min-[960px]:py-8">
+        <main className="mx-auto w-full max-w-[1180px] px-[22px] pt-2 pb-28 min-[960px]:px-[52px] min-[960px]:pt-10 min-[960px]:pb-[72px]">
           {children}
         </main>
       </div>

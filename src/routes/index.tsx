@@ -23,7 +23,7 @@ function TrainingPage(): React.ReactElement {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-4">
+      <div>
         <PageHeader title="Training" />
         <p className="text-sm text-muted-foreground">Wird geladen …</p>
       </div>
@@ -32,7 +32,7 @@ function TrainingPage(): React.ReactElement {
 
   if (isError || !data) {
     return (
-      <div className="flex flex-col gap-4">
+      <div>
         <PageHeader title="Training" />
         <p className="text-sm text-danger">
           Daten konnten nicht geladen werden
@@ -128,17 +128,19 @@ function TrainingPage(): React.ReactElement {
   );
 
   return (
-    <div className="flex flex-col gap-[18px] min-[960px]:gap-[26px]">
+    <div>
       <PageHeader title="Training" date={data.date} />
-      {data.journey && (
-        <JourneyStrip
-          title={data.journey.title}
-          subtitle={data.journey.subtitle}
-          filled={data.journey.filled}
-          total={data.journey.total}
-        />
-      )}
-      <TwoColumn main={mainColumn} side={sideColumn} />
+      <div className="flex flex-col gap-[18px] min-[960px]:gap-[26px]">
+        {data.journey && (
+          <JourneyStrip
+            title={data.journey.title}
+            subtitle={data.journey.subtitle}
+            filled={data.journey.filled}
+            total={data.journey.total}
+          />
+        )}
+        <TwoColumn main={mainColumn} side={sideColumn} />
+      </div>
     </div>
   );
 }
