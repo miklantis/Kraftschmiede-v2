@@ -18,14 +18,15 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 ## Aktueller Stand
 
 - **Phase:** 0 (Schema und Fundament) – begonnen
-- **Erledigt:** Minimales Vite-Skelett (React 19, TS strict) und Deploy-Workflow auf
-  GitHub Pages. Pages-Quelle auf „GitHub Actions" gestellt; Build laeuft automatisch bei
-  jedem Push. Test-URL liefert die V2-Fassung aus: https://miklantis.github.io/Kraftschmiede-v2/
-- **Als Naechstes:** Supabase-Projekt fuer V2 anlegen (eigene DB, getrennt von V1). Ich
-  fuehre den Nutzer durch das Anlegen; danach gibt er Projekt-URL und anon-Key (beide
-  duerfen ins oeffentliche Repo, RLS schuetzt; service_role-Key niemals).
-- **Danach:** Schema/Tabellen/RLS (Masterplan 5), restliches Stack-Setup (Router,
-  Tailwind/shadcn, Query, Zod), Engine-Portierung samt Tests.
+- **Erledigt:** Vite-Skelett + Pages-Deploy stehen. Supabase-Projekt fuer V2 angelegt
+  (eigene DB). Supabase-Client und TanStack-Query-Grundgeruest verdrahtet; die App prueft
+  beim Laden die Datenbankverbindung und zeigt den Status. Oeffentliche Config liegt in
+  committed .env (nur VITE_-Werte: URL + publishable key; RLS schuetzt).
+- **Als Naechstes:** Schema/Tabellen/RLS umsetzen (Masterplan 5) – eigener groesserer
+  Block. Davor kurz das Schema-Konzept gemeinsam durchgehen (Reihenfolge, RLS-Muster,
+  welche Tabellen zuerst).
+- **Danach:** restliches Stack-Setup (Router, Tailwind/shadcn, Zod), Engine-Portierung
+  samt Tests, Offline-Grundgeruest.
 - **Offene Grundsatzfragen:** Deploy/Test geklaert. In-App-Versionsanzeige (dreistellig,
   schlank) als spaeterer Komfort-Block vorgemerkt – nicht jetzt.
 
@@ -40,14 +41,14 @@ alle Bloecke und wird einmal bewusst entschieden, bevor einzelne Seiten entstehe
 
 ## Phase 0 – Schema und Fundament
 
-- [ ] Setup-Grundsatzentscheidungen bestaetigt (Stack, Offline-Zuschnitt, Deploy/Test-Weg)
-- [ ] Supabase-Projekt fuer V2 angelegt (eigene DB, getrennt von V1)
+- [x] Setup-Grundsatzentscheidungen bestaetigt (Stack, Offline-Zuschnitt, Deploy/Test-Weg)
+- [x] Supabase-Projekt fuer V2 angelegt (eigene DB, getrennt von V1)
 - [ ] Schema/Tabellen/RLS umgesetzt (Definitionen + Nutzerzustand, siehe Masterplan 5)
 - [ ] Invarianten als DB-Constraints (z. B. genau eine aktive Journey pro Nutzer)
 - [x] Vite + TypeScript (strict) aufgesetzt (minimales Skelett)
 - [ ] TanStack Router (file-based) eingerichtet
 - [ ] Tailwind + shadcn/ui aufgesetzt
-- [ ] Supabase-Client + TanStack-Query-Setup
+- [x] Supabase-Client + TanStack-Query-Setup (Verbindung steht, Health-Check sichtbar)
 - [ ] Engine nach TypeScript portiert (1RM, Plate-Loader, Aufwaerm-Generator,
       Doppelprogression, Suitability, Volumen/Deload, Skill-Advice)
 - [ ] Engine-Unit-Tests laufen (z. B. Vitest), gruen

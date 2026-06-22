@@ -4,8 +4,8 @@ node_modules/
 # Build-Ausgabe
 dist/
 
-# Lokale Env-Dateien (Secrets nie committen)
-.env
+# Lokale/geheime Env-Dateien (nie committen). Die oeffentliche .env
+# (nur VITE_-Werte: Projekt-URL + publishable key) wird bewusst committed.
 .env.local
 .env.*.local
 
