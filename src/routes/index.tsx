@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabaseConfig } from "@/lib/supabase";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
+import { Datenstand } from "@/components/Datenstand";
 
 export const Route = createFileRoute("/")({
   component: StartPage,
@@ -56,6 +57,8 @@ function StartPage(): React.ReactElement {
           Abmelden
         </Button>
       </div>
+
+      <Datenstand />
     </main>
   );
 }

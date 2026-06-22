@@ -40,6 +40,10 @@ export const focusEnum = z.enum([
 // Mess-Art ohne Gewicht (exercises.metric, skill_phase_exercises.metric).
 export const metricEnum = z.enum(["reps", "duration"]);
 
+// Aus den Enums abgeleitete Typen (einzige Pflegequelle bleibt das Enum).
+export type Focus = z.infer<typeof focusEnum>;
+export type Metric = z.infer<typeof metricEnum>;
+
 // Mess-Art einer Uebung-in-Einheit (session_exercises.metric) – inkl. Gewicht+Wdh.
 export const sessionMetricEnum = z.enum(["reps", "duration", "weight_reps"]);
 

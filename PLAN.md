@@ -22,16 +22,20 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   Offline-Grundgeruest, Live-Deploy). Schlichter Login als Voraussetzung fuer alle
   Schreibzugriffe gebaut: E-Mail/Passwort ueber Supabase Auth (Anmelden, Konto anlegen,
   Abmelden), AuthProvider + useAuth-Hook, AuthGate vor dem Router, wiederverwendbares
-  Input-Primitive. Startseite zeigt angemeldete E-Mail und Abmelden.
+  Input-Primitive. Startseite zeigt angemeldete E-Mail und Abmelden. Konto angelegt,
+  Anmeldung steht. Definitionen-Seed gebaut: 7 Journey-Vorlagen (+ Phasen) und 2 Skill-
+  Progressionen (+ Phasen, Uebungen, Equipment) als Code (src/seed/definitions.ts), idempotenter
+  Runner (src/lib/seed.ts) legt sie beim ersten Start mit user_id an. Temporaere Datenstand-
+  Anzeige (src/components/Datenstand.tsx) auf der Startseite zeigt die Zeilenzahl je Tabelle
+  zum Pruefen ohne Code.
 - **Entscheidung:** Auf Wunsch werden der reine Seed (Definitionen) und die Migration
   (persoenliche Daten) zu einer Erstbefuellung zusammengefasst. Definitionen (7 Journey-
   Vorlagen, 2 Skill-Progressionen) befuellen sich automatisch beim ersten Start nach Login;
   die kompletten V1-Daten kommen einmalig per Import-Knopf rein (dieser ist zugleich die
   spaetere Import/Export-Funktion). Aktive Journey wird die echte "Rueckkehr 2026".
-- **Als Naechstes:** (1) Du legst auf der V2-Datenbank ein Konto an und meldest dich an
-  (E-Mail-Bestaetigung im Supabase-Projekt unter Authentication kurz ausschalten).
-  (2) Definitionen automatisch seeden + Datenstand-Anzeige (Zeilen je Tabelle) zum Pruefen.
-  (3) Import-Knopf fuer die kompletten V1-Daten. Danach Phase 1 (globaler Look).
+- **Als Naechstes:** Import-Knopf fuer die kompletten V1-Daten (Uebungen + Muskel-Zuordnung,
+  Vorlagen, Inventar, Einstellungen, Journey "Rueckkehr 2026" + Phasen, Einheiten +
+  Saetze, Skill-Fortschritt, Body-Log, Messungen). Danach Phase 1 (globaler Look).
 - **Bewusst noch nicht dabei:** vollstaendiges Konto-Panel (Phase 10), App-Huelle offline
   laden (PWA, Phase 13), sichtbare Offline-Anzeige (Phase 1/2).
 - **Offene Grundsatzfragen:** Deploy/Test geklaert. In-App-Versionsanzeige (dreistellig,
@@ -159,7 +163,8 @@ alle Bloecke und wird einmal bewusst entschieden, bevor einzelne Seiten entstehe
 ## Phase 12 – Migration + Import/Export
 
 - [ ] Konzept abgestimmt
-- [ ] Definitionen aus V1-Code als DB-Seed
+- [x] Definitionen aus V1-Code als DB-Seed (Journey-Vorlagen, Skills; idempotent, beim
+      ersten Start mit user_id; temporaere Datenstand-Anzeige zum Pruefen)
 - [ ] Migrationsskript: V1-Blob -> normalisierte Zeilen, IDs umschluesseln
 - [ ] JSON-Import/Export
 - [ ] Abgleich alt/neu (Anzahl Sessions/Saetze/Journeys + Stichproben)
@@ -176,6 +181,18 @@ alle Bloecke und wird einmal bewusst entschieden, bevor einzelne Seiten entstehe
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-22 – Definitionen-Seed + Datenstand: die kuratierten Journey-Vorlagen (7, mit
+  Phasen) und Skill-Progressionen (2: Strict Pull-Up 10 Phasen, Pushup 6 Phasen, jeweils
+  mit Phasen-Uebungen und Equipment-Toren) als getypte Code-Daten unter src/seed/definitions.ts
+  (1:1 aus V1). Idempotenter Runner src/lib/seed.ts (ensureDefinitionsSeeded) legt sie beim
+  ersten Start mit der user_id an; laeuft nur, wenn noch keine Skills existieren. Inserts
+  ueber die Zod-Insert-Typen, IDs werden per key/Position verknuepft. Skill-Phasen-Uebungen
+  bekommen exercise_id vorerst null (Link zum Katalog folgt nach dem Import in den Feature-
+  Phasen). Schemas um die abgeleiteten Typen Focus/Metric ergaenzt. Temporaere Datenstand-
+  Anzeige src/components/Datenstand.tsx auf der Startseite: seedet beim ersten Aufruf und
+  zeigt die Zeilenzahl je der 23 Tabellen, damit der Stand ohne Code-Lesen pruefbar ist.
+  Typecheck, Build und 101 Tests gruen.
 
 - 2026-06-22 – Schlichter Login gebaut (Voraussetzung fuer alle RLS-geschuetzten
   Schreibzugriffe): Auth-Schicht src/lib/auth.tsx (AuthProvider + useAuth) ueber Supabase
