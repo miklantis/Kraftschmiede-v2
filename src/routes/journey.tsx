@@ -61,9 +61,7 @@ function JourneyPage(): React.ReactElement {
         <ActiveJourneyCard name={data.name} metaLine={metaLine} />
         {data.periodization.weeks.length > 0 && (
           <Section eyebrow="Periodisierung">
-            <div className="rounded-card bg-card p-2 shadow-card min-[960px]:p-3">
-              <PeriodizationChart data={data.periodization} />
-            </div>
+            <PeriodizationChart data={data.periodization} />
           </Section>
         )}
         <Section eyebrow="Phasen · Ablauf">

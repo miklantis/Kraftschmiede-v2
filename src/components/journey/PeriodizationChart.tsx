@@ -24,7 +24,9 @@ import type { PeriodizationData } from "@/lib/periodization";
 
 const MARGIN = { t: 14, r: 14, b: 40, l: 14 };
 const HEIGHT = 260;
-const PER_WEEK = 50; // Mindestbreite je Woche; darunter wird die Grafik scrollbar
+const PER_WEEK = 64; // Mindestbreite je Woche; darunter wird die Grafik scrollbar.
+// Hoeher als V1 (50), damit der Verlauf auf dem Handy nicht gequetscht wirkt; auf
+// dem Desktop bleibt er bei normalen Journey-Laengen unveraendert (volle Breite).
 
 interface ExtPoint {
   g: number;
