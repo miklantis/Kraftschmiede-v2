@@ -318,6 +318,15 @@ getrennt: was hier liegt, gehoert nicht auf den Trainings-Screen.
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
 
+- 2026-06-22 - Bugfix Journey: der Bearbeiten-Knopf der aktiven-Journey-Karte tat sichtbar
+  nichts. Ursache: die Vorlagen-Waehler-Route war im File-based-Routing als KIND von /journey
+  verschachtelt (journey.waehlen.tsx -> parent journey), und journey.tsx rendert kein
+  <Outlet/>; beim Navigieren blieb daher die Journey-Seite stehen. Fix: Datei zu
+  src/routes/journey_.waehlen.tsx umbenannt (angehaengtes _ loest die Verschachtelung), der
+  Waehler ist jetzt eine eigenstaendige Vollseite unter root - URL-Pfad bleibt /journey/waehlen,
+  Route-ID /journey_/waehlen. Entspricht V1 (Picker ersetzt die ganze Ansicht). routeTree.gen.ts
+  neu generiert. tsc, build und 154 Tests gruen.
+
 - 2026-06-22 - Phase 5 (Journey) Schritt 2 gebaut (wartet auf Live-Test): die
   Periodisierungskurve, 1:1 aus V1 (charts.js drawJourneyChart). Neues, domaenenfreies
   Chart-Fundament src/components/ui/chart.tsx (D3-getrieben, damit spaetere Aufbau-Animationen

@@ -16,7 +16,7 @@ import { Route as KoerperRouteImport } from './routes/koerper'
 import { Route as JourneyRouteImport } from './routes/journey'
 import { Route as EinstellungenRouteImport } from './routes/einstellungen'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as JourneyWaehlenRouteImport } from './routes/journey.waehlen'
+import { Route as JourneyWaehlenRouteImport } from './routes/journey_.waehlen'
 
 const VerlaufRoute = VerlaufRouteImport.update({
   id: '/verlauf',
@@ -54,15 +54,15 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const JourneyWaehlenRoute = JourneyWaehlenRouteImport.update({
-  id: '/waehlen',
-  path: '/waehlen',
-  getParentRoute: () => JourneyRoute,
+  id: '/journey_/waehlen',
+  path: '/journey/waehlen',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/einstellungen': typeof EinstellungenRoute
-  '/journey': typeof JourneyRouteWithChildren
+  '/journey': typeof JourneyRoute
   '/koerper': typeof KoerperRoute
   '/skills': typeof SkillsRoute
   '/uebungen': typeof UebungenRoute
@@ -72,7 +72,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/einstellungen': typeof EinstellungenRoute
-  '/journey': typeof JourneyRouteWithChildren
+  '/journey': typeof JourneyRoute
   '/koerper': typeof KoerperRoute
   '/skills': typeof SkillsRoute
   '/uebungen': typeof UebungenRoute
@@ -83,12 +83,12 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/einstellungen': typeof EinstellungenRoute
-  '/journey': typeof JourneyRouteWithChildren
+  '/journey': typeof JourneyRoute
   '/koerper': typeof KoerperRoute
   '/skills': typeof SkillsRoute
   '/uebungen': typeof UebungenRoute
   '/verlauf': typeof VerlaufRoute
-  '/journey/waehlen': typeof JourneyWaehlenRoute
+  '/journey_/waehlen': typeof JourneyWaehlenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -120,17 +120,18 @@ export interface FileRouteTypes {
     | '/skills'
     | '/uebungen'
     | '/verlauf'
-    | '/journey/waehlen'
+    | '/journey_/waehlen'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EinstellungenRoute: typeof EinstellungenRoute
-  JourneyRoute: typeof JourneyRouteWithChildren
+  JourneyRoute: typeof JourneyRoute
   KoerperRoute: typeof KoerperRoute
   SkillsRoute: typeof SkillsRoute
   UebungenRoute: typeof UebungenRoute
   VerlaufRoute: typeof VerlaufRoute
+  JourneyWaehlenRoute: typeof JourneyWaehlenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -184,35 +185,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/journey/waehlen': {
-      id: '/journey/waehlen'
-      path: '/waehlen'
+    '/journey_/waehlen': {
+      id: '/journey_/waehlen'
+      path: '/journey/waehlen'
       fullPath: '/journey/waehlen'
       preLoaderRoute: typeof JourneyWaehlenRouteImport
-      parentRoute: typeof JourneyRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
 
-interface JourneyRouteChildren {
-  JourneyWaehlenRoute: typeof JourneyWaehlenRoute
-}
-
-const JourneyRouteChildren: JourneyRouteChildren = {
-  JourneyWaehlenRoute: JourneyWaehlenRoute,
-}
-
-const JourneyRouteWithChildren =
-  JourneyRoute._addFileChildren(JourneyRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EinstellungenRoute: EinstellungenRoute,
-  JourneyRoute: JourneyRouteWithChildren,
+  JourneyRoute: JourneyRoute,
   KoerperRoute: KoerperRoute,
   SkillsRoute: SkillsRoute,
   UebungenRoute: UebungenRoute,
   VerlaufRoute: VerlaufRoute,
+  JourneyWaehlenRoute: JourneyWaehlenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

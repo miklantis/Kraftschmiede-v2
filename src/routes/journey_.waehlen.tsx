@@ -16,7 +16,7 @@ import { totalWeeks } from "@/lib/journey";
 // Vorlagen-Waehler: Zurueck-Knopf, optional Namensfeld der aktiven Journey,
 // dann die Vorlagen als Karten. Eine Vorlage waehlen legt eine neue aktive
 // Journey an und fuehrt zurueck ins Training (wie V1). Optik aus V1 (jr-pick).
-export const Route = createFileRoute("/journey/waehlen")({
+export const Route = createFileRoute("/journey_/waehlen")({
   component: JourneyPickerPage,
 });
 
