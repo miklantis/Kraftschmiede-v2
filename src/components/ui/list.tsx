@@ -53,7 +53,7 @@ export function ListRow({
   const inner = (
     <>
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <div className="text-[15px] font-semibold text-foreground min-[960px]:text-[15px]">
+        <div className="text-[17px] font-semibold text-foreground min-[960px]:text-[15px]">
           {title}
         </div>
         {subtitle != null && (

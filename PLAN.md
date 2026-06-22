@@ -35,7 +35,9 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   Zeilenhoehe erben. Fuenfte Live-Runde (Mobile): Konto-Avatar wie V1 in den Seitenkopf
   geholt (rechts, zum Kopf zentriert, 40px, mit Sync-Punkt gruen/grau) statt in einen
   separaten Kopfbalken darueber; MobileHeader entfernt; oberer Abstand mobil auf V1 (22px).
-  Als Naechstes Phase 3 weiter live pruefen, danach Phase 4 (Verlauf).
+  Sechste Live-Runde (Mobile): Bottom-Nav an V1 (Icons 27px statt 24, unterer Abstand 22px);
+  Listen-Titel am Handy 17px statt 15px (wie V1, Desktop bleibt 15px). Als Naechstes Phase 3
+  weiter live pruefen, danach Phase 4 (Verlauf).
 - **Erledigt:** Phase 0 abgeschlossen (Fundament, Schema/RLS, Engine, Zod-Schemas, UI-Fundament,
   Offline-Grundgeruest, Live-Deploy). Schlichter Login als Voraussetzung fuer alle
   Schreibzugriffe (E-Mail/Passwort ueber Supabase Auth, AuthProvider + useAuth, AuthGate vor
