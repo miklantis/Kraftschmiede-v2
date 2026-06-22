@@ -10,7 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { Datenstand } from "@/components/Datenstand";
 import { V1Import } from "@/components/V1Import";
 
@@ -62,10 +61,6 @@ function EinstellungenPage(): React.ReactElement {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-muted-foreground text-sm">Darstellung:</span>
-            <ThemeToggle />
-          </div>
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-muted-foreground text-sm">{status}</span>
             <Button

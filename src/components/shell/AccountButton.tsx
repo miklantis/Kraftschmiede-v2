@@ -38,8 +38,8 @@ export function AccountButton({
     <Link
       to="/einstellungen"
       className={cn(
-        "hover:bg-sidebar-accent flex items-center gap-3 rounded-3xl p-2 text-left transition-colors",
-        "focus-visible:ring-ring/30 outline-none focus-visible:ring-3",
+        "hover:bg-sidebar-accent flex items-center gap-3 rounded-control p-2 text-left transition-colors",
+        "focus-visible:ring-ring/30 outline-none focus-visible:ring-2",
       )}
     >
       {avatar}

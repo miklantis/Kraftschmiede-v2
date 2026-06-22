@@ -1,140 +1,90 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-/* Design-System (Phase 1). Struktur/Neutraltoene/Radius/Charts aus dem abgestimmten
-   shadcn-Token-Set (warmes "Stone"-Grau, weisser Hintergrund, hell + dunkel). Darueber
-   die Kraftschmiede-Markenfarben: Akzent = #0c9d77, dazu feste Nebenakzente mit fester
-   Bedeutung (Intensitaet/Teal, Skill/Blau, Yoga/Lila) und die Ampel (gut/Warnung/
-   Abweichung/Gefahr). Schrift: Inter fuer die UI, Spline Sans Mono fuer Zahlen. */
-
-@custom-variant dark (&:is(.dark *));
+/* Design-System (Phase 1) - V1-"Klar"-Theme 1:1 uebernommen.
+   Quelle: V1-Dateien klar-tokens.css und klar-app.css (Referenz-Repo, nur lesen).
+   Reines Hell-Theme wie V1 (kein Dunkelmodus). Feste Hex-Werte aus V1, keine
+   geschaetzten Toene. shadcn-Token-Namen werden auf die V1-Bedeutung gemappt;
+   darueber die Marken-Nebenfarben mit fester Bedeutung. Schrift: Sora (UI),
+   Spline Sans Mono (Zahlen). */
 
 :root {
-  /* Hintergrund zart warm abgetoent (Stone-Hue), Karten bleiben reinweiss -
-     so heben sich die Karten ueber die Flaeche ab (Luma-Prinzip). */
-  --background: oklch(0.985 0.003 106.5);
-  --foreground: oklch(0.153 0.006 107.1);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.153 0.006 107.1);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.153 0.006 107.1);
+  /* Flaechen (V1: --bg/--panel/--panel2). */
+  --background: #edeef1; /* App-Canvas hinter den Karten (V1 --bg) */
+  --foreground: #1c1c1e; /* Primaertext (V1 --text) */
+  --card: #ffffff; /* Karten-/Panel-Flaeche (V1 --panel) */
+  --card-foreground: #1c1c1e;
+  --popover: #ffffff;
+  --popover-foreground: #1c1c1e;
 
-  /* Akzent = Markengruen #0c9d77 (ersetzt das Gruen aus dem Paste bewusst). */
+  /* Akzent = Markengruen (V1 --accent). */
   --primary: #0c9d77;
   --primary-foreground: #ffffff;
 
-  --secondary: oklch(0.967 0.001 286.375);
-  --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.966 0.005 106.5);
-  --muted-foreground: oklch(0.58 0.031 107.3);
-  --accent: oklch(0.966 0.005 106.5);
-  --accent-foreground: oklch(0.228 0.013 107.4);
+  /* Sekundaer/leichte Fuellung (V1 --panel2). */
+  --secondary: #f0f0f2;
+  --secondary-foreground: #1c1c1e;
+  --muted: #f0f0f2;
+  --muted-foreground: #8a8a8e; /* V1 --muted */
+  --accent: #f0f0f2; /* shadcn-Hover-Flaeche, V1 --panel2 */
+  --accent-foreground: #1c1c1e;
 
-  /* Gefahr = Marken-Rot #ef5b5b. */
+  /* Gefahr (V1 --bad). */
   --destructive: #ef5b5b;
 
-  --border: oklch(0.93 0.007 106.5);
-  --input: oklch(0.93 0.007 106.5);
-  --ring: oklch(0.737 0.021 106.9);
+  /* Linien/Rahmen (V1 --line2 sichtbar, Eingabefeld-Fuellung wie V1 input). */
+  --border: #e4e4e8; /* V1 --line2 */
+  --input: #fafafa; /* V1 Eingabefeld-Fuellung */
+  --ring: #0c9d77; /* Fokus = Akzent, wie V1 :focus border-color */
 
-  --chart-1: oklch(0.845 0.143 164.978);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.596 0.145 163.225);
-  --chart-4: oklch(0.508 0.118 165.612);
-  --chart-5: oklch(0.432 0.095 166.913);
+  /* Radien (V1: --radius 16px Karten, --radius-sm 11px Bedienelemente,
+     --radius-pill 20px Pillen). */
+  --radius: 16px;
 
-  --radius: 0.625rem;
-
-  --sidebar: oklch(0.988 0.003 106.5);
-  --sidebar-foreground: oklch(0.153 0.006 107.1);
+  /* Sidebar (an V1-Shell angelehnt: heller Grund, Akzent-Aktivzustand). */
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1c1c1e;
   --sidebar-primary: #0c9d77;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: oklch(0.966 0.005 106.5);
-  --sidebar-accent-foreground: oklch(0.228 0.013 107.4);
-  --sidebar-border: oklch(0.93 0.007 106.5);
-  --sidebar-ring: oklch(0.737 0.021 106.9);
+  --sidebar-accent: #f0f0f2;
+  --sidebar-accent-foreground: #1c1c1e;
+  --sidebar-border: #e4e4e8;
+  --sidebar-ring: #0c9d77;
 
-  /* Markenfarben (Bedeutung statt Dekoration). */
-  --good: #0c9d77;
+  /* Markenfarben mit fester Bedeutung (V1 1:1). */
+  --good: #0c9d77; /* Erfolg = Akzentgruen */
   --good-foreground: #ffffff;
-  --warning: #d99a2b;
+  --warning: #d99a2b; /* Vorsicht/Deload */
   --warning-foreground: #8a6d18;
-  --deviation: #f3b13a;
+  --deviation: #f3b13a; /* Satz-Abweichung, distinkt vom Deload */
   --deviation-foreground: #8a6d18;
   --danger: #ef5b5b;
   --danger-foreground: #ffffff;
-  --intensity: #37a9c4;
+  --intensity: #37a9c4; /* Teal = Intensitaet im Journey-Chart */
   --intensity-foreground: #1f6f82;
-  --skill: #5b9bd6;
+  --skill: #5b9bd6; /* Skill-Blau */
   --skill-foreground: #2f6aa0;
-  --yoga: #8478c9;
+  --yoga: #8478c9; /* Yoga-Lila */
   --yoga-foreground: #544a9b;
 }
 
-.dark {
-  --background: oklch(0.153 0.006 107.1);
-  --foreground: oklch(0.988 0.003 106.5);
-  --card: oklch(0.228 0.013 107.4);
-  --card-foreground: oklch(0.988 0.003 106.5);
-  --popover: oklch(0.228 0.013 107.4);
-  --popover-foreground: oklch(0.988 0.003 106.5);
-
-  --primary: #0c9d77;
-  --primary-foreground: #ffffff;
-
-  --secondary: oklch(0.274 0.006 286.033);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.286 0.016 107.4);
-  --muted-foreground: oklch(0.737 0.021 106.9);
-  --accent: oklch(0.286 0.016 107.4);
-  --accent-foreground: oklch(0.988 0.003 106.5);
-
-  --destructive: #ef5b5b;
-
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.58 0.031 107.3);
-
-  --chart-1: oklch(0.845 0.143 164.978);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.596 0.145 163.225);
-  --chart-4: oklch(0.508 0.118 165.612);
-  --chart-5: oklch(0.432 0.095 166.913);
-
-  --sidebar: oklch(0.228 0.013 107.4);
-  --sidebar-foreground: oklch(0.988 0.003 106.5);
-  --sidebar-primary: #0c9d77;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: oklch(0.286 0.016 107.4);
-  --sidebar-accent-foreground: oklch(0.988 0.003 106.5);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.58 0.031 107.3);
-
-  /* Markenfarben im Dunkelmodus: Akzente bleiben, Text auf Toenungen wird heller. */
-  --good: #0c9d77;
-  --good-foreground: #ffffff;
-  --warning: #d99a2b;
-  --warning-foreground: #f0c879;
-  --deviation: #f3b13a;
-  --deviation-foreground: #f0c879;
-  --danger: #ef5b5b;
-  --danger-foreground: #ffffff;
-  --intensity: #37a9c4;
-  --intensity-foreground: #8fd2e0;
-  --skill: #5b9bd6;
-  --skill-foreground: #a9cdf0;
-  --yoga: #8478c9;
-  --yoga-foreground: #c2bbed;
-}
-
 @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  /* Radius-Stufen: card 16px, control 11px, pill 20px (V1-Werte).
+     In Tailwind v4 erzeugt der --radius-*-Namensraum die rounded-*-Utilities. */
+  --radius-card: var(--radius);
+  --radius-control: 11px;
+  --radius-pill: 20px;
 
+  /* Weiche V1-Schatten statt harter Rahmen. Der --shadow-*-Namensraum
+     erzeugt die shadow-*-Utilities (shadow-card/-hi/-pop). */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-hi: 0 8px 24px -12px rgba(12, 157, 119, 0.45),
+    0 0 0 1px rgba(12, 157, 119, 0.16);
+  --shadow-pop: 0 30px 80px -30px rgba(20, 24, 40, 0.6);
+
+  /* Schrift: Sora fuer die Oberflaeche, Spline Sans Mono fuer Zahlen. */
   --font-sans:
-    "Inter Variable", ui-sans-serif, system-ui, -apple-system,
+    "Sora Variable", ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono:
     "Spline Sans Mono Variable", ui-monospace, SFMono-Regular, "SF Mono",
@@ -158,11 +108,6 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);

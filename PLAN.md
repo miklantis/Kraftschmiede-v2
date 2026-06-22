@@ -17,10 +17,10 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Phase:** Kursaenderung am Design (2026-06-22). Phase 1 wird neu aufgemacht: weg von der
-  eigenen Luma-Interpretation, hin zum moeglichst 1:1 uebernommenen V1-"Klar"-Look. shadcn
-  bleibt als Fundament. Reihenfolge: erst globalen Look auf V1 angleichen, dann
-  Navigation/Shell mit diesem Look gegenpruefen, danach Phase 3 (Training).
+- **Phase:** Phase 1 auf V1-Look umgesetzt (2026-06-22). Globaler Look folgt jetzt dem
+  V1-"Klar"-Theme statt der eigenen Luma-Interpretation; shadcn bleibt als Fundament,
+  Dunkelmodus entfernt (V1 hat keinen), Schrift Sora + Spline Sans Mono. Als Naechstes
+  Navigation/Shell mit dem V1-Look gegenpruefen, danach Phase 3 (Training).
 - **Erledigt:** Phase 0 abgeschlossen (Fundament, Schema/RLS, Engine, Zod-Schemas, UI-Fundament,
   Offline-Grundgeruest, Live-Deploy). Schlichter Login als Voraussetzung fuer alle
   Schreibzugriffe (E-Mail/Passwort ueber Supabase Auth, AuthProvider + useAuth, AuthGate vor
@@ -61,9 +61,9 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   bleibt kein eigener Punkt (spaeter Karte im Training). Umschaltpunkt 960px. / zeigt direkt
   Training (kein eigener Startbildschirm). Sidebar und Bottom-Nav teilen sich eine Nav-Liste,
   damit sie nicht auseinanderlaufen.
-- **Als Naechstes:** Phase 1 neu - globalen Look auf V1 angleichen (Tokens, Primitives,
-  Schrift zurueckdrehen). Danach Navigation/Shell mit dem V1-Look gegenpruefen, erst dann
-  Phase 3 - Training gemeinsam abstimmen.
+- **Als Naechstes:** Navigation/Shell (Sidebar, Bottom-Nav, Konto-Symbol) mit dem
+  V1-Look gegenpruefen und ggf. feinjustieren, danach Phase 3 - Training gemeinsam
+  abstimmen.
 - **Bewusst noch nicht dabei:** JSON-Export-Haelfte und Import/Export-Politur (Phase 12),
   Abgleich alt/neu (Stichproben), vollstaendiges Konto-Panel (Phase 10), App-Huelle offline
   laden (PWA, Phase 13), sichtbare Offline-Anzeige (Phase 1/2).
@@ -111,12 +111,12 @@ moeglichst 1:1 uebernehmen. shadcn bleibt als Fundament (nur die Optik wird auf 
 zurueckgedreht). Quelle: V1-Dateien klar-tokens.css und klar-app.css (nur lesen).
 
 - [x] Konzept abgestimmt (Entscheidung: V1-Look 1:1 statt eigener Luma-Stil)
-- [ ] V1-Tokens 1:1 als Tailwind-Theme (Farben `--bg`/`--panel`/`--accent`, Radien
-      16/11/20px, weiche Schatten `--shadow-card`/`-hi`/`-pop`, hell+dunkel)
-- [ ] shadcn-Primitives (Button/Input/Card) von Luma-Geometrie auf V1-Optik zurueckgedreht
+- [x] V1-Tokens 1:1 als Tailwind-Theme (Farben `--bg`/`--panel`/`--accent`, Radien
+      16/11/20px, weiche Schatten `--shadow-card`/`-hi`/`-pop`, reines Hell-Theme)
+- [x] shadcn-Primitives (Button/Input/Card) von Luma-Geometrie auf V1-Optik zurueckgedreht
       (Karte 16px statt 32px, V1-Schatten statt Luma-Elevation, V1-Button/-Feld)
-- [ ] Schrift auf V1 umgestellt: System-UI fuer die Oberflaeche (Inter raus), Spline Sans
-      Mono fuer Zahlen; Dunkelmodus bleibt umschaltbar
+- [x] Schrift auf Sora (Oberflaeche) + Spline Sans Mono (Zahlen) umgestellt (Inter raus);
+      Dunkelmodus entfernt (V1 hat keinen)
 
 ## Phase 2 – Navigation / Shell
 
@@ -220,6 +220,24 @@ zurueckgedreht). Quelle: V1-Dateien klar-tokens.css und klar-app.css (nur lesen)
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-22 - Phase 1 auf V1-Look umgesetzt: src/index.css komplett auf das V1-"Klar"-
+  Theme umgestellt (feste Hex-Werte aus klar-tokens.css: Canvas #edeef1, Karte #fff,
+  Akzent #0c9d77, Linie #e4e4e8, Feld-Fuellung #fafafa, plus die Marken-Nebenfarben
+  good/warning/deviation/danger/intensity/skill/yoga 1:1). Radien als Tailwind-Utilities
+  rounded-card 16px / rounded-control 11px / rounded-pill 20px; weiche Schatten als
+  shadow-card/-hi/-pop (V1-Werte). Reines Hell-Theme: .dark-Block, @custom-variant dark
+  und alle dark:-Klassen entfernt, ThemeProvider/ThemeToggle/useTheme samt src/lib/theme.tsx
+  und src/components/ThemeToggle.tsx geloescht, ThemeProvider aus main.tsx und der
+  Darstellungs-Umschalter aus /einstellungen entfernt (V1 hat keinen Dunkelmodus).
+  Primitives auf V1-Optik zurueckgedreht: button.tsx (11px-Radius, 600er Schrift, kein
+  Pillenrund/Druck-Versatz; default=gruen gefuellt, outline=weisse Karte mit Rahmen,
+  ghost=Akzenttext, destructive=Rahmen+Danger), input.tsx (bg #fafafa, sichtbarer Rahmen,
+  11px, Fokus faerbt Rahmen gruen), card.tsx (16px, shadow-card statt Luma-Elevation/Ring,
+  Padding 16px). AccountButton von rounded-3xl auf rounded-control. Schrift: Sora (UI) statt
+  Inter, Spline Sans Mono (Zahlen) bleibt; beide selbst gehostet (offline-fest). Neue
+  Abhaengigkeit @fontsource-variable/sora, @fontsource-variable/inter entfernt.
+  Typecheck, Build und 109 Tests gruen.
 
 - 2026-06-22 - Kursaenderung Design (nur Doku, kein Code): Entscheidung revidiert - der
   globale Look folgt nicht mehr einer eigenen Luma-Interpretation, sondern wird moeglichst

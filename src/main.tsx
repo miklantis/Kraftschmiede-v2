@@ -11,8 +11,7 @@ import {
 } from "@/lib/offline";
 import { AuthProvider } from "@/lib/auth";
 import { AuthGate } from "@/components/AuthGate";
-import { ThemeProvider } from "@/lib/theme";
-import "@fontsource-variable/inter/wght.css";
+import "@fontsource-variable/sora/wght.css";
 import "@fontsource-variable/spline-sans-mono/wght.css";
 import "./index.css";
 
@@ -38,31 +37,27 @@ if (rootElement === null) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    {/* ThemeProvider aussen: setzt die Darstellung (hell/dunkel/system) vor dem
-        Rendern, damit die richtige Variante sofort greift. */}
-    <ThemeProvider>
-      {/* Persistenter Provider: Cache liegt in IndexedDB und ueberlebt das
-          Schliessen der App. Nach dem Wiederherstellen werden ohne Netz
-          angefallene, pausierte Schreibvorgaenge fortgesetzt. */}
-      <PersistQueryClientProvider
-        client={queryClient}
-        persistOptions={{
-          persister: offlinePersister,
-          maxAge: CACHE_MAX_ALTER_MS,
-          buster: CACHE_BUSTER,
-        }}
-        onSuccess={() => {
-          void queryClient.resumePausedMutations();
-        }}
-      >
-        {/* AuthProvider haelt die Sitzung; AuthGate laesst die App erst nach
-            Anmeldung durch, da alle Schreibzugriffe RLS-geschuetzt sind. */}
-        <AuthProvider>
-          <AuthGate>
-            <RouterProvider router={router} />
-          </AuthGate>
-        </AuthProvider>
-      </PersistQueryClientProvider>
-    </ThemeProvider>
+    {/* Persistenter Provider: Cache liegt in IndexedDB und ueberlebt das
+        Schliessen der App. Nach dem Wiederherstellen werden ohne Netz
+        angefallene, pausierte Schreibvorgaenge fortgesetzt. */}
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{
+        persister: offlinePersister,
+        maxAge: CACHE_MAX_ALTER_MS,
+        buster: CACHE_BUSTER,
+      }}
+      onSuccess={() => {
+        void queryClient.resumePausedMutations();
+      }}
+    >
+      {/* AuthProvider haelt die Sitzung; AuthGate laesst die App erst nach
+          Anmeldung durch, da alle Schreibzugriffe RLS-geschuetzt sind. */}
+      <AuthProvider>
+        <AuthGate>
+          <RouterProvider router={router} />
+        </AuthGate>
+      </AuthProvider>
+    </PersistQueryClientProvider>
   </StrictMode>,
 );
