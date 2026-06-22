@@ -17,16 +17,22 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Naechste Sitzung (Einstieg):** Phase 5 (Journey) ist komplett - live getestet und
-  freigegeben (Seite, Bearbeiten/Waehler, Periodisierungskurve). Naechster Schritt: Phase 6
-  (Skills). Erst das Konzept gemeinsam besprechen (Funktionsschnitt gegen V1: Manager-Ansicht
-  aktivieren/Phase anpassen/Fortschritt, Equipment-Tor, Konsekutiv-Logik mit Zaehler-Reset),
-  dann bauen, dann live testen. Einfach hier ansetzen.
-- **Phase:** Phase 5 (Journey) **abgeschlossen.** Dritte echte Inhaltsseite, strikt Paritaet
-  zu V1, einspaltig. Aktive-Journey-Karte; Periodisierungskurve (zwei Kurven Volumen/
-  Intensitaet, Phasen-Baender, Deload orange, "jetzt"-Marker; D3-getrieben, buendig ohne Karte,
-  auf dem Handy wischbar); Phasen-Ablauf mit Status; Vorlagen-Waehler als eigenstaendige
-  Vollseite (/journey/waehlen) mit Umbenennen und Anlegen aus Vorlage. Naechste Phase: 6 (Skills).
+- **Naechste Sitzung (Einstieg):** Phase 6 (Skills) gebaut und gepusht - **wartet auf
+  Live-Test**. Skills-Tab mit Katalog (Hinzufuegen = aktivieren) und "Meine Skills"
+  (aufklappbar: Phasen mit Zielen, aktuelle Phase markiert, Zaehler, Equipment-Tor als
+  Hinweis, Aktionen Deaktivieren/Phase zurueck/Zuruecksetzen). Standard-Equipment wird
+  beim ersten Start angelegt. Wenn der Test passt: Haekchen "Live getestet" setzen, dann
+  Phase 7 (Yoga). Hinweis: die eigentliche Skill-Live-Session (Trainieren) ist bewusst
+  Phase 11, nicht hier.
+- **Phase:** Phase 6 (Skills) **gebaut, Live-Test offen.** Vierte Inhaltsseite. Verwaltung
+  ohne Trainieren (Scope-Entscheidung: Live-Session = Phase 11). Engine/Schema/Seed waren
+  schon da; neu sind die Schreibaktionen (useSkillActions: aktivieren/deaktivieren/Phase
+  zurueck/zuruecksetzen mit Log und Zaehler-Reset), das View-Modell (useSkillsView fuehrt
+  Definitionen + Fortschritt + Equipment ueber skillAdvice zusammen), ein Accordion-
+  Primitive und die Skill-Karten. Standard-Equipment (Baender, Klimmzugstange, Ringe,
+  Parallettes) wird beim ersten Start idempotent angelegt - speist das Tor (Weg 1).
+  Der automatische Zaehler-Fortschritt nach einer Session kommt mit Phase 11; die Engine
+  kann ihn bereits (Reset bei "missed" getestet), hier greifen die manuellen Eingriffe.
 - **Erledigt:** Phase 0 abgeschlossen (Fundament, Schema/RLS, Engine, Zod-Schemas, UI-Fundament,
   Offline-Grundgeruest, Live-Deploy). Schlichter Login als Voraussetzung fuer alle
   Schreibzugriffe (E-Mail/Passwort ueber Supabase Auth, AuthProvider + useAuth, AuthGate vor
@@ -67,9 +73,9 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   bleibt kein eigener Punkt (spaeter Karte im Training). Umschaltpunkt 960px. / zeigt direkt
   Training (kein eigener Startbildschirm). Sidebar und Bottom-Nav teilen sich eine Nav-Liste,
   damit sie nicht auseinanderlaufen.
-- **Als Naechstes:** Phase 6 (Skills) - zuerst Konzept gegen V1 abstimmen: Manager-Ansicht
-  (aktivieren, Phase anpassen, Fortschritt), Equipment-Tor, Konsekutiv-Logik (Zaehler-Reset bei
-  Fehlschlag). Skill-Definitionen liegen bereits als Seed-Daten vor, skill_progress in der DB.
+- **Als Naechstes:** Phase 6 live testen und freigeben, dann Phase 7 (Yoga) - zuerst
+  Konzept gegen V1 abstimmen: Karte im Training-Tab plus Eintrag-Popup. Die eigentliche
+  Skill-Live-Session bleibt fuer Phase 11 vorgemerkt.
 - **Bewusst noch nicht dabei:** JSON-Export-Haelfte und Import/Export-Politur (Phase 12),
   Abgleich alt/neu (Stichproben), vollstaendiges Konto-Panel (Phase 10), App-Huelle offline
   laden (PWA, Phase 13), sichtbare Offline-Anzeige (Phase 1/2).
@@ -133,6 +139,9 @@ erfinden Abstaende/Groessen nicht neu.** Alle Werte sind aus dem V1-"Klar"-Theme
   Flaechenfuellung, heller Endpunkt-Ring, dunkler Nub-Tooltip; CHART_FONT/CHART_MONO,
   readToken). Die Domaene liefert nur den draw-Rueckruf und die Daten. (Phase 5 gebaut; Phase 8
   Uebungs-Verlaufscharts nutzen es mit.)
+- **Aufklappbare Karte (`AccordionItem`):** weisse Karte mit klickbarem Kopf (beliebiger
+  Inhalt) und Chevron rechts, darunter der einklappbare Bereich. Eigener Offen-Zustand je
+  Eintrag. Generisch, domaenenfrei; spaeter auch fuer Uebungen/Verlauf. (Phase 6 gebaut.)
 
 Wenn eine neue Seite ein Muster braucht, das es noch nicht gibt (z. B. Kalender, Chart,
 Muscle-Map), wird es als neues wiederverwendbares Primitive in `src/components/ui` angelegt
@@ -237,10 +246,10 @@ fuehrt vorerst zu einem Platzhalter, bis Live steht.
 
 ## Phase 6 – Skills
 
-- [ ] Konzept abgestimmt
-- [ ] Manager-Ansicht (aktivieren, Phase anpassen, Fortschritt)
-- [ ] Equipment-Tor
-- [ ] Konsekutiv-Logik (Zaehler-Reset bei Fehlschlag)
+- [x] Konzept abgestimmt
+- [x] Manager-Ansicht (aktivieren, Phase anpassen, Fortschritt)
+- [x] Equipment-Tor
+- [x] Konsekutiv-Logik (Zaehler-Reset bei Fehlschlag)
 - [ ] Live getestet
 
 ## Phase 7 – Yoga
