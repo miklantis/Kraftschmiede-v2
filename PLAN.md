@@ -19,15 +19,12 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 - **Phase:** 0 (Schema und Fundament) – begonnen
 - **Erledigt:** Fundament steht (Vite + Pages-Deploy, Supabase-Projekt, Client/Query,
-  Verbindung). Vollstaendiges DB-Schema gegen das echte V1-Modell abgeglichen, als
-  `supabase/migrations/0001_initial_schema.sql` geschrieben und lokal gegen eine echte
-  Postgres-Instanz validiert (23 Tabellen, RLS + 92 Policies, Invariante, 43 FKs, Check-
-  und Cascade-Tests bestanden). Masterplan Abschnitt 5 entsprechend fortgeschrieben.
-- **Als Naechstes / Aktion beim Nutzer:** Das Schema-Skript einmalig im Supabase-SQL-
-  Editor ausfuehren (reinkopieren, „Run"). Ich fuehre durch die Klicks.
-- **Danach:** restliches Stack-Setup (Router, Tailwind/shadcn, Zod-Schemas),
-  Engine-Portierung samt Tests, Offline-Grundgeruest, dann der Seed (Definitionen aus
-  V1 als DB-Daten).
+  Verbindung). Vollstaendiges DB-Schema in Supabase ausgefuehrt: 23 Tabellen mit RLS,
+  Invariante aktiv. Masterplan Abschnitt 5 auf den umgesetzten Stand fortgeschrieben.
+- **Als Naechstes:** Verbleibende Phase-0-Bausteine. Empfehlung der Reihenfolge: zuerst
+  Engine nach TypeScript portieren (reine Rechenlogik + Unit-Tests, vom Schema
+  unabhaengig), dann Zod-Schemas der Entitaeten, dann UI-Fundament (TanStack Router +
+  Tailwind/shadcn), zuletzt Offline-Grundgeruest. Seed (Definitionen aus V1) danach.
 - **Offene Grundsatzfragen:** Deploy/Test geklaert. In-App-Versionsanzeige (dreistellig,
   schlank) als spaeterer Komfort-Block vorgemerkt.
 
@@ -44,10 +41,8 @@ alle Bloecke und wird einmal bewusst entschieden, bevor einzelne Seiten entstehe
 
 - [x] Setup-Grundsatzentscheidungen bestaetigt (Stack, Offline-Zuschnitt, Deploy/Test-Weg)
 - [x] Supabase-Projekt fuer V2 angelegt (eigene DB, getrennt von V1)
-- [ ] Schema/Tabellen/RLS umgesetzt (Skript erstellt + lokal gegen Postgres validiert;
-      Ausführung im Supabase-SQL-Editor steht beim Nutzer)
-- [ ] Invarianten als DB-Constraints (im Skript enthalten + getestet: genau eine aktive
-      Journey; wird mit der Ausführung wirksam)
+- [x] Schema/Tabellen/RLS umgesetzt (Skript in Supabase ausgefuehrt; 23 Tabellen mit RLS)
+- [x] Invarianten als DB-Constraints (genau eine aktive Journey pro Nutzer, aktiv)
 - [x] Vite + TypeScript (strict) aufgesetzt (minimales Skelett)
 - [ ] TanStack Router (file-based) eingerichtet
 - [ ] Tailwind + shadcn/ui aufgesetzt
