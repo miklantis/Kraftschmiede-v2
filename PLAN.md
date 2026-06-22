@@ -18,17 +18,15 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 ## Aktueller Stand
 
 - **Phase:** 0 (Schema und Fundament) – begonnen
-- **Erledigt:** Minimales Vite-Skelett (React 19, TS strict). Typecheck und Build laufen
-  lokal gruen.
-- **Blockiert:** Der Deploy-Workflow ist vorbereitet, kann aber noch nicht gepusht werden
-  – der Token darf keine Workflow-Dateien anlegen (fehlende Berechtigung „Workflows").
-- **Als Naechstes / Aktion beim Nutzer:** Dem bestehenden Token die Berechtigung
-  „Workflows: Read and write" geben (Token-Wert bleibt gleich). Danach pushe ich den
-  Workflow; anschliessend Pages-Quelle einmalig auf „GitHub Actions" stellen. Test-URL
-  dann: https://miklantis.github.io/Kraftschmiede-v2/
+- **Erledigt:** Minimales Vite-Skelett (React 19, TS strict) und Deploy-Workflow auf
+  GitHub Pages gepusht. Typecheck und Build laufen lokal gruen.
+- **Als Naechstes / Aktion beim Nutzer:** In den Repo-Settings unter „Pages" die Quelle
+  einmalig auf „GitHub Actions" stellen. Danach baut jeder Push automatisch und die
+  Test-URL ist erreichbar: https://miklantis.github.io/Kraftschmiede-v2/
 - **Danach im Projekt:** Supabase-Projekt fuer V2 anlegen (eigene DB), dann Schema/RLS,
   restliches Stack-Setup (Router, Tailwind/shadcn, Query, Zod) und Engine-Portierung.
-- **Offene Grundsatzfragen:** Deploy/Test geklaert (GitHub Pages via Action).
+- **Offene Grundsatzfragen:** Deploy/Test geklaert (GitHub Pages via Action). Offen:
+  In-App-Versionsanzeige mit „Was ist neu"-Liste – Konzept noch zu entscheiden.
 
 ---
 
@@ -54,8 +52,8 @@ alle Bloecke und wird einmal bewusst entschieden, bevor einzelne Seiten entstehe
 - [ ] Engine-Unit-Tests laufen (z. B. Vitest), gruen
 - [ ] Zod-Schemas fuer die Entitaeten
 - [ ] Offline-Grundgeruest gelegt (persistenter Query-Cache + Mutations-Queue, Skelett)
-- [ ] **Live-Test-Deploy eingerichtet** (Workflow vorbereitet; Push noch blockiert, weil
-      dem Token die Berechtigung „Workflows" fehlt – danach Pages-Quelle auf
+- [x] **Live-Test-Deploy eingerichtet** (Workflow gepusht; baut bei jedem Push auf main
+      und veroeffentlicht auf Pages. Letzter Handgriff beim Nutzer: Pages-Quelle auf
       „GitHub Actions" stellen)
 
 ## Phase 1 – Design-System (globaler Look)
