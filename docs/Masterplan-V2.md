@@ -91,49 +91,80 @@ ein gutes Muster und sollte so bleiben: Definitionen im Code, `skill_progress` i
 
 ---
 
-## 5. Datenbank-Schema (Entwurf)
+## 5. Datenbank-Schema (umgesetzt)
 
-Nach Entscheidung 3.2 liegen **alle Daten in der Datenbank** – auch die Definitionen.
-Alle Tabellen mit `user_id` und RLS (jede Person sieht/aendert nur ihre Zeilen),
-beim ersten Start aus einem Seed befuellt. Konkrete Felder verfeinern wir beim Bau.
+Stand: umgesetzt als `supabase/migrations/0001_initial_schema.sql` und gegen das echte
+V1-Datenmodell (Blob in `data.js`/`live.js`/`engine.js`) abgeglichen. 23 Tabellen,
+jede mit `user_id` und Row Level Security (vier Policies select/insert/update/delete
+strikt auf `auth.uid() = user_id`), Zugriff fuer Rolle `authenticated` freigegeben.
+Definitionen werden beim ersten Start pro Nutzer aus einem Seed befuellt. Tabellen mit
+stabilem Seed-Identifikator haben ein `key`-Feld (`unique(user_id, key)`) fuer die
+Migrations-Umschluesselung; Fremdschluessel nutzen UUIDs. Kleine, attributarme
+Wertobjekte bleiben bewusst als `jsonb` (Befinden-Snapshot, Aufwaermen, Coach-Vorschlag,
+Recovery-Fenster, Timer).
 
-### 5.1 Definitionen (Stammdaten in der DB, per Seed)
+### 5.1 Inventar
 
-- **exercises** – id, user_id, name, profile (strength/core), slot_role (lift1/lift2),
-  kind (main/accessory/core), bar_id (FK inventory_bars, nullable), rep_range_min,
-  rep_range_max, start_weight, recovery_hours
-- **exercise_muscles** – id, exercise_id (FK), region_id, kategorie (primaer/sekundaer/
-  stabilisierend)
-- **templates** – id, user_id, name, position
-- **template_exercises** – id, template_id (FK), exercise_id (FK), position
-- **skills** – id, user_id, name, position
-- **skill_phases** – id, skill_id (FK), name, position, required_sessions
-- **skill_phase_exercises** – id, skill_phase_id (FK), name, metric (reps/duration),
-  target, position
-- **skill_phase_equipment** – id, skill_phase_id (FK), equipment_key (Voraussetzung)
-- **journey_templates** – id, user_id, name, position
-- **journey_template_phases** – id, journey_template_id (FK), name, focus, weeks,
-  sets_start, sets_end, deload_week (nullable), position
+- **inventory_bars** – Stangen: key, name, weight, is_default, position
+- **inventory_plates** – Scheiben: je Zeile ein verfuegbares Gewicht (kein Stueck-Zaehler,
+  wie V1; der Plate-Loader rechnet ohne Limit)
+- **inventory_kettlebells** – Kettlebells: je Zeile ein Gewicht
+- **inventory_equipment** – Skill-Equipment-Tor: key, label, active (Klimmzugstange,
+  Baender, Ringe ...)
 
-### 5.2 Nutzerzustand
+### 5.2 Definitionen (Stammdaten in der DB, per Seed)
 
-- **journeys** – id, user_id, name, active (bool), created_at, source_template_id (FK,
-  nullable)
-- **phases** – id, journey_id (FK), name, focus (reentry/hypertrophy/strength/test),
-  weeks, sets_start, sets_end, deload_week (nullable), position
-- **sessions** – id, user_id, date, type (strength/yoga/skill), journey_id (FK,
-  nullable), template_id (FK, nullable), skill_id (FK, nullable), duration_min (yoga)
-- **sets** – id, session_id (FK), exercise_id (FK), weight, reps, done, score, position
-- **skill_progress** – id, user_id, skill_id (FK), current_phase, counter
-- **body_log** – id, user_id, date, weight, composition (jsonb fuer InBody-Messwerte)
-- **inventory_bars** – id, user_id, name, weight
-- **inventory_plates** – id, user_id, weight, count
-- **inventory_equipment** – id, user_id, name, enabled (bool)
-- **settings** – user_id (PK), weekly_frequency_target, weight_step, orm_formula,
-  recovery-/timer-Einstellungen (Skalare als Spalten, kleine Bloecke ggf. jsonb)
+- **exercises** – key, name, category (barbell/core/bodyweight), profile, kind, equipment,
+  bar_id (FK), description, metric (reps/duration bei Koerpergewicht), muscle_groups
+  (grobe Tags als text[]), rep_range_min/max, target_score, work_weight, recovery_hours,
+  rm/rm_as_of/rm_stale (zwischengespeichertes 1RM fuer den Coach), active, position
+- **exercise_muscles** – feine Regionen-Map: exercise_id (FK), region_id (Code-/SVG-Region),
+  kategorie (primaer/sekundaer/stabilisierend)
+- **templates** – key, name, image, position
+- **template_exercises** – template_id (FK), exercise_id (FK), role (primary/secondary/core),
+  position
+- **journey_templates** – key, name, tagline, for_whom, summary, position
+- **journey_template_phases** – journey_template_id (FK), name, focus, weeks,
+  sets_start, sets_end, deload_week (nullable), rep_target_min/max, position
+- **skills** – key, name, category, image, position
+- **skill_phases** – skill_id (FK), label, description, consecutive_sessions
+  (aufeinanderfolgende Erfolge bis Aufstieg), position
+- **skill_phase_exercises** – skill_phase_id (FK), name, metric (reps/duration), sets,
+  target, tempo, exercise_id (FK, optional zur Katalog-Uebung), position
+- **skill_phase_equipment** – skill_phase_id (FK), equipment_key (Voraussetzung)
 
-Invarianten als DB-Constraints, wo moeglich (z. B. genau eine aktive Journey pro Nutzer
-ueber Partial Unique Index auf `active = true`).
+Hinweis zu Entscheidung 3.2/3.3: Skill-Definitionen liegen als Seed in DB-Tabellen
+(einheitlicher Zugriff ueber Query-Hooks, spaeter editierbar); der Fortschritt steht
+separat in `skill_progress`.
+
+### 5.3 Nutzerzustand
+
+- **journeys** – name, active, status (active/archived), source_template_id (FK), start_date,
+  created_at. Invariante: Partial Unique Index `journeys_one_active_per_user` auf
+  `user_id where active` -> genau eine aktive Journey pro Nutzer
+- **phases** – journey_id (FK), name, focus, weeks, sets_start, sets_end, deload_week
+  (nullable), rep_target_min/max, position
+- **sessions** – date, type (strength/yoga/skill), status (live/done), journey_id,
+  phase_id, template_id, skill_id (alle FK, nullable), week (eingefrorene Journey-Woche),
+  duration_sec, minutes (yoga), notes, started_at, body (jsonb Befinden-Snapshot),
+  general_warmup (jsonb), skill_phase, skill_result (completed/missed/skipped)
+- **session_exercises** – Uebung-in-Einheit (V1 "entry"): session_id (FK), exercise_id
+  (FK, nullable), name, bar_id (FK), metric, tested_1rm, suggestion (jsonb), position
+- **sets** – session_exercise_id (FK), kind (warmup/work), position, reps, weight,
+  duration_sec, score, failed, done, target_reps, target_weight, target_score, adjusted,
+  adjust_note, met (Skill: Ziel erreicht)
+- **skill_progress** – skill_id (FK), active, current_phase, counter (Konsekutiv-Zaehler,
+  Reset bei Fehlversuch), mastered, log (jsonb), `unique(user_id, skill_id)`
+- **body_log** – Tages-Befinden: date, legs, upper_body, overall (Muskelkater 0..3),
+  readiness, pain_flag, pain_note, notes, `unique(user_id, date)`
+- **composition** – InBody-/BIA-Messung: date, weight, body_fat_kg, body_fat_pct,
+  skeletal_muscle_kg, tbw_kg, phase_angle, visceral_fat, `unique(user_id, date)`
+- **settings** – user_id (PK), rm_formula, weekly_frequency_target, weight_step, unit,
+  recovery_windows (jsonb), timers (jsonb)
+
+Bewusste Abweichungen von V1: das Blob-Backup (`app_state_backups`) entfaellt; an seine
+Stelle tritt JSON-Export/Import (Phase 12). Der Scheiben-Bestandszaehler aus dem fruehen
+Entwurf wurde verworfen (V1 kennt keinen).
 
 ---
 

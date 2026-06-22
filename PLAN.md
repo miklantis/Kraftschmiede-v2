@@ -18,17 +18,18 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 ## Aktueller Stand
 
 - **Phase:** 0 (Schema und Fundament) – begonnen
-- **Erledigt:** Vite-Skelett + Pages-Deploy stehen. Supabase-Projekt fuer V2 angelegt
-  (eigene DB). Supabase-Client und TanStack-Query-Grundgeruest verdrahtet; die App prueft
-  beim Laden die Datenbankverbindung und zeigt den Status. Oeffentliche Config liegt in
-  committed .env (nur VITE_-Werte: URL + publishable key; RLS schuetzt).
-- **Als Naechstes:** Schema/Tabellen/RLS umsetzen (Masterplan 5) – eigener groesserer
-  Block. Davor kurz das Schema-Konzept gemeinsam durchgehen (Reihenfolge, RLS-Muster,
-  welche Tabellen zuerst).
-- **Danach:** restliches Stack-Setup (Router, Tailwind/shadcn, Zod), Engine-Portierung
-  samt Tests, Offline-Grundgeruest.
+- **Erledigt:** Fundament steht (Vite + Pages-Deploy, Supabase-Projekt, Client/Query,
+  Verbindung). Vollstaendiges DB-Schema gegen das echte V1-Modell abgeglichen, als
+  `supabase/migrations/0001_initial_schema.sql` geschrieben und lokal gegen eine echte
+  Postgres-Instanz validiert (23 Tabellen, RLS + 92 Policies, Invariante, 43 FKs, Check-
+  und Cascade-Tests bestanden). Masterplan Abschnitt 5 entsprechend fortgeschrieben.
+- **Als Naechstes / Aktion beim Nutzer:** Das Schema-Skript einmalig im Supabase-SQL-
+  Editor ausfuehren (reinkopieren, „Run"). Ich fuehre durch die Klicks.
+- **Danach:** restliches Stack-Setup (Router, Tailwind/shadcn, Zod-Schemas),
+  Engine-Portierung samt Tests, Offline-Grundgeruest, dann der Seed (Definitionen aus
+  V1 als DB-Daten).
 - **Offene Grundsatzfragen:** Deploy/Test geklaert. In-App-Versionsanzeige (dreistellig,
-  schlank) als spaeterer Komfort-Block vorgemerkt – nicht jetzt.
+  schlank) als spaeterer Komfort-Block vorgemerkt.
 
 ---
 
@@ -43,8 +44,10 @@ alle Bloecke und wird einmal bewusst entschieden, bevor einzelne Seiten entstehe
 
 - [x] Setup-Grundsatzentscheidungen bestaetigt (Stack, Offline-Zuschnitt, Deploy/Test-Weg)
 - [x] Supabase-Projekt fuer V2 angelegt (eigene DB, getrennt von V1)
-- [ ] Schema/Tabellen/RLS umgesetzt (Definitionen + Nutzerzustand, siehe Masterplan 5)
-- [ ] Invarianten als DB-Constraints (z. B. genau eine aktive Journey pro Nutzer)
+- [ ] Schema/Tabellen/RLS umgesetzt (Skript erstellt + lokal gegen Postgres validiert;
+      Ausführung im Supabase-SQL-Editor steht beim Nutzer)
+- [ ] Invarianten als DB-Constraints (im Skript enthalten + getestet: genau eine aktive
+      Journey; wird mit der Ausführung wirksam)
 - [x] Vite + TypeScript (strict) aufgesetzt (minimales Skelett)
 - [ ] TanStack Router (file-based) eingerichtet
 - [ ] Tailwind + shadcn/ui aufgesetzt
