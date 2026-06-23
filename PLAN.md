@@ -22,10 +22,11 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   Paritaetsdurchlauf am Stueck hat er bewusst zurueckgestellt (meldet sich, falls noch etwas
   auffaellt). Damit steht die komplette gefuehrte Durchfuehrung fuer Kraft und Skill inkl.
   Beenden/Speichern, Offline und Wake-Lock.
-- **Naechster Schritt: Phase 12 (Migration + Import/Export).** Migrations-Import (V1-Blob ->
-  normalisierte Zeilen, Import-Knopf auf der Startseite) und der Seed stehen schon. Offen:
-  Konzept abstimmen, dann JSON-Import/Export (Export-Haelfte + Politur, wandert nach
-  Einstellungen) und Abgleich alt/neu. **Erst Konzept gegen V1, dann Code.**
+- **Naechster Schritt: Phase 12 (Export + Voll-Restore).** Konzept abgestimmt (2026-06-23):
+  Die V1-Migration wird NICHT mehr gebraucht (Daten laengst in V2) und fliegt raus; es bleibt
+  nur Export + schlankes Voll-Restore (kein Teil-Merge, kein „Abgleich alt/neu"). Reihenfolge:
+  Migration entfernen -> Export -> Voll-Restore. Details in der Phase-12-Sektion. Konzept ist
+  durch, der naechste Chat baut direkt.
 
 - **Live-Korrektur Ende-Popup-Optik auf V1-Paritaet (2026-06-23).** Das Sitzungsende-Popup
   (Workout UND Skill) sah anders aus als V1; jetzt 1:1 nach klar-app.css (kl-end-/kl-summary-):
@@ -109,10 +110,13 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   enabled = laufende Session && timers.wakeLock && Unterstuetzung. timersSchema additiv um
   optionales wakeLock erweitert; TimerSettings um die Schalter-Reihe ergaenzt. tsc/build/284
   Tests gruen (1 neuer Schema-Test: wakeLock optional + rueckwaertskompatibel).
-- **Naechste Sitzung (Einstieg):** **Phase 12 (Migration + Import/Export).** Zuerst Konzept
-  gegen V1 abstimmen: wie V1 exportiert/importiert (Datenform, Trigger, Stelle in der App),
-  was davon nach V2 gehoert, wo es in V2 sitzt (Einstellungen) und wie der Abgleich alt/neu
-  aussieht. Erst nach Konsens bauen. Migrations-Import (Startseite) und Seed stehen bereits.
+- **Naechste Sitzung (Einstieg):** **Phase 12 bauen (Konzept ist abgestimmt).** Reihenfolge:
+  1) **Migration entfernen** - `<V1Import />` aus den Einstellungen (Sektion „Daten") raus,
+  dazu `src/components/V1Import.tsx`, `src/lib/v1import.ts`, `src/lib/__tests__/v1import.test.ts`
+  loeschen; Composition-Import und die Datenstand-Anzeige bleiben. 2) **Export** (Bestand als
+  ein JSON, Datei + Zwischenablage, V1-Anreicherung). 3) **Voll-Restore** (eigenen V2-Export
+  zurueckspielen, Vorschau, Rueckfrage). Kleine Schritte, jeder einzeln live testbar. Volle
+  Details in der Phase-12-Sektion.
 - **L4 (Beenden + Speichern) bleibt vorgemerkt** (nicht starten vor L3-Freigabe): erledigte
   Saetze normalisiert in den Verlauf schreiben (echter Unterschied Speichern/Verwerfen),
   volles Offline-Zusammenspiel. Erst Konzept gegen V1 (app.js finishSession: nur abgehakte
@@ -710,16 +714,53 @@ Fortschritt wird hier je Lieferung gefuehrt:
       jeweils einzeln gegen V1 geprueft und freigegeben; den zusammenhaengenden Durchlauf
       am Stueck bewusst zurueckgestellt — meldet sich, falls noch etwas auffaellt.)*
 
-## Phase 12 – Migration + Import/Export
+## Phase 12 – Export + Voll-Restore
 
-- [ ] Konzept abgestimmt
-- [x] Definitionen aus V1-Code als DB-Seed (Journey-Vorlagen, Skills; idempotent, beim
-      ersten Start mit user_id; temporaere Datenstand-Anzeige zum Pruefen)
-- [x] Migrationsskript: V1-Blob -> normalisierte Zeilen, IDs umschluesseln (Import-
-      Knopf auf der Startseite: Datei waehlen, Vorschau, bestaetigen; gesperrt, sobald
-      Daten da sind)
-- [ ] JSON-Import/Export (Export-Haelfte + Politur, wandert nach Einstellungen)
-- [ ] Abgleich alt/neu (Anzahl Sessions/Saetze/Journeys + Stichproben)
+**Konzept abgestimmt (2026-06-23).** Wichtige Entscheidung von Kadir: die V1-Daten sind
+laengst in V2 -> die einmalige V1-Migration wird NICHT mehr gebraucht und fliegt raus. Es
+bleibt nur Export + ein schlankes Voll-Restore. Kein Teil-Merge (Anhaengen/Aktualisieren),
+keine drei V1-Modi - in der normalisierten DB zu teuer und in V2 unnoetig. Der „Abgleich
+alt/neu" entfaellt ebenfalls (kein alter V1-Bestand mehr zum Vergleichen).
+
+Bezug zu V1: js/io.js. V1 hatte einen Blob, darum Im-/Export dort trivial. Was wir von V1
+uebernehmen: die lesefreundliche Export-Anreicherung (je Arbeitssatz rir/rpe/scoreLabel aus
+der Score-Skala ableiten + eine _scoreScale-Notiz; beim Import wieder verworfen), den
+Dateinamen-Stil mit Datum, beide Wege Datei + Zwischenablage, und die Rueckfrage vor dem
+Ueberschreiben.
+
+- [x] Konzept abgestimmt (2026-06-23) - siehe oben.
+- [x] Seed beim Erststart (Journey-Vorlagen, Skills aus V1-Code; idempotent, mit user_id).
+      Bleibt - ist kein Migrations-Thema, sondern die Erststart-Befuellung.
+- [x] V1-Migrationsskript (Blob -> normalisierte Zeilen) - hatte seinen Zweck, wird jetzt
+      ENTFERNT (siehe naechster Punkt).
+- [ ] **Migration entfernen.** Den Migrations-Import aus den Einstellungen (Sektion „Daten",
+      `<V1Import />`) herausnehmen samt Komponente `src/components/V1Import.tsx`, Logik
+      `src/lib/v1import.ts` und Test `src/lib/__tests__/v1import.test.ts`. NICHT anfassen:
+      der laufende Composition-Import (InBody/BIA: BodyImportCard + useImportComposition) -
+      das ist ein normales Feature, keine Migration. Die Datenstand-Anzeige (`Datenstand`)
+      bleibt und wandert in die neue Daten-Karte neben Export/Restore (schlichter
+      Bestandsueberblick, auch ohne Migration nuetzlich).
+- [ ] **Export (zuerst, sofort live testbar).** Kompletter Bestand des Nutzers als ein
+      lesbares JSON: Sessions mit geschachtelten Saetzen im V1-Format, dazu Uebungen,
+      Vorlagen, Journeys, Skill-Fortschritt, Composition, Einstellungen, Inventar. V1-
+      Anreicherung je Arbeitssatz (rir/rpe/scoreLabel) + _scoreScale-Notiz, beim Import
+      verworfen. Zwei Wege wie V1: Datei `kraftschmiede_DATUM.json` und Zwischenablage.
+      Sitzt in den Einstellungen in der Sektion „Daten".
+- [ ] **Voll-Restore (danach).** Nimmt einen eigenen V2-Export (NUR V2, kein V1-JSON),
+      zeigt erst eine Vorschau (Anzahl Sessions/Saetze/Journeys - wie der alte Migrations-
+      Knopf), ersetzt nach Rueckfrage den kompletten Bestand. Kein Anhaengen, kein
+      Aktualisieren. Kein erzwungenes Backup davor (Export liegt direkt daneben).
+
+**Komponentenschnitt (intern, fuer den frischen Chat):** reine, getestete Export-Aufbau-
+Funktion in `src/lib/` (DOM-frei, baut das JSON aus dem Zustand, analog V1 enrichExport);
+reine, Zod-gepruefte Import-Pruefung (parst + validiert einen V2-Export, verwirft die
+abgeleiteten Felder wie V1 stripDerived); beides in Hooks gekapselt (z. B. useExport /
+useRestore), Komponenten kennen Supabase nicht direkt. Die Daten-Karte nutzt die
+vorhandenen Einstellungs-Bausteine (Section/List/Button/Overlay fuer die Rueckfrage).
+
+**Reihenfolge:** Migration entfernen -> Export -> Voll-Restore. Kleine Schritte, jeder
+einzeln live testbar. Konzept ist abgestimmt, also direkt bauen (kein erneutes Abstimmen
+noetig); nur bei Detailfragen kurz ruecksprechen.
 
 ## Phase 13 – Politur
 
@@ -733,6 +774,15 @@ Fortschritt wird hier je Lieferung gefuehrt:
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-23 - Phase 12 Konzept abgestimmt (nur Doku, kein Code). Entscheidung: V1-Migration
+  wird entfernt (Daten laengst in V2), Phase 12 = Export + schlankes Voll-Restore. Kein
+  Teil-Merge / keine drei V1-Modi, kein „Abgleich alt/neu". Aus V1 (io.js) uebernommen:
+  Export-Anreicherung rir/rpe/scoreLabel + _scoreScale-Notiz (beim Import verworfen),
+  Datei+Zwischenablage, Rueckfrage vor dem Ueberschreiben. Sitzt in den Einstellungen
+  (Sektion „Daten"); Datenstand-Anzeige bleibt, Composition-Import bleibt. Reihenfolge:
+  Migration entfernen -> Export -> Voll-Restore. Phase-12-Sektion entsprechend neu
+  geschnitten. Kadir startet das Bauen im frischen Chat.
 
 - 2026-06-23 - Phase 11 (Live-Session) ABGESCHLOSSEN. L6 (Wake-Lock) live freigegeben.
   Kadir hat L1–L6 jeweils einzeln gegen V1 geprueft und abgenommen; den zusammenhaengenden
