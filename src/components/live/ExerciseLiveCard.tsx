@@ -80,7 +80,7 @@ export function ExerciseLiveCard({
 
   return (
     <div className="overflow-hidden rounded-[14px] bg-card shadow-card">
-      <div className="flex items-start gap-2 border-b border-border px-4 py-3">
+      <div className="flex items-center gap-2 border-b border-border px-4 py-3">
         <div className="min-w-0 flex-1">
           <div className="text-[15px] font-semibold text-foreground">
             {entry.exerciseName}
@@ -92,7 +92,7 @@ export function ExerciseLiveCard({
         {isBar && bars.length > 0 && (
           <select
             aria-label="Stange wählen"
-            className="max-w-[150px] rounded-[8px] border border-border bg-background px-2 py-1 text-[12px] text-foreground outline-none focus:border-primary"
+            className="h-[34px] max-w-[150px] flex-none rounded-[8px] border border-border bg-background px-2.5 text-[12px] text-foreground outline-none focus:border-primary"
             value={entry.barId ?? ""}
             onChange={(e) => {
               const b = bars.find((x) => x.id === e.target.value);
@@ -113,18 +113,18 @@ export function ExerciseLiveCard({
             title="Scheiben"
             onClick={onCyclePlate}
             className={
-              "flex size-[30px] flex-none items-center justify-center rounded-[8px] border transition-colors " +
+              "flex size-[34px] flex-none items-center justify-center rounded-[8px] border transition-colors " +
               (plateMode > 0
                 ? "border-primary text-primary"
                 : "border-border text-muted-foreground")
             }
           >
-            <CircleDot className="size-[15px]" strokeWidth={2} />
+            <CircleDot className="size-[16px]" strokeWidth={2} />
           </button>
         )}
       </div>
 
-      <div className="px-4 py-2">
+      <div className="px-4 pb-4 pt-2">
         <div
           className={
             ROW + " border-b border-border px-1.5 pb-1.5 pt-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground"
@@ -214,7 +214,7 @@ export function ExerciseLiveCard({
           );
         })}
 
-        <div className="flex gap-4 px-1.5 pt-2">
+        <div className="flex gap-4 px-1.5 pb-1 pt-4">
           <button
             type="button"
             onClick={onAddSet}
