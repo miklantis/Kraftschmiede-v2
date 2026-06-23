@@ -17,12 +17,22 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Naechste Sitzung (Einstieg):** **Phase 10 als Ganzes live abnehmen.** Beide Lieferungen
-  stehen (Grundgeruest live freigegeben; Inventar gebaut, siehe unten). Inventar live pruefen
-  (Stange per Preset anlegen/loeschen, Scheiben/Kettlebells als Chips hinzufuegen/entfernen,
-  Geraete-Schalter), dann Haken "Live getestet" bei Phase 10 setzen und zu **Phase 11
-  (Live-Session)** uebergehen – der grosse, heikle Brocken, beginnt wieder mit Konzeptabstimmung.
-  Nebenher offen: Flash-Fix der Muskelkater-Figur (Phase 9) gegenchecken.
+- **Naechste Sitzung (Einstieg):** **Phase 11 (Live-Session) – der grosse, heikle Brocken.**
+  Beginnt mit Konzeptabstimmung gegen V1 (js/live.js, ~1200 Zeilen), bevor irgendetwas gebaut
+  wird. Grobe Bausteine laut Plan: Sitzungsaufbau aus Vorlage + Coach (Arbeits-/Aufwaermsaetze,
+  Plate-Loader), gefuehrter Ablauf (Saetze abhaken), Coach beim Durchfuehren, Pausen-/Rest-Timer
+  + Rest-Bar, Audio/Vibration, Overlay (Desktop)/Bottom-Sheet (Mobile) mit Ziehgeste + Wake-Lock,
+  fokus-erhaltende Inline-Updates, Start-/Ende-Dialoge, volles Offline-Zusammenspiel. Wegen der
+  Groesse zuerst Konzept/Plan zeigen und in kleine Lieferungen schneiden. Vorhandenes Fundament,
+  das hier zusammenkommt: Engine (Plate-Loader, Aufwaerm-Generator, Progression, Suitability),
+  Coach-Modul, Overlay-Primitive (Phase 7), Stepper, Timer-Einstellungen (Phase 10), Inventar.
+  Nebenher offen (Phase 9): Flash-Fix der Muskelkater-Figur ist noch nicht ausdruecklich
+  gegengecheckt – unkritisch.
+- **Phase 10 (Einstellungen) abgeschlossen und live freigegeben (2026-06-23).** Komplette Seite
+  abgenommen: Konto-/Verbindungs-Panel, Engine & Einheiten, Pausen-Timer, Inventar (Stangen/
+  Scheiben/Kettlebells/Geraete), Score-Referenz; spaltenweiser Fluss (CSS-Spalten wie V1), mobil
+  ohne Konto-Icon im Kopf. Alle Haken gesetzt. Export/Import bleibt bewusst fuer Phase 12; unter
+  "Daten" steht vorerst nur Datenstand + V1-Import (Migrationswerkzeug).
 - **Phase 10 Lieferung 2 (Inventar) gebaut (2026-06-23), live testbar.** Die Einstellungen-Seite
   hat jetzt die vier Inventar-Bereiche wie V1, eingereiht ins zweispaltige Raster: Stangen (Liste
   Name + Gewicht + Loeschen, Preset-Knoepfe Standard/Kurz/Olympia/SZ-Curl/Frauen zum Hinzufuegen;
@@ -517,7 +527,7 @@ DB-Tabelle exercise_muscles. Charts ueber ChartCanvas/D3 (Phase 5).
       das den portierten Engine-Plate-Loader fuettert)
 - [x] Settings (Frequenzziel, Gewichtsschritt, 1RM-Formel, Timer)
 - [x] Sync-/Konto-Panel
-- [ ] Live getestet
+- [x] Live getestet
 
 ## Phase 11 – Live-Session (Kraft + Skill) — der dicke, heikle Brocken
 
