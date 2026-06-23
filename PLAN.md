@@ -17,12 +17,26 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Naechste Sitzung (Einstieg):** **Skill-Uebungsverlauf-Anbindung** (letzter offener
-  Schritt in Phase 8, dann Phase 8 als Ganzes live abnehmen). Aufgabe: Skill-Saetze haben
-  exercise_id=null und tauchen daher im Uebungsverlauf/Detail noch nicht auf. Sie ueber die
-  Skill-Definition (skillId + phase + Index -> exerciseKey) der passenden Katalog-Uebung
-  zuordnen, sodass Detailseite, Statistik und Charts auch die Skill-Saetze sehen. Erst
-  Konzept gegen V1 abstimmen (wie V1 die Zuordnung macht), dann bauen.
+- **Naechste Sitzung (Einstieg):** **Phase 8 als Ganzes live abnehmen.** Alle Bausteine der
+  Uebungs-Phase stehen jetzt (Liste, Detailseite mit Statistik/Verlauf/Diagramm, MuscleMap,
+  "Uebung anpassen", Anheften, Skill-Anbindung). Danach Haken "Live getestet" setzen und zu
+  Phase 9 (Koerper) uebergehen – dort beginnt es wieder mit Konzeptabstimmung.
+- **Skill-Uebungsverlauf-Anbindung gebaut (2026-06-23), live testbar.** Skill-Saetze (z. B.
+  Dead Hang, Negative/Strict Pull-Up) wurden ohne Katalogbezug abgelegt (exercise_id null)
+  und fehlten daher im Uebungsverlauf. Sie werden jetzt – 1:1 wie V1 (app.js exerciseHistory)
+  – ueber die Skill-Definition der Katalog-Uebung zugeordnet: skill_id (DB-UUID) -> Definitions-
+  Schluessel (useSkills) -> Skill-Definition (Code-Seed) -> Phase + Position der Uebung ->
+  exerciseKey/target/metric; stimmt exerciseKey mit dem key der geoeffneten Katalog-Uebung
+  ueberein, gehoeren die Saetze dazu. Sichtbar auf der Detailseite: im Trainingsverlauf eigene
+  Zeilen je Skill-Einheit (Werte als Chips "x Wdh"/"x s", rechts "Ziel X"); in Statistik
+  (Sessions-Zahl) und Diagramm zaehlen die Werte passend zum Typ mit (Wdh/Volumen bzw.
+  Haltezeit); kein Gewicht/1RM/Score fuer Skill-Eintraege; roter Abweichungspunkt, wenn mind.
+  ein Satz das Ziel verfehlt hat (met=false); nur abgehakte Saetze zaehlen. Umgesetzt:
+  buildExerciseHistory um exerciseKey + reinen Resolver (SkillExResolve) erweitert, ExHistoryEntry
+  um skill/metric/target; useSessionsDetailed holt zusaetzlich skill_phase + set.met; HistorySet/
+  HistorySessionInput additiv um met/skillPhase ergaenzt; useExerciseDetail baut den Resolver aus
+  useSkills + skillSeeds und macht die Verlaufszeile skill-faehig. Kraft-/1RM-Logik, Diagramm-
+  Fundament und Anheften unberuehrt. tsc/build/206 Tests gruen (5 neue Skill-Tests).
 - **Schritt 6 (Anheften/Dashboard) live getestet und freigegeben (2026-06-23).** Detailseite:
   im Kopf der Verlaufs-Chartkarte der Umschalter
   "Anheften"/"Angeheftet" (kleine Pille rechts neben dem Metrik-Titel), bezogen auf die
@@ -52,9 +66,8 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   (genau die drei Felder, laedt den Katalog neu), Hook useActivePhaseRepBand (Repband der
   laufenden Phase ueber journeyPlacement) und in der Engine die reinen Helfer
   repTargetForFocus + phaseRepBand (aus V1 portiert, mit Tests). tsc/build/195 Tests gruen.
-- **Naechster Schritt:** Skill-Uebungsverlauf-Anbindung (Skill-Saetze ueber die
-  Skill-Definition der Katalog-Uebung zuordnen), dann Phase 8 live abnehmen (Skill-Saetze mit exercise_id=null ueber die Skill-
-  Definition skillId+phase+Index -> exerciseKey -> Katalog-Uebung verknuepfen; eigener Schritt).
+- **Naechster Schritt:** Phase 8 als Ganzes live abnehmen (Liste, Detail, Diagramm, MuscleMap,
+  Anpassen, Anheften, Skill-Anbindung), dann Phase 9 (Koerper) mit Konzeptabstimmung beginnen.
 - **Phase 8 Schritt 4 (Generische MuscleMap) gebaut, live getestet (mit Korrekturen unten).**
   Auf der Uebungs-Detailseite steht zwischen Diagramm und Verlauf eine
   Karte "Beanspruchte Muskeln" mit beiden Figuren (vorne+hinten). Neu: das generische
@@ -399,7 +412,7 @@ DB-Tabelle exercise_muscles. Charts ueber ChartCanvas/D3 (Phase 5).
       (Haupt: 1RM/Top-Gewicht/Wdh/Volumen, Standard 1RM; Koerper-Wdh: Wdh/Volumen;
       Koerper-Haltezeit: nur Haltezeit). Linie je Einheit (Tooltip, roter Punkt bei
       Abweichung), Volumen als Wochenbalken. "Anheften" folgt mit Schritt 6.
-- [ ] Skill-Uebungsverlauf anbinden (Skill-Saetze ueber die Skill-Definition der
+- [x] Skill-Uebungsverlauf anbinden (Skill-Saetze ueber die Skill-Definition der
       Katalog-Uebung zuordnen)
 - [x] Generische MuscleMap-Komponente (Doku: docs/Muskel-Map.md)
 - [x] "Uebung anpassen" als Popup ueber das Overlay-Primitive
@@ -466,6 +479,19 @@ getrennt: was hier liegt, gehoert nicht auf den Trainings-Screen.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-23 - Phase 8 Skill-Uebungsverlauf-Anbindung abgeschlossen, wartet auf Live-Test.
+  Skill-Saetze (exercise_id null) werden ueber die Skill-Definition der Katalog-Uebung
+  zugeordnet - 1:1 wie V1 (app.js exerciseHistory, skill-Zweig): skill_id (DB-UUID) ->
+  Definitions-Schluessel (useSkills) -> Skill-Seed -> Phase + Position -> exerciseKey/target/
+  metric; Treffer, wenn exerciseKey == key der geoeffneten Uebung. Verlaufszeilen je Skill-
+  Einheit (Werte-Chips + "Ziel X"), Werte zaehlen in Statistik/Diagramm typgerecht mit (Wdh/
+  Volumen bzw. Haltezeit), kein Gewicht/1RM/Score, Abweichung bei verfehltem Ziel (met=false),
+  nur abgehakte Saetze. Umgesetzt: buildExerciseHistory + exerciseKey/SkillExResolve, ExHistory-
+  Entry um skill/metric/target, useSessionsDetailed holt skill_phase + set.met, HistorySet/
+  HistorySessionInput additiv (met/skillPhase), useExerciseDetail baut Resolver aus useSkills +
+  skillSeeds. Kraft-/1RM-Pfad, Diagramm-Fundament und Anheften unberuehrt. tsc/build/206 Tests
+  gruen (5 neue).
 
 - 2026-06-23 - Phase 8 Schritt 6 live getestet und freigegeben (Anheften/Dashboard).
 - 2026-06-23 - Phase 8 Schritt 6 abgeschlossen (Anheften/Dashboard), wartet auf Live-Test.

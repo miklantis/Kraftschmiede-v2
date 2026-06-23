@@ -20,6 +20,7 @@ function session(
     type: "strength",
     templateId: null,
     skillId: null,
+    skillPhase: null,
     durationSec: null,
     minutes: null,
     notes: "",
@@ -236,5 +237,157 @@ describe("exVolumeSeries", () => {
     expect(v[0].value).toBe(800); // 500 + 300 (gleiche Woche)
     expect(v[1].value).toBe(400);
     expect(v[0].label.startsWith("W")).toBe(true);
+  });
+});
+
+// --- Skill-Anbindung ---------------------------------------------------------
+// Skill-Einheiten legen ihre Uebungen ohne Katalogbezug ab (exerciseId null).
+// Ueber den Resolver (skillId + Phase + Position -> exerciseKey) ordnet
+// buildExerciseHistory sie der Katalog-Uebung zu (1:1 wie V1).
+
+function skillSession(
+  date: string,
+  skillId: string,
+  phase: number,
+  exercises: Array<{
+    position: number;
+    metric: "reps" | "duration";
+    sets: Array<{
+      reps?: number | null;
+      durationSec?: number | null;
+      done: boolean;
+      met?: boolean | null;
+    }>;
+  }>,
+): HistorySessionInput {
+  return {
+    id: "sk-" + date,
+    date,
+    type: "skill",
+    templateId: null,
+    skillId,
+    skillPhase: phase,
+    durationSec: null,
+    minutes: null,
+    notes: "",
+    exercises: exercises.map((ex) => ({
+      exerciseId: null,
+      name: null,
+      metric: ex.metric,
+      position: ex.position,
+      sets: ex.sets.map((s) => ({
+        kind: "work" as const,
+        reps: s.reps ?? null,
+        weight: null,
+        durationSec: s.durationSec ?? null,
+        score: null,
+        adjusted: false,
+        done: s.done,
+        met: s.met ?? null,
+      })),
+    })),
+  };
+}
+
+// Resolver: Skill "pull" hat in Phase 0 an Position 0 eine Wiederholungs-Uebung
+// (Ziel 5) auf Katalog "scapular", an Position 1 eine Haltezeit (Ziel 30) auf
+// "dead_hang".
+const resolve = (skillId: string, phase: number, position: number) => {
+  if (skillId !== "pull" || phase !== 0) return null;
+  if (position === 0)
+    return { exerciseKey: "scapular", metric: "reps" as const, target: 5 };
+  if (position === 1)
+    return { exerciseKey: "dead_hang", metric: "duration" as const, target: 30 };
+  return null;
+};
+
+describe("buildExerciseHistory – Skill-Anbindung", () => {
+  it("ordnet Skill-Wiederholungssaetze ueber die Definition der Katalog-Uebung zu", () => {
+    const sessions = [
+      skillSession("2026-02-01", "pull", 0, [
+        {
+          position: 0,
+          metric: "reps",
+          sets: [
+            { reps: 5, done: true, met: true },
+            { reps: 4, done: true, met: false },
+            { reps: 3, done: false }, // nicht abgehakt -> zaehlt nicht
+          ],
+        },
+      ]),
+    ];
+    const h = buildExerciseHistory("scapular", sessions, "mean", "scapular", resolve);
+    expect(h).toHaveLength(1);
+    expect(h[0].skill).toBe(true);
+    expect(h[0].metric).toBe("reps");
+    expect(h[0].target).toBe(5);
+    expect(h[0].reps).toBe(9); // 5 + 4 (der nicht abgehakte faellt raus)
+    expect(h[0].vol).toBe(9);
+    expect(h[0].sec).toBe(0);
+    expect(h[0].topW).toBe(0);
+    expect(h[0].est1RM).toBeNull();
+    expect(h[0].score).toBeNull();
+    expect(h[0].dev).toBe(true); // ein Satz hat das Ziel verfehlt (met false)
+    expect(h[0].sets).toHaveLength(2);
+  });
+
+  it("ordnet Skill-Haltezeiten zu und nimmt die beste Sekundenzahl", () => {
+    const sessions = [
+      skillSession("2026-02-02", "pull", 0, [
+        {
+          position: 1,
+          metric: "duration",
+          sets: [
+            { durationSec: 28, done: true, met: false },
+            { durationSec: 32, done: true, met: true },
+          ],
+        },
+      ]),
+    ];
+    const h = buildExerciseHistory("dead_hang", sessions, "mean", "dead_hang", resolve);
+    expect(h).toHaveLength(1);
+    expect(h[0].metric).toBe("duration");
+    expect(h[0].sec).toBe(32);
+    expect(h[0].vol).toBe(32); // Volumen = beste Haltezeit bei Dauer
+    expect(h[0].reps).toBe(0);
+    expect(h[0].target).toBe(30);
+    expect(h[0].dev).toBe(true);
+  });
+
+  it("ignoriert Skill-Saetze, wenn der Schluessel nicht passt", () => {
+    const sessions = [
+      skillSession("2026-02-03", "pull", 0, [
+        { position: 0, metric: "reps", sets: [{ reps: 5, done: true }] },
+      ]),
+    ];
+    const h = buildExerciseHistory("dead_hang", sessions, "mean", "dead_hang", resolve);
+    expect(h).toHaveLength(0);
+  });
+
+  it("nimmt Skill-Einheiten nur mit exerciseKey + Resolver auf", () => {
+    const sessions = [
+      skillSession("2026-02-04", "pull", 0, [
+        { position: 0, metric: "reps", sets: [{ reps: 5, done: true }] },
+      ]),
+    ];
+    // Ohne exerciseKey/Resolver bleiben Skill-Saetze aussen vor (Rueckwaertskompatibel).
+    expect(buildExerciseHistory("scapular", sessions)).toHaveLength(0);
+  });
+
+  it("mischt Kraft- und Skill-Eintraege chronologisch derselben Uebung", () => {
+    const sessions = [
+      session("2026-02-10", [
+        strengthEx("scapular", [{ kind: "work", weight: 0, reps: 8 }]),
+      ]),
+      skillSession("2026-02-05", "pull", 0, [
+        { position: 0, metric: "reps", sets: [{ reps: 5, done: true }] },
+      ]),
+    ];
+    const h = buildExerciseHistory("scapular", sessions, "mean", "scapular", resolve);
+    expect(h).toHaveLength(2);
+    expect(h[0].date).toBe("2026-02-05"); // aelteste zuerst
+    expect(h[0].skill).toBe(true);
+    expect(h[1].date).toBe("2026-02-10");
+    expect(h[1].skill).toBeUndefined();
   });
 });

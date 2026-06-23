@@ -22,6 +22,7 @@ export interface HistorySet {
   score?: number | null;
   done?: boolean;
   failed?: boolean;
+  met?: boolean | null;
 }
 
 export interface HistoryExercise {
@@ -39,6 +40,7 @@ export interface HistorySessionInput {
   type: "strength" | "yoga" | "skill";
   templateId: string | null;
   skillId: string | null;
+  skillPhase: number | null;
   durationSec: number | null;
   minutes: number | null;
   notes: string;

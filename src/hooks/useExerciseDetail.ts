@@ -2,6 +2,8 @@ import { useExercises } from "./useExercises";
 import { useExerciseMuscles } from "./useExerciseMuscles";
 import { useSessionsDetailed } from "./useSessionsDetailed";
 import { useSettings } from "./useSettings";
+import { useSkills } from "./useSkills";
+import { skillSeeds } from "@/seed/definitions";
 import { muscleValuesFromRows } from "@/lib/muscles";
 import {
   buildExerciseHistory,
@@ -12,6 +14,7 @@ import {
   type ExHistoryEntry,
   type ExMetric,
   type ExMetricOption,
+  type SkillExResolve,
 } from "@/lib/exerciseHistory";
 import { fmtNum, fmtWeight } from "@/lib/format";
 import type { ExerciseRow } from "@/schemas";
@@ -54,33 +57,80 @@ function bestSetLine(e: ExHistoryEntry, unit: string): string {
   return fmtNum(bs.weight) + " " + unit + " × " + bs.reps;
 }
 
+// Skill-Einheit im Verlauf (wie V1): geleistete Saetze als Werte verbunden,
+// Einheit "Wdh" bzw. "s". Rechts steht das Ziel der Skill-Uebung.
+function skillUnit(e: ExHistoryEntry): string {
+  return e.metric === "duration" ? "s" : "Wdh";
+}
+function skillLine(e: ExHistoryEntry): string {
+  const u = skillUnit(e);
+  const vals = e.sets.map((s) =>
+    e.metric === "duration" ? (s.durationSec ?? 0) : (s.reps ?? 0),
+  );
+  return vals.map((v) => v + " " + u).join(" · ");
+}
+function skillTargetLabel(e: ExHistoryEntry): string {
+  if (e.target == null) return "";
+  return "Ziel " + e.target + " " + skillUnit(e);
+}
+
 export function useExerciseDetail(exerciseId: string): ExerciseDetailView {
   const exercisesQ = useExercises();
   const musclesQ = useExerciseMuscles();
   const sessionsQ = useSessionsDetailed();
   const settingsQ = useSettings();
+  const skillsQ = useSkills();
 
   const isLoading =
     exercisesQ.isLoading ||
     musclesQ.isLoading ||
     sessionsQ.isLoading ||
-    settingsQ.isLoading;
+    settingsQ.isLoading ||
+    skillsQ.isLoading;
   const isError =
     exercisesQ.isError ||
     musclesQ.isError ||
     sessionsQ.isError ||
-    settingsQ.isError;
+    settingsQ.isError ||
+    skillsQ.isError;
   const error =
-    exercisesQ.error ?? musclesQ.error ?? sessionsQ.error ?? settingsQ.error;
+    exercisesQ.error ??
+    musclesQ.error ??
+    sessionsQ.error ??
+    settingsQ.error ??
+    skillsQ.error;
 
   const unit = settingsQ.data?.unit ?? "kg";
   const rmFormula = settingsQ.data?.rm_formula ?? "mean";
   const exercise =
     exercisesQ.data?.find((e) => e.id === exerciseId) ?? null;
 
+  // Skill-Zuordnung: skillId (DB-UUID) -> Definitions-Schluessel (useSkills),
+  // Schluessel -> Skill-Definition (Code-Seed), darin Phase + Position ->
+  // exerciseKey/target/metric. So findet der Verlauf der Katalog-Uebung auch
+  // die Skill-Saetze (1:1 wie V1 exerciseHistory).
+  const skillResolve: SkillExResolve = (skillId, phase, position) => {
+    const def = skillsQ.data?.find((d) => d.id === skillId);
+    if (!def || def.key == null) return null;
+    const seed = skillSeeds.find((s) => s.key === def.key);
+    const ex = seed?.phases[phase]?.exercises[position];
+    if (!ex || ex.exerciseKey == null) return null;
+    return {
+      exerciseKey: ex.exerciseKey,
+      metric: ex.metric === "duration" ? "duration" : "reps",
+      target: ex.target,
+    };
+  };
+
   const history =
-    exercise && sessionsQ.data
-      ? buildExerciseHistory(exercise.id, sessionsQ.data, rmFormula)
+    exercise && sessionsQ.data && skillsQ.data
+      ? buildExerciseHistory(
+          exercise.id,
+          sessionsQ.data,
+          rmFormula,
+          exercise.key,
+          skillResolve,
+        )
       : [];
 
   const isBodyweight = exercise?.profile === "bodyweight";
@@ -116,20 +166,29 @@ export function useExerciseDetail(exerciseId: string): ExerciseDetailView {
     }
   }
 
-  // Verlauf neueste zuerst (history ist aelteste zuerst).
+  // Verlauf neueste zuerst (history ist aelteste zuerst). Skill-Einheiten zeigen
+  // die geleisteten Werte als Zeile und das Ziel rechts (kein Gewicht/1RM/Score).
   const verlauf: VerlaufRow[] = history
     .slice()
     .reverse()
-    .map((e) => ({
-      date: e.date,
-      line: bestSetLine(e, unit),
-      right:
-        e.est1RM != null
-          ? fmtWeight(e.est1RM, unit)
-          : e.score != null
-            ? "Ø " + (Math.round(e.score * 10) / 10).toString()
-            : "",
-    }));
+    .map((e) =>
+      e.skill
+        ? {
+            date: e.date,
+            line: skillLine(e),
+            right: skillTargetLabel(e),
+          }
+        : {
+            date: e.date,
+            line: bestSetLine(e, unit),
+            right:
+              e.est1RM != null
+                ? fmtWeight(e.est1RM, unit)
+                : e.score != null
+                  ? "Ø " + (Math.round(e.score * 10) / 10).toString()
+                  : "",
+          },
+    );
 
   const metricOptions = exercise
     ? exMetricOptions(exercise.profile, exercise.metric)

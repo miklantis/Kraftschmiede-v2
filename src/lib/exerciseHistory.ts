@@ -26,6 +26,11 @@ export interface ExHistoryEntry {
   est1RM: number | null; // je Einheit aus den Arbeitssaetzen geschaetztes 1RM
   dev: boolean; // Abweichung (mind. ein angepasster Satz)
   sets: ExHistorySet[];
+  // Skill-Einheiten (ueber die Skill-Definition zugeordnet): kein Gewicht/1RM/
+  // Score. metric + target steuern die Anzeige im Verlauf (Chips + "Ziel X").
+  skill?: boolean;
+  metric?: "reps" | "duration";
+  target?: number | null;
 }
 
 function dateMs(d: string): number {
@@ -33,15 +38,33 @@ function dateMs(d: string): number {
   return Number.isNaN(t) ? 0 : t;
 }
 
+// Loest eine Skill-Uebung (per Skill-UUID + Phase + Position in der Phase) auf
+// die hinterlegte Katalog-Uebung auf. Liefert null, wenn keine Zuordnung
+// besteht. exerciseKey ist der V1-Schluessel der Katalog-Uebung (z. B.
+// "dead_hang"); target/metric stammen aus der Skill-Definition.
+export type SkillExResolve = (
+  skillId: string,
+  phase: number,
+  position: number,
+) => { exerciseKey: string; metric: "reps" | "duration"; target: number | null } | null;
+
 // Verlauf der Uebung aus allen absolvierten Einheiten, aelteste zuerst.
 // Das 1RM je Einheit wird – wie in V1 zur Anzeigezeit – aus den sauberen
 // Arbeitssaetzen geschaetzt (engine.best1RMFromSets mit der eingestellten
 // Formel), nicht aus einem gespeicherten Feld. Das gespeicherte tested1RM
 // blieb beim V1-Import leer (V1 fuellte es nie), daher diese Berechnung.
+//
+// exerciseKey + skillResolve binden zusaetzlich die Skill-Saetze an: Skill-
+// Einheiten legen ihre Uebungen ohne Katalogbezug ab (exercise_id null), werden
+// aber ueber die Skill-Definition (skillId + Phase + Position -> exerciseKey)
+// dieser Katalog-Uebung zugeordnet (1:1 wie V1 exerciseHistory). Ohne beide
+// Argumente bleiben Skill-Einheiten aussen vor.
 export function buildExerciseHistory(
   exerciseId: string,
   sessions: readonly HistorySessionInput[],
   formula: RmFormula = "mean",
+  exerciseKey: string | null = null,
+  skillResolve?: SkillExResolve,
 ): ExHistoryEntry[] {
   const out: ExHistoryEntry[] = [];
 
@@ -93,6 +116,50 @@ export function buildExerciseHistory(
           score: x.score ?? null,
         })),
       });
+    }
+  }
+
+  // Skill-Einheiten: Leistung liegt in Uebungen ohne Katalogbezug. Ueber die
+  // Skill-Definition (skillId + Phase + Position) wird jede Skill-Uebung ihrer
+  // Katalog-Uebung (exerciseKey) zugeordnet. Nur abgehakte Saetze zaehlen; kein
+  // Gewicht/1RM/Score. Abweichung = mind. ein Satz hat das Ziel verfehlt.
+  if (exerciseKey != null && skillResolve) {
+    for (const s of sessions) {
+      if (s.type !== "skill" || s.skillId == null || s.skillPhase == null) {
+        continue;
+      }
+      for (const ex of s.exercises) {
+        const def = skillResolve(s.skillId, s.skillPhase, ex.position);
+        if (def == null || def.exerciseKey !== exerciseKey) continue;
+        const done = ex.sets.filter((x) => x.done === true);
+        if (done.length === 0) continue;
+        const isDur = def.metric === "duration";
+        const vals = done.map((x) =>
+          isDur ? (x.durationSec ?? 0) : (x.reps ?? 0),
+        );
+        const sumReps = isDur ? 0 : vals.reduce((a, b) => a + b, 0);
+        const topSec = isDur ? Math.max(0, ...vals) : 0;
+        const anyMiss = done.some((x) => x.met === false);
+        out.push({
+          date: s.date,
+          topW: 0,
+          reps: sumReps,
+          vol: isDur ? topSec : sumReps,
+          sec: topSec,
+          score: null,
+          est1RM: null,
+          dev: anyMiss,
+          sets: done.map((x) => ({
+            weight: null,
+            reps: isDur ? null : (x.reps ?? 0),
+            durationSec: isDur ? (x.durationSec ?? 0) : null,
+            score: null,
+          })),
+          skill: true,
+          metric: isDur ? "duration" : "reps",
+          target: def.target,
+        });
+      }
     }
   }
 

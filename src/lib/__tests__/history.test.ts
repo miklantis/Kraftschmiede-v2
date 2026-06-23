@@ -23,6 +23,7 @@ function strength(over: Partial<HistorySessionInput> = {}): HistorySessionInput 
     type: "strength",
     templateId: "t1",
     skillId: null,
+    skillPhase: null,
     durationSec: 2700,
     minutes: null,
     notes: "",
