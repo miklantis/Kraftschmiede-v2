@@ -17,8 +17,14 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Naechste Sitzung (Einstieg):** Phase 8 Schritt 6 (Anheften/Dashboard) **gebaut, live zu
-  testen.** Detailseite: im Kopf der Verlaufs-Chartkarte sitzt jetzt der Umschalter
+- **Naechste Sitzung (Einstieg):** **Skill-Uebungsverlauf-Anbindung** (letzter offener
+  Schritt in Phase 8, dann Phase 8 als Ganzes live abnehmen). Aufgabe: Skill-Saetze haben
+  exercise_id=null und tauchen daher im Uebungsverlauf/Detail noch nicht auf. Sie ueber die
+  Skill-Definition (skillId + phase + Index -> exerciseKey) der passenden Katalog-Uebung
+  zuordnen, sodass Detailseite, Statistik und Charts auch die Skill-Saetze sehen. Erst
+  Konzept gegen V1 abstimmen (wie V1 die Zuordnung macht), dann bauen.
+- **Schritt 6 (Anheften/Dashboard) live getestet und freigegeben (2026-06-23).** Detailseite:
+  im Kopf der Verlaufs-Chartkarte der Umschalter
   "Anheften"/"Angeheftet" (kleine Pille rechts neben dem Metrik-Titel), bezogen auf die
   gerade gewaehlte Metrik - dieselbe Uebung kann mit mehreren Metriken angeheftet sein
   (z. B. 1RM und Volumen). /uebungen: ganz oben die Sektion "Angeheftet" mit den
@@ -31,9 +37,6 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   Cross-Tab ueber storage-Event), View-Hook usePinnedView (Pins -> fertige Kacheln),
   Komponente exercise/PinnedCharts, Breakpoint-Hook useIsDesktop (960px), EX_METRIC_SHORT in
   exerciseHistory, height-Prop an ExerciseChart. tsc/build/201 Tests gruen.
-- **Naechster Schritt:** Skill-Uebungsverlauf-Anbindung (Skill-Saetze mit exercise_id=null
-  ueber die Skill-Definition skillId+phase+Index -> exerciseKey -> Katalog-Uebung verknuepfen),
-  dann Phase 8 als Ganzes live abnehmen.
 - **Schritt 5 ("Uebung anpassen") live getestet und freigegeben (2026-06-23).** Auf der
   Uebungs-Detailseite gibt es unten den Knopf "Uebung anpassen" (Stift) -
   Desktop unten in der rechten Spalte, mobil ganz am Ende (order-5, nach dem Verlauf), wie
@@ -464,6 +467,7 @@ getrennt: was hier liegt, gehoert nicht auf den Trainings-Screen.
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
 
+- 2026-06-23 - Phase 8 Schritt 6 live getestet und freigegeben (Anheften/Dashboard).
 - 2026-06-23 - Phase 8 Schritt 6 abgeschlossen (Anheften/Dashboard), wartet auf Live-Test.
   Anheften-Umschalter im Kopf der Detail-Chartkarte (je Uebung+Metrik) + "Angeheftet"-
   Sektion oben auf /uebungen mit flachen Chart-Kacheln (Desktop-Raster/Handy-Liste, leer ->
