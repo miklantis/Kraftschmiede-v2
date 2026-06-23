@@ -17,14 +17,17 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Naechste Sitzung (Einstieg) - OFFENES PROBLEM zu loesen:** Das Mobile-Popup
-  (generisches Overlay, `components/ui/overlay.tsx`) **blendet am Handy nur ein, statt von
-  unten hereinzugleiten** - und beim Schliessen ebenso kein Hinausgleiten. Erwartet: das
-  Bodenblatt faehrt von unten rein und wieder raus (wie V1). Am Desktop ist das Aussehen in
-  Ordnung. Ein Anlauf ueber einen erzwungenen Reflow (Commit 8d05fb0) hat das Verhalten
-  NICHT behoben. Das ist als Erstes in einem frischen Chat zu loesen. Erst danach Phase 7
-  live freigeben (letztes Kaestchen) und zu Phase 8 (Uebungen) weitergehen. Hinweis: die
-  Skill-Live-Session (Trainieren) bleibt fuer Phase 11 vorgemerkt.
+- **Naechste Sitzung (Einstieg):** Das Gleiten-Problem des Mobile-Popups ist **geloest.**
+  Ursache war nicht das Timing/der Reflow, sondern eine falsche `transition-property`: In
+  Tailwind v4 schieben `translate-y-*` das Blatt ueber die eigene `translate`-Eigenschaft
+  (nicht mehr ueber `transform`), und am Desktop laeuft die Bewegung ueber `scale`. Die
+  Animationsliste nannte aber nur `transform,opacity` - also wurde die Deckkraft animiert
+  (Popup "tauchte auf"), die Position aber sprang. Korrigiert auf
+  `transform,translate,scale,opacity`. Der Reflow/rAF-Trick bleibt unveraendert noetig und
+  korrekt. Naechster Schritt: am Handy live testen (Yoga-Zeile -> Bodenblatt faehrt von
+  unten rein und beim Schliessen wieder raus). Nach Freigabe das letzte Kaestchen in Phase 7
+  abhaken, dann Phase 8 (Uebungen). Hinweis: die Skill-Live-Session (Trainieren) bleibt fuer
+  Phase 11 vorgemerkt.
 - **Phase:** Phase 7 (Yoga) **gebaut.** Yoga ist bewusst KEIN eigener Tab, sondern eine
   schnell abgehakte Einheit ueber die Zeile im Training-Tab. Neu und wichtig: das
   **generische Overlay-Primitive** (components/ui/overlay.tsx) als Popup-Fundament fuer alle

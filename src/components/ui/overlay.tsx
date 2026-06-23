@@ -113,7 +113,7 @@ export function Overlay({
           "flex max-h-[90%] w-full flex-col overflow-y-auto bg-background",
           "rounded-t-[26px] px-[22px] pt-3.5 pb-[max(22px,env(safe-area-inset-bottom))]",
           "shadow-pop will-change-transform",
-          "transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+          "transition-[transform,translate,scale,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
           // Desktop: zentriertes Fenster statt Bodenblatt.
           "min-[960px]:max-h-[88vh] min-[960px]:w-[440px] min-[960px]:rounded-[22px] min-[960px]:px-[26px] min-[960px]:pt-[26px] min-[960px]:pb-6",
           shown
