@@ -69,9 +69,12 @@ export function ExerciseLiveCard({
     const act = isActive(active, ei, idx, warm);
     if (plateMode === 2 && !act) return null;
     return (
-      <div className="pb-1.5">
-        <PlateChips total={weight} barWeight={entry.barWeight!} plates={plates} />
-      </div>
+      <PlateChips
+        total={weight}
+        barWeight={entry.barWeight!}
+        plates={plates}
+        active={act}
+      />
     );
   }
 
