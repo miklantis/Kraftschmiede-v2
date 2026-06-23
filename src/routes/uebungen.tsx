@@ -51,9 +51,13 @@ function UebungenPage(): React.ReactElement {
   return (
     <div>
       <PageHeader title="Übungen" />
-      <div className="grid gap-x-[26px] gap-y-7 min-[960px]:grid-cols-2">
+      <div className="columns-1 [column-gap:24px] min-[960px]:columns-2">
         {groups.map((g) => (
-          <Section key={g.title} eyebrow={g.title}>
+          <Section
+            key={g.title}
+            eyebrow={g.title}
+            className="mb-6 break-inside-avoid"
+          >
             <List bordered>
               {g.items.map((it) => (
                 <ListRow
