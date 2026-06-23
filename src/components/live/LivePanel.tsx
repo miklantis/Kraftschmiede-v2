@@ -2,38 +2,44 @@ import { useRef } from "react";
 import { ChevronDown } from "lucide-react";
 import { useLiveSession } from "@/hooks/useLiveSession";
 import { useIsDesktop } from "@/hooks/useIsDesktop";
+import { usePlates } from "@/hooks/useInventory";
+import { useSettings } from "@/hooks/useSettings";
 import { useLiveClock } from "./useLiveClock";
 import { useGripDrag } from "./useGripDrag";
 import { LiveMiniBar } from "./LiveMiniBar";
+import { GeneralWarmupCard } from "./GeneralWarmupCard";
+import { ExerciseLiveCard } from "./ExerciseLiveCard";
 import type { LiveSession } from "@/lib/liveSession";
 
-// Globales Live-Panel der gefuehrten Session (Phase 11, Lieferung 1: die Huelle).
+// Globales Live-Panel der gefuehrten Session.
 //  - Desktop (>= 960px): Vollbild-Overlay; eingeklappt eine freischwebende Pille.
 //  - Mobile (< 960px): EIN morphendes Bodenblatt - eingeklappt schiebt sich
 //    dasselbe Element zum dunklen Mini-Streifen ueber der Navigation; Ziehen am
 //    Griff/Kopf klappt auf und zu.
-// Der Inhalt ist hier noch ein Platzhalter; die echten Uebungs-/Satzkarten kommen
-// mit Lieferung 2.
+// Lieferung 2: der Inhalt zeigt die vom Coach aufgebaute Einheit (allgemeines
+// Aufwaermen + Uebungskarten mit Aufwaerm-/Arbeitssaetzen und Scheiben). Abhaken,
+// Werte tippen und Timer folgen in Lieferung 3.
 
-function PanelContent({ session }: { session: LiveSession }): React.ReactElement {
+function PanelContent({
+  session,
+  plates,
+  unit,
+}: {
+  session: LiveSession;
+  plates: number[];
+  unit: string;
+}): React.ReactElement {
   return (
     <div className="flex flex-col gap-3">
-      <div className="rounded-[14px] bg-card p-4 text-[13px] text-muted-foreground shadow-card">
-        Die gefuehrten Uebungs- und Satzkarten folgen in Lieferung 2. Hier
-        laufen bereits Kopf, Uhr, Ein-/Ausklappen und die Start-/Ende-Dialoge.
-      </div>
-      {session.exercisesPreview.length > 0 && (
-        <div className="overflow-hidden rounded-[14px] bg-card shadow-card">
-          {session.exercisesPreview.map((name, i) => (
-            <div
-              key={name + i}
-              className="border-border px-4 py-3 text-[15px] font-medium text-foreground [&:not(:last-child)]:border-b"
-            >
-              {name}
-            </div>
-          ))}
-        </div>
-      )}
+      <GeneralWarmupCard sets={session.generalWarmup.sets} />
+      {session.entries.map((entry, i) => (
+        <ExerciseLiveCard
+          key={entry.exerciseId + i}
+          entry={entry}
+          plates={plates}
+          unit={unit}
+        />
+      ))}
     </div>
   );
 }
@@ -78,6 +84,8 @@ function PanelHead({
 export function LivePanel(): React.ReactElement | null {
   const live = useLiveSession();
   const isDesktop = useIsDesktop();
+  const platesQ = usePlates();
+  const settingsQ = useSettings();
   const ovRef = useRef<HTMLDivElement>(null);
   const startedAt = live.session?.startedAt ?? null;
   const clock = useLiveClock(startedAt);
@@ -87,11 +95,11 @@ export function LivePanel(): React.ReactElement | null {
 
   if (!live.session) return null;
   const s = live.session;
+  const plates = (platesQ.data ?? []).map((p) => p.weight);
+  const unit = settingsQ.data?.unit ?? "kg";
   const title = "Workout " + s.title;
   const subtitle =
-    s.exercisesPreview.length > 0
-      ? s.exercisesPreview.length + " Übungen"
-      : "läuft";
+    s.entries.length > 0 ? s.entries.length + " Übungen" : "läuft";
 
   // --- Desktop ---
   if (isDesktop) {
@@ -116,7 +124,7 @@ export function LivePanel(): React.ReactElement | null {
         />
         <div className="kl-ov-scroll">
           <div className="kl-ov-inner">
-            <PanelContent session={s} />
+            <PanelContent session={s} plates={plates} unit={unit} />
           </div>
         </div>
       </div>
@@ -145,7 +153,7 @@ export function LivePanel(): React.ReactElement | null {
         grip
       />
       <div className="kl-ov-scroll">
-        <PanelContent session={s} />
+        <PanelContent session={s} plates={plates} unit={unit} />
       </div>
     </div>
   );

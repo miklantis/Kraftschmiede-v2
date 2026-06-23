@@ -116,7 +116,8 @@ function getSnapshot(): LiveState {
 export interface StartWorkoutInput {
   templateId: string;
   title: string;
-  exercisesPreview: string[];
+  entries: LiveSession["entries"];
+  generalWarmup: LiveSession["generalWarmup"];
 }
 
 /** Start-Popup oeffnen: die Einheit vormerken (noch nicht laufen lassen). */
@@ -128,7 +129,8 @@ function openStartWorkout(input: StartWorkoutInput): void {
     templateId: input.templateId,
     title: input.title,
     startedAt: Date.now(),
-    exercisesPreview: input.exercisesPreview,
+    generalWarmup: input.generalWarmup,
+    entries: input.entries,
   };
   set({ pending });
 }

@@ -22,12 +22,12 @@ export function EndModal(): React.ReactElement {
       {s && (
         <>
           <div className="mb-4 flex flex-col gap-2">
-            {s.exercisesPreview.map((name, i) => (
+            {s.entries.map((entry, i) => (
               <div
-                key={name + i}
+                key={entry.exerciseId + i}
                 className="rounded-[14px] bg-secondary px-4 py-3 text-[15px] font-medium text-foreground"
               >
-                {name}
+                {entry.exerciseName}
               </div>
             ))}
           </div>

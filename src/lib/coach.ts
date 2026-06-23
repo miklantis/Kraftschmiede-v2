@@ -4,9 +4,21 @@
 // Engine (suitability). Gleiche Bauform wie die Engine. 1:1 aus V1 (CoachCore +
 // Glue), nur die Zustandsbeschaffung wandert in die Daten-Hooks.
 
-import { suitability } from "@/engine";
-import type { SuitabilityResult } from "@/engine";
-import type { Exercise, SuitabilityCtx } from "@/engine/types";
+import {
+  suitability,
+  suggestWeight,
+  generateWarmup,
+  volumeForWeek,
+} from "@/engine";
+import type { SuitabilityResult, SuggestResult, SuggestExercise } from "@/engine";
+import type {
+  Exercise,
+  SuitabilityCtx,
+  EngineSet,
+  SetEntry,
+  Bar,
+  VolumePhase,
+} from "@/engine/types";
 import { isoWeekKey } from "@/engine/journey";
 
 // Eine abgeschlossene Krafteinheit, reduziert auf das fuer das Ranking Noetige:
@@ -130,4 +142,128 @@ export function rankWorkouts<T extends RankableTemplate>(
       if (a.excluded !== b.excluded) return a.excluded ? 1 : -1;
       return b.score - a.score;
     });
+}
+
+// ---------------------------------------------------------------------------
+// Sitzungsaufbau (Phase 11, Lieferung 2). Die zweite Haelfte des V1-CoachCore:
+// Gewichts-/Wdh.-Vorschlag je Uebung, Begleituebungs-Uebernahme, Aufwaermrampe
+// und Wochen-Satzzahl. Wie oben reine Daten herein, Entscheidung heraus - kein
+// DB-/DOM-Bezug. Die Zustandsbeschaffung (letzter Eintrag, Phase, Inventar)
+// liegt im Daten-Hook useLiveBuilder; hier nur die Rechnung (1:1 aus js/coach.js).
+// ---------------------------------------------------------------------------
+
+// Uebung in der vom Aufbau benoetigten Form. `key` traegt die Text-Kennung der
+// Uebung (z. B. "deadlift") fuer die Deadlift-Erkennung der Aufwaermrampe.
+export interface CoachBuildExercise {
+  key: string | null;
+  profile: "strength" | "core" | "bodyweight";
+  category: "barbell" | "core" | "bodyweight";
+  repRange: [number, number] | null;
+  workWeight: number;
+  targetScore: number;
+  barId: string | null;
+}
+
+// Coach-Entscheidung mit dem zusaetzlichen "carry" (bewusst keine Wertung) fuer
+// Begleit-/Koerpergewichtsuebungen, die nicht progressiv gerechnet werden.
+export type CoachDecision = SuggestResult["decision"] | "carry";
+export interface CoachSuggestion {
+  weight: number;
+  targetReps: number;
+  decision: CoachDecision;
+  note: string;
+}
+
+// Begleituebung/Koerpergewicht: keine Doppelprogression. Vorbelegung = letzter
+// Arbeitssatz mit dem hoechsten Gewicht samt dessen Wdh.; ohne Vordaten Start-
+// gewicht + oberes Repband-Ende.
+export function coreCarry(
+  exo: CoachBuildExercise,
+  lastEntry: SetEntry | null,
+): CoachSuggestion {
+  const range = exo.repRange ?? [12, 20];
+  const ws = lastEntry
+    ? (lastEntry.sets ?? []).filter((s) => s.type !== "warmup")
+    : [];
+  if (ws.length) {
+    const top = ws.reduce(
+      (a, b) => ((b.weight || 0) >= (a.weight || 0) ? b : a),
+      ws[0]!,
+    );
+    return {
+      weight: top.weight != null ? top.weight : exo.workWeight || 0,
+      targetReps: top.reps || range[1],
+      decision: "carry",
+      note: "Begleitübung – letztes Mal übernommen, frei anpassbar",
+    };
+  }
+  return {
+    weight: exo.workWeight || 0,
+    targetReps: range[1],
+    decision: "carry",
+    note: "Begleitübung – Startwert, frei anpassbar",
+  };
+}
+
+export interface SuggestBuildCtx {
+  phase: { focus?: string } | null;
+  lastEntry: SetEntry | null;
+  bar?: Bar;
+  plates?: number[];
+  // Ueberschreibt das Repband der Uebung (Ziel-Repband der aktiven Phase).
+  repTarget?: [number, number] | null;
+}
+
+// Gewichts-/Wdh.-Vorschlag. Core/Bodyweight -> coreCarry; sonst Doppelprogression
+// ueber die Engine, Wiedereinstiegs-Reduktion bei phase.focus === "reentry". Ein
+// gesetztes repTarget ueberschreibt das Repband der Uebung fuer die Rechnung.
+export function suggestForExercise(
+  exo: CoachBuildExercise,
+  ctx: SuggestBuildCtx,
+): CoachSuggestion {
+  if (exo.profile === "core" || exo.profile === "bodyweight") {
+    return coreCarry(exo, ctx.lastEntry);
+  }
+  const focus = ctx.phase ? ctx.phase.focus : null;
+  const exUse: SuggestExercise = {
+    workWeight: exo.workWeight,
+    repRange: ctx.repTarget
+      ? [ctx.repTarget[0], ctx.repTarget[1]]
+      : (exo.repRange ?? undefined),
+    targetScore: exo.targetScore,
+    barId: exo.barId ?? undefined,
+  };
+  return suggestWeight(exUse, ctx.lastEntry, {
+    bar: ctx.bar,
+    plates: ctx.plates,
+    reentry: focus === "reentry",
+  });
+}
+
+// Aufwaermsaetze: nur Langhantel mit Stange bekommt eine Rampe; Deadlift weniger
+// Volumen, erste Uebung (isFirst) gruendlicher. Sonst [].
+export function warmupFor(
+  exo: CoachBuildExercise,
+  workWeight: number,
+  bar: Bar | null | undefined,
+  isFirst: boolean,
+  plates: number[],
+): EngineSet[] {
+  if (!exo || exo.category !== "barbell" || !bar) return [];
+  const isDeadlift = /deadlift/i.test(exo.key ?? "");
+  return generateWarmup(workWeight, bar.weight, plates, {
+    isLift1: !!isFirst,
+    isDeadlift,
+  });
+}
+
+// Empfohlene Arbeitssatzzahl der Woche aus der Phasen-Rampe (volumeForWeek);
+// weekInPhase ist 0-basiert, green = Erholung gruen. Ohne Phase Default 3.
+export function plannedSets(
+  phase: VolumePhase | null,
+  weekInPhase: number,
+  green: boolean,
+): number {
+  if (!phase) return 3;
+  return volumeForWeek(phase, weekInPhase, green);
 }

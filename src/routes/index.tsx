@@ -10,6 +10,7 @@ import { RecommendedWorkout } from "@/components/training/RecommendedWorkout";
 import { YogaEntryModal } from "@/components/training/YogaEntryModal";
 import { useTrainingOverview } from "@/hooks/useTrainingOverview";
 import { useLiveSession } from "@/hooks/useLiveSession";
+import { useLiveBuilder } from "@/hooks/useLiveBuilder";
 
 // Startroute = Training (wie V1). Reine Uebersichts-/Empfehlungsseite: zeigt an
 // und fuehrt hin, fuehrt aber nicht durch (gefuehrte Session = Phase 11).
@@ -21,6 +22,7 @@ function TrainingPage(): React.ReactElement {
   const navigate = useNavigate();
   const { isLoading, isError, error, data } = useTrainingOverview();
   const { openStartWorkout } = useLiveSession();
+  const builder = useLiveBuilder();
   // Skill-Durchfuehrung folgt in Lieferung 5; bis dahin Platzhalter-Hinweis.
   const [note, setNote] = useState<string | null>(null);
   const [yogaOpen, setYogaOpen] = useState(false);
@@ -53,12 +55,19 @@ function TrainingPage(): React.ReactElement {
     id: string;
     name: string;
     exerciseNames: string[];
-  }): void =>
+  }): void => {
+    const built = builder.buildWorkout(w.id);
+    if (!built) {
+      setNote("Die Einheit konnte nicht aufgebaut werden.");
+      return;
+    }
     openStartWorkout({
       templateId: w.id,
       title: w.name,
-      exercisesPreview: w.exerciseNames,
+      entries: built.entries,
+      generalWarmup: built.generalWarmup,
     });
+  };
 
   const mainColumn = (
     <>

@@ -5,8 +5,8 @@ import { useLiveSession } from "@/hooks/useLiveSession";
 // Start-Popup (vor dem Workout). Nutzt das Overlay-Primitive (Desktop zentriert,
 // Mobile Bodenblatt). Zeigt eine Vorschau der Einheit; "Los geht's" laesst das
 // Popup ausfahren und danach das Panel hereinfahren (Uebergang im Store
-// orchestriert). Lieferung 1: die Vorschau listet die Uebungsnamen; die
-// Satz-Chips (Wdh x kg) kommen mit dem Coach in Lieferung 2.
+// orchestriert). Lieferung 2: die Vorschau listet die Uebungen der aufgebauten
+// Einheit; die ausfuehrlichen Satzkarten stehen dann im Panel selbst.
 export function StartModal(): React.ReactElement {
   const live = useLiveSession();
   const p = live.pending;
@@ -20,15 +20,20 @@ export function StartModal(): React.ReactElement {
       {p && (
         <>
           <div className="mb-3 text-[13px] text-muted-foreground">
-            {p.exercisesPreview.length} Übungen · Vorschau
+            {p.entries.length} Übungen · Vorschau
           </div>
           <div className="mb-4 flex flex-col gap-2">
-            {p.exercisesPreview.map((name, i) => (
+            {p.entries.map((entry, i) => (
               <div
-                key={name + i}
-                className="rounded-[14px] bg-secondary px-4 py-3 text-[15px] font-medium text-foreground"
+                key={entry.exerciseId + i}
+                className="flex items-center justify-between rounded-[14px] bg-secondary px-4 py-3"
               >
-                {name}
+                <span className="text-[15px] font-medium text-foreground">
+                  {entry.exerciseName}
+                </span>
+                <span className="font-mono text-[12px] text-muted-foreground">
+                  {entry.sets.length}×{entry.sets[0]?.reps ?? "–"}
+                </span>
               </div>
             ))}
           </div>

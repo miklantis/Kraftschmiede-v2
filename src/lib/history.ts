@@ -23,6 +23,9 @@ export interface HistorySet {
   done?: boolean;
   failed?: boolean;
   met?: boolean | null;
+  // Geplante Zielwerte (fuer den Coach-Vorschlag der naechsten Einheit).
+  targetReps?: number | null;
+  targetWeight?: number | null;
 }
 
 export interface HistoryExercise {

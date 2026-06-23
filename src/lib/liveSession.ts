@@ -6,10 +6,10 @@
 // saubere Zeilen in die DB geschrieben (Lieferung 4). So verschmutzt keine
 // halbfertige Einheit den Bestand, und das Aufzeichnen laeuft komplett offline.
 //
-// Lieferung 1 (Panel-Huelle): die Struktur ist hier noch schlank - nur das
-// Noetige fuer Kopf, Uhr und Start-/Ende-Vorschau. Der echte Aufbau aus Vorlage
-// + Coach (Uebungs-/Satzkarten) ersetzt `exercisesPreview` in Lieferung 2 durch
-// vollwertige Eintraege; die Aenderung bleibt additiv.
+// Lieferung 2 (Sitzungsaufbau): die Struktur traegt jetzt die vom Coach
+// aufgebauten Uebungen (`entries`) samt Aufwaerm- und Arbeitssaetzen und das
+// allgemeine Aufwaermen. Veraendert (abhaken, Werte tippen) werden sie erst in
+// Lieferung 3; hier stehen sie auf den geplanten Startwerten.
 
 // Eine reine Funktion (keine React-/DOM-Abhaengigkeit), damit die Engine-/
 // Format-Logik testbar bleibt - dieselbe Trennung wie im uebrigen Projekt.
@@ -36,6 +36,51 @@ export function fmtDur(sec: number): string {
 /** Art der laufenden Einheit. Skill kommt in Lieferung 5 dazu. */
 export type LiveKind = "workout";
 
+/**
+ * Ein Arbeitssatz der laufenden Einheit. Geplant (target*) vs. tatsaechlich;
+ * `done`/`failed`/`adjusted` werden erst in Lieferung 3 (gefuehrter Ablauf)
+ * veraendert - in Lieferung 2 stehen sie auf ihren Startwerten.
+ */
+export interface LiveSet {
+  reps: number;
+  weight: number;
+  score: number; // 1..5, Start = Ziel-Score der Uebung
+  targetReps: number;
+  targetWeight: number;
+  done: boolean;
+  failed: boolean;
+  adjusted: boolean;
+  adjustNote: string;
+}
+
+/** Ein Aufwaermsatz (Wdh + Gewicht, ohne Score/RIR). */
+export interface LiveWarmupSet {
+  reps: number;
+  weight: number;
+  done: boolean;
+}
+
+/** Ein Satz des allgemeinen Aufwaermens (Dauer in Minuten + Art). */
+export interface LiveGeneralWarmupSet {
+  minutes: number;
+  mode: string; // bike | row | walk | vario | other
+  done: boolean;
+}
+
+/** Eine Uebung der laufenden Einheit samt Aufwaerm- und Arbeitssaetzen. */
+export interface LiveEntry {
+  exerciseId: string;
+  exerciseName: string;
+  category: "barbell" | "core" | "bodyweight";
+  /** Kurzkennung im Kartenkopf: "1RM 120 kg" bzw. Muskelgruppen. */
+  tag: string;
+  /** Stange (nur Langhantel) - aufgeloest fuer Anzeige und Scheiben-Aufteilung. */
+  barName: string | null;
+  barWeight: number | null;
+  warmupSets: LiveWarmupSet[];
+  sets: LiveSet[];
+}
+
 export interface LiveSession {
   /** Lokale Lauf-ID (kollidiert nicht mit DB-UUIDs der gespeicherten Session). */
   id: string;
@@ -46,12 +91,10 @@ export interface LiveSession {
   title: string;
   /** Startzeitpunkt in ms (Date.now). Die Uhr rechnet immer ab hier. */
   startedAt: number;
-  /**
-   * Lieferung-1-Platzhalter: Uebungsnamen fuer die Start-/Ende-Vorschau und den
-   * Panel-Inhalt, solange es noch keine echten Satzkarten gibt. Wird in
-   * Lieferung 2 durch vollwertige Eintraege abgeloest.
-   */
-  exercisesPreview: string[];
+  /** Allgemeines Aufwaermen (Cardio) vor den Uebungen. */
+  generalWarmup: { sets: LiveGeneralWarmupSet[] };
+  /** Die vom Coach aufgebauten Uebungen mit ihren Saetzen (Lieferung 2). */
+  entries: LiveEntry[];
 }
 
 // ---- Lokale Persistenz ------------------------------------------------------
@@ -86,9 +129,6 @@ export function parseLive(raw: string | null): PersistedLive {
     ) {
       return { session: null, collapsed };
     }
-    const preview = Array.isArray(sr.exercisesPreview)
-      ? sr.exercisesPreview.filter((x): x is string => typeof x === "string")
-      : [];
     return {
       session: {
         id: sr.id,
@@ -96,13 +136,77 @@ export function parseLive(raw: string | null): PersistedLive {
         templateId: sr.templateId,
         title: sr.title,
         startedAt: sr.startedAt,
-        exercisesPreview: preview,
+        generalWarmup: parseGeneralWarmup(sr.generalWarmup),
+        entries: parseEntries(sr.entries),
       },
       collapsed,
     };
   } catch {
     return empty;
   }
+}
+
+function num(v: unknown, fallback = 0): number {
+  return typeof v === "number" && Number.isFinite(v) ? v : fallback;
+}
+function bool(v: unknown): boolean {
+  return v === true;
+}
+function str(v: unknown, fallback = ""): string {
+  return typeof v === "string" ? v : fallback;
+}
+
+function parseGeneralWarmup(v: unknown): { sets: LiveGeneralWarmupSet[] } {
+  const rec = typeof v === "object" && v !== null ? (v as Record<string, unknown>) : {};
+  const arr = Array.isArray(rec.sets) ? rec.sets : [];
+  const sets = arr.map((x): LiveGeneralWarmupSet => {
+    const o = (typeof x === "object" && x !== null ? x : {}) as Record<string, unknown>;
+    return { minutes: num(o.minutes, 5), mode: str(o.mode, "bike"), done: bool(o.done) };
+  });
+  return { sets };
+}
+
+function parseEntries(v: unknown): LiveEntry[] {
+  if (!Array.isArray(v)) return [];
+  return v
+    .map((x): LiveEntry | null => {
+      const o = (typeof x === "object" && x !== null ? x : {}) as Record<string, unknown>;
+      if (typeof o.exerciseId !== "string") return null;
+      const cat = o.category;
+      const category: LiveEntry["category"] =
+        cat === "core" || cat === "bodyweight" ? cat : "barbell";
+      const warmupSets = (Array.isArray(o.warmupSets) ? o.warmupSets : []).map(
+        (w): LiveWarmupSet => {
+          const wo = (typeof w === "object" && w !== null ? w : {}) as Record<string, unknown>;
+          return { reps: num(wo.reps), weight: num(wo.weight), done: bool(wo.done) };
+        },
+      );
+      const sets = (Array.isArray(o.sets) ? o.sets : []).map((s): LiveSet => {
+        const so = (typeof s === "object" && s !== null ? s : {}) as Record<string, unknown>;
+        return {
+          reps: num(so.reps),
+          weight: num(so.weight),
+          score: num(so.score, 3),
+          targetReps: num(so.targetReps),
+          targetWeight: num(so.targetWeight),
+          done: bool(so.done),
+          failed: bool(so.failed),
+          adjusted: bool(so.adjusted),
+          adjustNote: str(so.adjustNote),
+        };
+      });
+      return {
+        exerciseId: o.exerciseId,
+        exerciseName: str(o.exerciseName),
+        category,
+        tag: str(o.tag),
+        barName: typeof o.barName === "string" ? o.barName : null,
+        barWeight: typeof o.barWeight === "number" ? o.barWeight : null,
+        warmupSets,
+        sets,
+      };
+    })
+    .filter((e): e is LiveEntry => e !== null);
 }
 
 export function serializeLive(state: PersistedLive): string {

@@ -13,7 +13,31 @@ const SESSION: LiveSession = {
   templateId: "tpl-1",
   title: "Oberkörper",
   startedAt: 1_700_000_000_000,
-  exercisesPreview: ["Bankdrücken", "Klimmzug"],
+  generalWarmup: { sets: [{ minutes: 7, mode: "bike", done: false }] },
+  entries: [
+    {
+      exerciseId: "ex-1",
+      exerciseName: "Bankdrücken",
+      category: "barbell",
+      tag: "1RM 100 kg",
+      barName: "Olympia",
+      barWeight: 20,
+      warmupSets: [{ reps: 5, weight: 20, done: false }],
+      sets: [
+        {
+          reps: 8,
+          weight: 60,
+          score: 3,
+          targetReps: 8,
+          targetWeight: 60,
+          done: false,
+          failed: false,
+          adjusted: false,
+          adjustNote: "",
+        },
+      ],
+    },
+  ],
 };
 
 describe("liveSession", () => {
@@ -71,12 +95,40 @@ describe("liveSession", () => {
       expect(parseLive(raw).session).toBeNull();
     });
 
-    it("filtert Nicht-String-Eintraege aus der Vorschau", () => {
+    it("verwirft Eintraege ohne exerciseId und stellt Default-Werte her", () => {
       const raw = JSON.stringify({
         collapsed: false,
-        session: { ...SESSION, exercisesPreview: ["A", 5, null, "B"] },
+        session: {
+          ...SESSION,
+          entries: [
+            { foo: "bar" }, // kein exerciseId -> raus
+            { exerciseId: "ex-9" }, // minimal -> Defaults
+          ],
+        },
       });
-      expect(parseLive(raw).session?.exercisesPreview).toEqual(["A", "B"]);
+      const out = parseLive(raw).session;
+      expect(out?.entries).toEqual([
+        {
+          exerciseId: "ex-9",
+          exerciseName: "",
+          category: "barbell",
+          tag: "",
+          barName: null,
+          barWeight: null,
+          warmupSets: [],
+          sets: [],
+        },
+      ]);
+    });
+
+    it("stellt das allgemeine Aufwaermen tolerant wieder her", () => {
+      const raw = JSON.stringify({
+        collapsed: false,
+        session: { ...SESSION, generalWarmup: { sets: [{}] } },
+      });
+      expect(parseLive(raw).session?.generalWarmup.sets).toEqual([
+        { minutes: 5, mode: "bike", done: false },
+      ]);
     });
   });
 });

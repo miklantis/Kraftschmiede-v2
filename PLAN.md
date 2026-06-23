@@ -17,15 +17,33 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Naechste Sitzung (Einstieg):** **Phase 11 Lieferung 2 – Sitzungsaufbau aus Vorlage + Coach.**
-  L1 (Panel-Huelle) ist gebaut, live getestet und freigegeben (2026-06-23, s. Log; Ebenen-
-  Reihenfolge wie V1 nachgezogen). L2 fuellt den Panel-Inhalt: echte Uebungs-/Satzkarten aus der
-  Vorlage, vom Coach aufgebaut (Arbeits-/Aufwaermsaetze, Satz-Vorschlaege, Plate-Loader). Dabei
-  `LiveSession.exercisesPreview` (L1-Platzhalter) durch vollwertige Eintraege ersetzen (additiv).
-  Erst Konzept gegen V1 (js/live.js: Sitzungsaufbau + Coach), dann bauen. Vorhandenes Fundament:
-  Engine (Plate-Loader, Aufwaerm-Generator, Progression, Suitability), Coach-Modul, Audio-
-  Baustein (liegt seit L1), Overlay-Primitive, das global gemountete Live-Panel. Wake-Lock-
-  Entscheidung erst in L6.
+- **Naechste Sitzung (Einstieg):** **Phase 11 Lieferung 3 – Gefuehrter Ablauf.** L2
+  (Sitzungsaufbau + Coach) ist gebaut und wartet auf den Live-Test (s. u.). L3 macht die
+  Karten interaktiv: Saetze abhaken (Aufwaermen/Arbeit/allg. Aufwaermen), aktiver-Satz-
+  Fokus, Coach beim Durchfuehren (Progression), Pausen-/Rest-Timer (Satz/Uebung getrennt,
+  Auto-Start) + Rest-Bar, Audio/Vibration im Ablauf, fokus-erhaltende Eingaben (Wdh/kg/RIR),
+  +/- Satz, Stangenwechsel, Scheiben-Schalter. Erst Konzept gegen V1 (live.js: toggleSetDone/
+  onSetCompleted/startRest/refreshActive + Inline-Updates), dann bauen. Wake-Lock bleibt L6.
+- **Phase 11 Lieferung 2 (Sitzungsaufbau aus Vorlage + Coach) gebaut (2026-06-23), live
+  testbar.** Beim Start baut der Coach die Einheit einmal vor (1:1 wie V1 buildLive); das
+  Panel zeigt jetzt die echten Karten statt des Platzhalters: oben das allgemeine Aufwaermen
+  (ein Cardio-Satz 7 min Rad), darunter je Uebung eine Karte mit Kopf (Name + Tag 1RM/Muskeln,
+  bei Langhantel Stange) und der Tabelle Satz/Wdh/kg/RIR/Haken - erst die Aufwaermsaetze (A1..),
+  dann die Arbeitssaetze (S1..), bei Langhantel mit Scheiben-Chips je Satz. Coach-Logik 1:1 aus
+  V1: Doppelprogression fuer Haupt-/Assistenz (Wiedereinstieg reduziert), Begleit-/Koerper-
+  gewicht uebernimmt das letzte Mal (carry), Core fix 3 Saetze sonst die Phasen-Satzrampe,
+  Aufwaermrampe nur Langhantel (Deadlift weniger, erste Uebung gruendlicher), Phasen-Repband
+  ueberstimmt das Uebungs-Band. Bewusst INERT: Abhaken, Werte tippen, Timer, Stangenwechsel,
+  +/- und der Coach-waehrend-der-Durchfuehrung kommen geschlossen in L3 - die Karten zeigen die
+  geplanten Startwerte. Neu/portiert: die zweite Haelfte des V1-CoachCore in lib/coach.ts
+  (coreCarry/suggestForExercise/warmupFor/plannedSets, DOM-frei, getestet), der reine Aufbau
+  lib/liveBuild.ts (Vorlage+Phase+Inventar -> Eintraege, getestet), das auf entries/
+  generalWarmup umgestellte LiveSession-Objekt (lib/liveSession.ts, defensiver Restore), der
+  Daten-Hook useLiveBuilder (beschafft Uebungen/Vorlagen/Verlauf/Phase/Inventar/Body und ruft
+  den Aufbau), die Komponenten GeneralWarmupCard/ExerciseLiveCard/PlateChips. useSessionsDetailed
+  additiv um target_reps/target_weight ergaenzt (Vordaten fuer den Vorschlag); HistorySet
+  entsprechend. tsc/build/254 Tests gruen (14 neue: 10 coach-Aufbau, 4 liveBuild; Live-Tests an
+  das neue Modell angepasst).
 - **Phase 10 (Einstellungen) abgeschlossen und live freigegeben (2026-06-23).** Komplette Seite
   abgenommen: Konto-/Verbindungs-Panel, Engine & Einheiten, Pausen-Timer, Inventar (Stangen/
   Scheiben/Kettlebells/Geraete), Score-Referenz; spaltenweiser Fluss (CSS-Spalten wie V1), mobil
@@ -541,7 +559,7 @@ Fortschritt wird hier je Lieferung gefuehrt:
       Dialoge ueber das Overlay-Primitive, Audio-/Vibrations-Baustein (clickTick/
       playBeep/buzz, settings-gesteuert; greift im Ablauf ab L3). Ebenen wie V1
       (Nav ueber Panel, Dialoge ueber allem). Gebaut + live getestet 2026-06-23 (s. Log).
-- [ ] **L2 – Sitzungsaufbau aus Vorlage + Coach.** Echte Uebungs-/Satzkarten: Arbeits-
+- [x] **L2 – Sitzungsaufbau aus Vorlage + Coach.** Echte Uebungs-/Satzkarten: Arbeits-
       und Aufwaermsaetze, Satz-Vorschlaege, Plate-Loader. Ersetzt den L1-Platzhalter
       `LiveSession.exercisesPreview` durch vollwertige Eintraege (additiv).
 - [ ] **L3 – Gefuehrter Ablauf.** Saetze abhaken (Aufwaermen, Arbeitssaetze, allg.
@@ -580,6 +598,37 @@ Fortschritt wird hier je Lieferung gefuehrt:
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-23 - Phase 11 Lieferung 2 (Sitzungsaufbau aus Vorlage + Coach) gebaut, wartet auf
+  Live-Test. Der L1-Platzhalter im Live-Panel ist durch die echte, vom Coach aufgebaute Einheit
+  ersetzt (1:1 aus V1 live.js buildLive + js/coach.js). Beim Start baut useLiveBuilder die Einheit
+  einmal vor und reicht sie als entries/generalWarmup ins lokale Live-Session-Objekt; das Panel
+  rendert das allgemeine Aufwaermen (ein Cardio-Satz, 7 min Rad) und je Uebung eine Karte: Kopf
+  (Name + Tag 1RM/Muskeln, bei Langhantel die Stange) und die Tabelle Satz/Wdh/kg/RIR/Haken mit
+  den Aufwaermsaetzen (A1..) und Arbeitssaetzen (S1..), bei Langhantel je Satz die Scheiben pro
+  Seite als Chips (Engine plateBreakdown). Coach-Aufbau 1:1: Haupt-/Assistenz ueber die Doppel-
+  progression (Wiedereinstieg reduziert bei focus=reentry), Begleit-/Koerpergewicht uebernimmt
+  den letzten schwersten Arbeitssatz (decision carry), Core fix 3 Saetze sonst die Phasen-Satz-
+  rampe (volumeForWeek), Aufwaermrampe nur Langhantel mit Stange (Deadlift weniger Volumen, erste
+  Uebung gruendlicher), das Ziel-Repband der aktiven Phase ueberstimmt das Uebungs-Band (nur
+  Kraft). Bewusst INERT (wie mit Kadir abgestimmt): die Karten zeigen nur die geplanten
+  Startwerte - Abhaken, Werte tippen, aktiver-Satz-Fokus, Pausen-Timer, Audio im Ablauf, +/- Satz,
+  Stangenwechsel, Scheiben-Schalter und der Coach-waehrend-der-Durchfuehrung kommen geschlossen
+  in L3. Neu/portiert: lib/coach.ts um die zweite Haelfte des V1-CoachCore erweitert (coreCarry,
+  suggestForExercise, warmupFor, plannedSets - reine, DOM-freie Komposition der Engine, getestet);
+  lib/liveBuild.ts (reiner Aufbau Vorlage+Phase+Inventar -> LiveEntry-Struktur, getestet);
+  lib/liveSession.ts auf das echte Modell umgestellt (LiveSet/LiveWarmupSet/LiveGeneralWarmupSet/
+  LiveEntry; LiveSession traegt entries + generalWarmup statt exercisesPreview; parseLive stellt
+  alles defensiv wieder her, Default-Werte fuer fehlende Felder); hooks/useLiveBuilder.ts (Daten-
+  Hook: beschafft Uebungen/Vorlagen/Verlauf/aktive Journey/Einstellungen/Stangen/Scheiben/Body,
+  bestimmt Phase + Woche-in-Phase ueber journeyPlacement und liefert buildWorkout(templateId));
+  Komponenten components/live/GeneralWarmupCard, ExerciseLiveCard und PlateChips. useLiveSession:
+  StartWorkoutInput traegt jetzt entries + generalWarmup; Start-/Ende-Dialoge und Panel-Subtitle
+  lesen aus entries. useSessionsDetailed additiv um target_reps/target_weight erweitert (Vordaten
+  fuer den Vorschlag), HistorySet entsprechend - History-/Detail-Pfad unberuehrt. Die Trainings-
+  seite baut die Einheit ueber den Builder, bevor das Start-Popup oeffnet. Validiert: tsc sauber,
+  254 Tests gruen (+14: 10 coach-Aufbau, 4 liveBuild; die Live-Tests an das neue Modell angepasst),
+  vite build ok.
 
 - 2026-06-23 - Phase 11 Lieferung 1 (Live-Panel-Huelle) gebaut, live getestet und freigegeben. Die
   gefuehrte Session ist als geraete-lokales Arbeitsobjekt angelegt (localStorage, Muster wie
