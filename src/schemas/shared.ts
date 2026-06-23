@@ -53,6 +53,7 @@ export const muscleKategorieEnum = z.enum([
   "sekundaer",
   "stabilisierend",
 ]);
+export type MuscleKategorie = z.infer<typeof muscleKategorieEnum>;
 
 // ---- jsonb-Wertobjekte ------------------------------------------------------
 // Kleine, attributarme Wertobjekte, die als jsonb in ihrer Tabelle liegen.
