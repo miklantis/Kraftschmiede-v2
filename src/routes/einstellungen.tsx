@@ -12,7 +12,6 @@ import {
 } from "@/components/settings/InventoryWeights";
 import { InventoryEquipment } from "@/components/settings/InventoryEquipment";
 import { Datenstand } from "@/components/Datenstand";
-import { V1Import } from "@/components/V1Import";
 import { useSettings } from "@/hooks/useSettings";
 import {
   useBars,
@@ -29,7 +28,8 @@ export const Route = createFileRoute("/einstellungen")({
 // Steuerelement rechts. Oben das Konto-/Verbindungs-Panel, darunter auf dem
 // Desktop ein zweispaltiges Raster der Bereiche (mobil ein Stapel). Reihenfolge
 // wie V1: Engine, Timer, Inventar (Stangen/Scheiben/Kettlebells/Geraete), Score,
-// dann vorlaeufig "Daten" (V1-Import wandert in Phase 12). Plate-Loader bekommt
+// dann "Daten" (vorerst nur die Datenstand-Anzeige; Export/Restore folgen in
+// Phase 12). Plate-Loader bekommt
 // keine eigene UI - das Inventar fuettert den schon portierten Engine-Loader.
 function EinstellungenPage(): React.ReactElement {
   const settingsQuery = useSettings();
@@ -90,7 +90,6 @@ function EinstellungenPage(): React.ReactElement {
           <Section eyebrow="Daten">
             <div className="flex flex-col gap-3">
               <Datenstand />
-              <V1Import />
             </div>
           </Section>
         </div>

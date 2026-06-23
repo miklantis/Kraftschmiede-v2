@@ -17,16 +17,19 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Phase 11 (Live-Session) abgeschlossen (2026-06-23).** L6 (Wake-Lock) live freigegeben.
-  Kadir hat L1–L6 jeweils einzeln gegen V1 geprueft und abgenommen; den zusammenhaengenden
-  Paritaetsdurchlauf am Stueck hat er bewusst zurueckgestellt (meldet sich, falls noch etwas
-  auffaellt). Damit steht die komplette gefuehrte Durchfuehrung fuer Kraft und Skill inkl.
-  Beenden/Speichern, Offline und Wake-Lock.
-- **Naechster Schritt: Phase 12 (Export + Voll-Restore).** Konzept abgestimmt (2026-06-23):
-  Die V1-Migration wird NICHT mehr gebraucht (Daten laengst in V2) und fliegt raus; es bleibt
-  nur Export + schlankes Voll-Restore (kein Teil-Merge, kein „Abgleich alt/neu"). Reihenfolge:
-  Migration entfernen -> Export -> Voll-Restore. Details in der Phase-12-Sektion. Konzept ist
-  durch, der naechste Chat baut direkt.
+- **Phase 12 Schritt 1 (Migration entfernt) gebaut (2026-06-23), live testbar.** Die
+  einmalige V1-Migration ist raus: `<V1Import />` aus der Daten-Sektion der Einstellungen
+  entfernt, dazu die drei Migrationsdateien geloescht (`src/components/V1Import.tsx`,
+  `src/lib/v1import.ts`, `src/lib/__tests__/v1import.test.ts`). Bewusst unberuehrt: der
+  laufende Composition-Import (InBody/BIA) und die Datenstand-Anzeige - beide bleiben.
+  Unter „Daten" steht jetzt nur noch der Datenstand; Export und Voll-Restore kommen in den
+  naechsten beiden Schritten daneben. tsc/build/276 Tests gruen (8 v1import-Tests entfielen).
+- **Naechster Schritt: Phase 12 Schritt 2 (Export).** Kompletter Bestand des Nutzers als ein
+  lesbares JSON (Sessions mit geschachtelten Saetzen im V1-Format, Uebungen, Vorlagen,
+  Journeys, Skill-Fortschritt, Composition, Einstellungen, Inventar), V1-Anreicherung je
+  Arbeitssatz (rir/rpe/scoreLabel) + _scoreScale-Notiz, Datei `kraftschmiede_DATUM.json` +
+  Zwischenablage. Reine Aufbau-Funktion in `src/lib/` + Hook `useExport`. Details in der
+  Phase-12-Sektion. Konzept ist abgestimmt, also direkt bauen.
 
 - **Live-Korrektur Ende-Popup-Optik auf V1-Paritaet (2026-06-23).** Das Sitzungsende-Popup
   (Workout UND Skill) sah anders aus als V1; jetzt 1:1 nach klar-app.css (kl-end-/kl-summary-):
@@ -733,7 +736,7 @@ Ueberschreiben.
       Bleibt - ist kein Migrations-Thema, sondern die Erststart-Befuellung.
 - [x] V1-Migrationsskript (Blob -> normalisierte Zeilen) - hatte seinen Zweck, wird jetzt
       ENTFERNT (siehe naechster Punkt).
-- [ ] **Migration entfernen.** Den Migrations-Import aus den Einstellungen (Sektion „Daten",
+- [x] **Migration entfernen.** Den Migrations-Import aus den Einstellungen (Sektion „Daten",
       `<V1Import />`) herausnehmen samt Komponente `src/components/V1Import.tsx`, Logik
       `src/lib/v1import.ts` und Test `src/lib/__tests__/v1import.test.ts`. NICHT anfassen:
       der laufende Composition-Import (InBody/BIA: BodyImportCard + useImportComposition) -
