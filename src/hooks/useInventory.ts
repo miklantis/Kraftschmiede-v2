@@ -43,3 +43,65 @@ export function useOwnedEquipmentKeys() {
     },
   });
 }
+
+// Stangen (Langhantel-Typen), nach position sortiert. id+name+weight fuer Liste
+// und Loeschen; is_default markiert die Standardstange.
+export interface BarItem {
+  id: string;
+  name: string;
+  weight: number;
+  is_default: boolean;
+}
+export function useBars() {
+  const userId = useUserId();
+  return useQuery({
+    queryKey: ["bars", userId],
+    enabled: userId !== null,
+    queryFn: async (): Promise<BarItem[]> => {
+      const { data, error } = await supabase
+        .from("inventory_bars")
+        .select("id, name, weight, is_default")
+        .order("position", { ascending: true });
+      if (error) throw new Error(error.message);
+      return (data ?? []) as BarItem[];
+    },
+  });
+}
+
+// Verfuegbare Scheiben-Typen (Gewicht), aufsteigend sortiert. id zum Loeschen.
+export interface WeightItem {
+  id: string;
+  weight: number;
+}
+export function usePlates() {
+  const userId = useUserId();
+  return useQuery({
+    queryKey: ["plates", userId],
+    enabled: userId !== null,
+    queryFn: async (): Promise<WeightItem[]> => {
+      const { data, error } = await supabase
+        .from("inventory_plates")
+        .select("id, weight")
+        .order("weight", { ascending: true });
+      if (error) throw new Error(error.message);
+      return (data ?? []) as WeightItem[];
+    },
+  });
+}
+
+// Verfuegbare Kettlebell-Gewichte, aufsteigend sortiert.
+export function useKettlebells() {
+  const userId = useUserId();
+  return useQuery({
+    queryKey: ["kettlebells", userId],
+    enabled: userId !== null,
+    queryFn: async (): Promise<WeightItem[]> => {
+      const { data, error } = await supabase
+        .from("inventory_kettlebells")
+        .select("id, weight")
+        .order("weight", { ascending: true });
+      if (error) throw new Error(error.message);
+      return (data ?? []) as WeightItem[];
+    },
+  });
+}

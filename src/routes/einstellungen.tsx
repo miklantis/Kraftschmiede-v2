@@ -5,9 +5,21 @@ import { AccountCard } from "@/components/settings/AccountCard";
 import { EngineSettings } from "@/components/settings/EngineSettings";
 import { TimerSettings } from "@/components/settings/TimerSettings";
 import { ScoreReference } from "@/components/settings/ScoreReference";
+import { InventoryBars } from "@/components/settings/InventoryBars";
+import {
+  InventoryPlates,
+  InventoryKettlebells,
+} from "@/components/settings/InventoryWeights";
+import { InventoryEquipment } from "@/components/settings/InventoryEquipment";
 import { Datenstand } from "@/components/Datenstand";
 import { V1Import } from "@/components/V1Import";
 import { useSettings } from "@/hooks/useSettings";
+import {
+  useBars,
+  usePlates,
+  useKettlebells,
+  useEquipment,
+} from "@/hooks/useInventory";
 
 export const Route = createFileRoute("/einstellungen")({
   component: EinstellungenPage,
@@ -15,12 +27,27 @@ export const Route = createFileRoute("/einstellungen")({
 
 // Einstellungen-Seite im iOS-Stil: gruppierte Listen, Beschriftung links,
 // Steuerelement rechts. Oben das Konto-/Verbindungs-Panel, darunter auf dem
-// Desktop ein zweispaltiges Raster der Bereiche (mobil ein Stapel). Inventar
-// (Stangen/Scheiben/Geraete) folgt in Lieferung 2; Export/Import-Politur in
-// Phase 12 - daher steht der V1-Import vorerst unter "Daten".
+// Desktop ein zweispaltiges Raster der Bereiche (mobil ein Stapel). Reihenfolge
+// wie V1: Engine, Timer, Inventar (Stangen/Scheiben/Kettlebells/Geraete), Score,
+// dann vorlaeufig "Daten" (V1-Import wandert in Phase 12). Plate-Loader bekommt
+// keine eigene UI - das Inventar fuettert den schon portierten Engine-Loader.
 function EinstellungenPage(): React.ReactElement {
   const settingsQuery = useSettings();
   const settings = settingsQuery.data ?? null;
+  const unit = settings?.unit ?? "kg";
+
+  const bars = useBars().data ?? [];
+  const plates = usePlates().data ?? [];
+  const kettlebells = useKettlebells().data ?? [];
+  const equipment = useEquipment().data ?? [];
+
+  const placeholder = (
+    <p className="text-sm text-muted-foreground">
+      {settingsQuery.isError
+        ? "Einstellungen konnten nicht geladen werden."
+        : "Wird geladen …"}
+    </p>
+  );
 
   return (
     <div>
@@ -31,28 +58,30 @@ function EinstellungenPage(): React.ReactElement {
 
         <div className="grid grid-cols-1 items-start gap-7 min-[960px]:grid-cols-2 min-[960px]:gap-x-[26px]">
           <Section eyebrow="Engine & Einheiten">
-            {settings ? (
-              <EngineSettings settings={settings} />
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                {settingsQuery.isError
-                  ? "Einstellungen konnten nicht geladen werden."
-                  : "Wird geladen …"}
-              </p>
-            )}
+            {settings ? <EngineSettings settings={settings} /> : placeholder}
           </Section>
 
           <Section eyebrow="Pausen-Timer">
-            {settings ? (
-              <TimerSettings settings={settings} />
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                {settingsQuery.isError
-                  ? "Einstellungen konnten nicht geladen werden."
-                  : "Wird geladen …"}
-              </p>
-            )}
+            {settings ? <TimerSettings settings={settings} /> : placeholder}
           </Section>
+
+          <Section eyebrow="Inventar · Stangen">
+            <InventoryBars bars={bars} unit={unit} />
+          </Section>
+
+          <Section eyebrow="Inventar · Scheiben · pro Seite (kg)">
+            <InventoryPlates plates={plates} />
+          </Section>
+
+          <Section eyebrow="Inventar · Kettlebells · kg">
+            <InventoryKettlebells kettlebells={kettlebells} />
+          </Section>
+
+          {equipment.length > 0 && (
+            <Section eyebrow="Inventar · Geräte (Skills)">
+              <InventoryEquipment equipment={equipment} />
+            </Section>
+          )}
 
           <Section eyebrow="Score ↔ RIR ↔ RPE">
             <ScoreReference />

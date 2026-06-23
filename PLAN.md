@@ -17,13 +17,24 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Naechste Sitzung (Einstieg):** **Phase 10 Lieferung 1 (Einstellungen-Grundgeruest) live
-  abnehmen, dann Lieferung 2 (Inventar) bauen.** Kopf/Engine/Timer/Score stehen und sind live
-  testbar (siehe unten). Offen: Inventar (Stangen/Scheiben/Kettlebells/Geraete als Chip-Editor +
-  Schreib-Hooks). Plate-Loader/Ladbarkeit bekommt KEINE eigene UI (V1-Paritaet) – der Haken wird
-  mit dem Inventar gesetzt, da dieses den schon portierten Engine-Plate-Loader fuettert.
-  Nebenher: der Flash-Fix der Muskelkater-Figur (Phase 9) ist noch nicht gegengecheckt –
-  bei Gelegenheit bestaetigen.
+- **Naechste Sitzung (Einstieg):** **Phase 10 als Ganzes live abnehmen.** Beide Lieferungen
+  stehen (Grundgeruest live freigegeben; Inventar gebaut, siehe unten). Inventar live pruefen
+  (Stange per Preset anlegen/loeschen, Scheiben/Kettlebells als Chips hinzufuegen/entfernen,
+  Geraete-Schalter), dann Haken "Live getestet" bei Phase 10 setzen und zu **Phase 11
+  (Live-Session)** uebergehen – der grosse, heikle Brocken, beginnt wieder mit Konzeptabstimmung.
+  Nebenher offen: Flash-Fix der Muskelkater-Figur (Phase 9) gegenchecken.
+- **Phase 10 Lieferung 2 (Inventar) gebaut (2026-06-23), live testbar.** Die Einstellungen-Seite
+  hat jetzt die vier Inventar-Bereiche wie V1, eingereiht ins zweispaltige Raster: Stangen (Liste
+  Name + Gewicht + Loeschen, Preset-Knoepfe Standard/Kurz/Olympia/SZ-Curl/Frauen zum Hinzufuegen;
+  neue Stangen ohne key), Scheiben (Chips "pro Seite, kg", Standardwerte 0,5..25 zum Hinzufuegen),
+  Kettlebells (Chips, 4..32) und Geraete (Skills) als Schalter (nur sichtbar, wenn Equipment da
+  ist). Neu und domaenenfrei: das Chip-Editor-Primitive (components/ui/chip-editor.tsx, loeschbare
+  Chips + "+ Option"-Knoepfe). Lese-Hooks useBars/usePlates/useKettlebells in useInventory ergaenzt
+  (Scheiben/Kettlebells nach Gewicht sortiert); ein gebuendelter Schreib-Hook useInventoryActions
+  (addBar/deleteBar/addPlate/deletePlate/addKettlebell/deleteKettlebell/toggleEquipment, eine
+  Mutation, laedt je Aktion die passende Liste neu; Equipment-Toggle laedt zusaetzlich
+  ownedEquipment fuer das Skill-Tor). Plate-Loader bleibt bewusst ohne eigene UI (V1-Paritaet);
+  das Inventar fuettert den schon portierten Engine-Loader. tsc/build/231 Tests gruen.
 - **Phase 10 Lieferung 1 (Einstellungen-Grundgeruest) gebaut (2026-06-23), live testbar.**
   Konzept abgestimmt: iOS-Einstellungen-Anmutung (gruppierte Listen, Label links, Wert/Schalter
   rechts), Desktop zweispaltig, Inhalt 1:1 wie V1. Die Seite ersetzt das provisorische Platzhalter-
@@ -496,9 +507,9 @@ DB-Tabelle exercise_muscles. Charts ueber ChartCanvas/D3 (Phase 5).
 
 - [x] Konzept abgestimmt (iOS-Einstellungen-Anmutung, gruppierte Listen, Desktop zweispaltig,
       Inhalt 1:1 wie V1; Bau in zwei Lieferungen: Grundgeruest -> Inventar)
-- [ ] Inventar (Stangen, Scheiben, Equipment)
-- [ ] Plate-Loader / Ladbarkeitspruefung (keine eigene UI – V1-Paritaet; ueber Inventar abgedeckt,
-      das den portierten Engine-Plate-Loader fuettert; Haken zusammen mit Inventar setzen)
+- [x] Inventar (Stangen, Scheiben, Equipment)
+- [x] Plate-Loader / Ladbarkeitspruefung (keine eigene UI – V1-Paritaet; ueber Inventar abgedeckt,
+      das den portierten Engine-Plate-Loader fuettert)
 - [x] Settings (Frequenzziel, Gewichtsschritt, 1RM-Formel, Timer)
 - [x] Sync-/Konto-Panel
 - [ ] Live getestet
