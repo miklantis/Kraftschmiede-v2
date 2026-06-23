@@ -73,13 +73,20 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   ist jetzt eine Union (WorkoutSession | SkillSession); Store, Start-/Ende-Popup und Panel
   verzweigen nach kind. useSkills additiv um Uebungsname + Tempo ergaenzt. tsc/build/283
   Tests gruen (12 neue: 5 skillLiveBuild, 7 skillFinish).
-- **Naechste Sitzung (Einstieg):** **Phase 11 Lieferung 5 live testen und freigeben.** Pruefen:
-  Skill auf der Trainingsseite starten, Werte/Stoppuhr (5s-Vorlauf, Ziel-Piep), abhaken +
-  Satzpause, Beenden -> Verlauf (Uebungs-Detailseite zeigt die Skill-Saetze) und Fortschritt
-  (Konsekutiv-Zaehler/Phasenaufstieg/gemeistert auf der Skills-Seite). Danach **L6 (Wake-Lock)**
-  - Entscheidung weglassen vs. mitnehmen (V1 hat KEINEN), dann der Paritaetsdurchlauf Live gegen
-  V1 + Abschluss-Test. Mit L1-L5 steht die Live-Session funktional; offen sind nur noch
-  L6 + Paritaetsdurchlauf.
+- **Phase 11 Lieferung 5 (Skill-Live) live freigegeben (2026-06-23).** Nach den Optik-
+  Korrekturen (Ende-Popup Workout+Skill 1:1 auf V1: gruener Uhr-Chip im Kopf, weisse Karten,
+  graue/gruene Chips, gleicher Hinweistext, keine Meta-Zeile) und dem iOS-Fix (RIR + Zahlen
+  per text-align-last und fester Feldhoehe auf einer Linie) hat Kadir L5 abgenommen. Damit
+  stehen L1-L5 der Live-Session: gefuehrte Skill-Einheit (Start-Popup, Werte/Stoppuhr mit
+  5s-Vorlauf, Abhaken + Satzpause), Beenden mit Konsekutiv-Fortschreibung, Schreiben in den
+  Verlauf (Uebungs-Detailseite zeigt die Skill-Saetze) - alles offline ueber pausierbare
+  Mutation. Auch der Cache-Buster steht auf v2 (alte Skill-Definitionen ohne Name/Tempo werden
+  beim Laden verworfen).
+- **Naechste Sitzung (Einstieg):** **Phase 11 Lieferung 6 (Wake-Lock)** - zuerst die
+  Entscheidung weglassen vs. mitnehmen treffen (V1 hat KEINEN Wake-Lock; bei Aufnahme als
+  bewusste Erweiterung ueber V1 hinaus kurz mit Kadir abstimmen), dann ggf. bauen. Danach der
+  **Paritaetsdurchlauf Live gegen V1 + Abschluss-Test** (L1-L6 am Stueck gegen V1 pruefen),
+  dann ist Phase 11 fertig. Die Live-Session ist mit L1-L5 funktional vollstaendig.
 - **L4 (Beenden + Speichern) bleibt vorgemerkt** (nicht starten vor L3-Freigabe): erledigte
   Saetze normalisiert in den Verlauf schreiben (echter Unterschied Speichern/Verwerfen),
   volles Offline-Zusammenspiel. Erst Konzept gegen V1 (app.js finishSession: nur abgehakte
@@ -663,8 +670,9 @@ Fortschritt wird hier je Lieferung gefuehrt:
       Erledigte Saetze normalisiert in den Verlauf
       schreiben (echter Unterschied Speichern/Verwerfen); volles Offline-Zusammenspiel
       (Aufzeichnen ohne Netz, spaeter Sync).
-- [ ] **L5 – Skill-Live.** *(gebaut 2026-06-23, wartet auf Live-Test/Freigabe)* Gefuehrte
-      Skill-Einheit (Stoppuhr/Fortschritt); Skill-Start auf der Trainingsseite verdrahtet.
+- [x] **L5 – Skill-Live.** *(live freigegeben 2026-06-23)* Gefuehrte Skill-Einheit
+      (Start-Popup, Werte/Stoppuhr mit 5s-Vorlauf, Abhaken + Satzpause, Beenden mit
+      Konsekutiv-Fortschreibung); Skill-Start auf der Trainingsseite verdrahtet.
 - [ ] **L6 – Wake-Lock.** Entscheidung weglassen vs. mitnehmen faellt erst hier
       (V1 hat KEINEN Wake-Lock).
 - [ ] Paritaetsdurchlauf Live gegen V1 + Abschluss-Test
@@ -692,6 +700,17 @@ Fortschritt wird hier je Lieferung gefuehrt:
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-23 - Phase 11 Lieferung 5 (Skill-Live) live getestet und FREIGEGEBEN. Gefuehrte
+  Skill-Einheit gegen V1: Start aus der Trainingsseite (Start-Popup mit Ziel-Vorschau),
+  je Phasen-Uebung eine Karte (Satz/Ziel/Ergebnis/Haken), Haltezeit ueber die Stoppuhr
+  (5s-Vorlauf rot, Start-/Ziel-Signal), Abhaken + Satzpause, Beenden wertet aus
+  (uebersprungen/gemeistert/verfehlt) und schreibt Konsekutiv-Logik + Verlauf fort
+  (Uebungs-Detailseite zeigt die Skill-Saetze). Offline ueber eine zweite pausierbare
+  Mutation. Nach dem Bau drei Korrekturen: Cache-Buster v2 (alte Skill-Definitionen ohne
+  Name/Tempo verwerfen), Ende-Popup-Optik (Workout+Skill) 1:1 auf V1, iOS-Fix fuer RIR +
+  Zahlen auf einer Linie (text-align-last + feste Feldhoehe). Damit stehen L1-L5; offen sind
+  nur noch L6 (Wake-Lock) + der Paritaetsdurchlauf.
 
 - 2026-06-23 - Phase 11 Lieferung 4 (Beenden + Speichern) live getestet und FREIGEGEBEN.
   Speichern (nur abgehakte Saetze in den Verlauf, Katalog-Fortschreibung, eingefrorene
