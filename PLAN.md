@@ -17,10 +17,12 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Naechste Sitzung (Einstieg):** **Phase 8 als Ganzes live abnehmen.** Alle Bausteine der
-  Uebungs-Phase stehen jetzt (Liste, Detailseite mit Statistik/Verlauf/Diagramm, MuscleMap,
-  "Uebung anpassen", Anheften, Skill-Anbindung). Danach Haken "Live getestet" setzen und zu
-  Phase 9 (Koerper) uebergehen – dort beginnt es wieder mit Konzeptabstimmung.
+- **Naechste Sitzung (Einstieg):** **Phase 9 (Koerper) – Konzept abstimmen.** Phase 8 ist
+  komplett abgeschlossen und live freigegeben. Erst Funktionsschnitt gegen V1 besprechen
+  (Body-Log, InBody-Composition, Verlaufscharts), dann bauen. Noch kein Code geschrieben.
+- **Phase 8 abgeschlossen und live freigegeben (2026-06-23).** Gesamte Uebungs-Phase
+  abgenommen: Liste, Detailseite (Statistik/Verlauf/Diagramm mit Metrik-Umschalter),
+  MuscleMap, "Uebung anpassen", Anheften und Skill-Verlauf-Anbindung. Alle Haken gesetzt.
 - **Skill-Uebungsverlauf-Anbindung gebaut (2026-06-23), live testbar.** Skill-Saetze (z. B.
   Dead Hang, Negative/Strict Pull-Up) wurden ohne Katalogbezug abgelegt (exercise_id null)
   und fehlten daher im Uebungsverlauf. Sie werden jetzt – 1:1 wie V1 (app.js exerciseHistory)
@@ -66,8 +68,8 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   (genau die drei Felder, laedt den Katalog neu), Hook useActivePhaseRepBand (Repband der
   laufenden Phase ueber journeyPlacement) und in der Engine die reinen Helfer
   repTargetForFocus + phaseRepBand (aus V1 portiert, mit Tests). tsc/build/195 Tests gruen.
-- **Naechster Schritt:** Phase 8 als Ganzes live abnehmen (Liste, Detail, Diagramm, MuscleMap,
-  Anpassen, Anheften, Skill-Anbindung), dann Phase 9 (Koerper) mit Konzeptabstimmung beginnen.
+- **Naechster Schritt:** Phase 9 (Koerper) – Konzept gegen V1 abstimmen (Body-Log,
+  InBody-Composition, Verlaufscharts), dann erst bauen.
 - **Phase 8 Schritt 4 (Generische MuscleMap) gebaut, live getestet (mit Korrekturen unten).**
   Auf der Uebungs-Detailseite steht zwischen Diagramm und Verlauf eine
   Karte "Beanspruchte Muskeln" mit beiden Figuren (vorne+hinten). Neu: das generische
@@ -420,7 +422,9 @@ DB-Tabelle exercise_muscles. Charts ueber ChartCanvas/D3 (Phase 5).
       im Kopf der Detail-Chartkarte. Speicherung geraete-lokal (localStorage), getrennt vom
       Datenbestand, nicht synchronisiert/exportiert (V1-Verhalten). Kein Sortieren/Entfernen
       in der Sektion (Verwaltung ueber den Umschalter), V1-Paritaet.
-- [ ] Live getestet
+- [x] Live getestet und freigegeben (2026-06-23). Gesamte Uebungs-Phase abgenommen:
+      Liste, Detailseite (Statistik/Verlauf/Diagramm mit Metrik-Umschalter), MuscleMap,
+      "Uebung anpassen", Anheften und Skill-Verlauf-Anbindung. Phase 8 abgeschlossen.
 
 ## Phase 9 – Koerper
 
