@@ -26,17 +26,18 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   die Haken sind rund (offen grauer Ring, aktiv gruener Ring, erledigt gruen gefuellt); "+ Satz"
   gruen, "- Satz" dezent als Textlinks; Scheiben-Knopf als Zielscheiben-Symbol. tsc/build/265
   Tests gruen.
-- **Naechste Sitzung (Einstieg):** **Phase 11 Lieferung 3 ist gebaut, aber NOCH NICHT
-  freigegeben.** L3 (gefuehrter Ablauf) funktioniert und wurde optisch in mehreren Live-
-  Korrekturen an V1 angenaehert (s. u.), Kadir testet aber weiter und gibt weiterhin
-  visuelles Feedback im Detail-Vergleich gegen V1. Naechste Sitzung also: **weiter L3
-  visuell feinjustieren gegen V1** (Kadir bringt konkrete Punkte mit), dann Freigabe.
-  Erst danach L4. NICHT mit L4 beginnen, solange L3 nicht ausdruecklich freigegeben ist.
-  Stand der bisherigen Optik-Anpassungen: Eingaben ohne sichtbaren Kasten (nur Fokus
-  dezent), erledigte Saetze leicht gruen, aktiver Satz gruener 2px-Rahmen, runde Haken,
-  Scheiben-Chips als V1-Pillen (aktiv gruen), Karten-Titel 18px/bold, Spaltenkoepfe
-  zentriert ueber den Werten, Stange/Scheiben-Knopf gleich hoch + mittig im Kopf,
-  +/- Satz mit mehr Abstand. Offene/weitere Feinheiten kommen per Live-Feedback.
+- **Phase 11 Lieferung 3 (Gefuehrter Ablauf) live freigegeben (2026-06-23).** Nach den
+  Optik-Korrekturen gegen V1 (Eingaben ohne sichtbaren Kasten, erledigte Saetze leicht gruen,
+  aktiver Satz gruener 2px-Rahmen, runde Haken, Scheiben als V1-Pillen) hat Kadir L3 design-
+  und funktionstechnisch abgenommen. Damit stehen L1-L3 der Live-Session.
+- **Naechste Sitzung (Einstieg):** **Phase 11 Lieferung 4 (Beenden + Speichern)** - erst das
+  Konzept gegen V1 abstimmen, dann bauen. Inhalt: nur abgehakte Saetze normalisiert in den
+  Verlauf schreiben (echter Unterschied Speichern/Verwerfen), est1RM/Score je Satz, Body-
+  Snapshot; volles Offline-Zusammenspiel (Aufzeichnen ohne Netz, spaeter Sync). Quelle: V1
+  app.js finishSession. Der Skill-Pfad bleibt bewusst L5: die aktiven Skills auf der Trainings-
+  seite bekommen dort ihre eigene gefuehrte Einheit (Stoppuhr/Fortschritt, Werte je Satz mit
+  Ziel + geschafft/nicht), der Skill-Start-Knopf wird in L5 verdrahtet (zeigt bis dahin den
+  Platzhalter-Hinweis „folgt in Lieferung fuenf").
 - **L4 (Beenden + Speichern) bleibt vorgemerkt** (nicht starten vor L3-Freigabe): erledigte
   Saetze normalisiert in den Verlauf schreiben (echter Unterschied Speichern/Verwerfen),
   volles Offline-Zusammenspiel. Erst Konzept gegen V1 (app.js finishSession: nur abgehakte
@@ -612,8 +613,7 @@ Fortschritt wird hier je Lieferung gefuehrt:
 - [x] **L2 – Sitzungsaufbau aus Vorlage + Coach.** Echte Uebungs-/Satzkarten: Arbeits-
       und Aufwaermsaetze, Satz-Vorschlaege, Plate-Loader. Ersetzt den L1-Platzhalter
       `LiveSession.exercisesPreview` durch vollwertige Eintraege (additiv).
-- [x] **L3 – Gefuehrter Ablauf.** *(gebaut, NOCH NICHT freigegeben - visuelle Feinabstimmung
-      gegen V1 laeuft, s. „Aktueller Stand")* Saetze abhaken (Aufwaermen, Arbeitssaetze, allg.
+- [x] **L3 – Gefuehrter Ablauf.** *(live freigegeben 2026-06-23)* Saetze abhaken (Aufwaermen, Arbeitssaetze, allg.
       Aufwaermen), Coach beim Durchfuehren (Progression), Pausen-/Rest-Timer (Satz/
       Uebung getrennt, Auto-Start) + Rest-Bar, Audio/Vibration im Ablauf, fokus-
       erhaltende Eingaben (in React ueber Komponenten-State statt V1-DOM-Patch).
@@ -649,6 +649,14 @@ Fortschritt wird hier je Lieferung gefuehrt:
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-23 - Phase 11 Lieferung 3 (Gefuehrter Ablauf) live getestet und FREIGEGEBEN. Nach
+  mehreren Optik-Runden gegen V1 (Satz-Eingaben ohne sichtbaren Kasten, erledigte Saetze leicht
+  gruen, aktiver Satz gruener 2px-Rahmen, runde Haken, Scheiben als V1-Pillen) hat Kadir den
+  gefuehrten Ablauf design- und funktionstechnisch abgenommen. Damit stehen L1-L3 der Live-
+  Session: Huelle/Start-Ende/Toene (L1), Aufbau aus Vorlage + Coach (L2), gefuehrter Ablauf mit
+  Abhaken/Pausen-Timer/editierbaren Werten (L3). Naechste Lieferung: L4 (Beenden + Speichern) -
+  erst Konzept gegen V1. Nur Doku, kein Code.
 
 - 2026-06-23 - Phase 11 Lieferung 3 (Gefuehrter Ablauf) gebaut, wartet auf Live-Test/Freigabe.
   Die Uebungs- und Aufwaermkarten sind interaktiv: Abhaken (allg. Aufwaermen/Aufwaermsaetze/
