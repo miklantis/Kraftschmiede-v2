@@ -20,33 +20,37 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 - **Naechste Sitzung (Einstieg):** Phase 7 (Yoga) **abgeschlossen und freigegeben.** Popup
   und Yoga-Eintrag funktionieren live; das Mobile-Gleiten des Bodenblatts ist behoben (siehe
   Log/Phase 7).
-- **Naechste Sitzung (Einstieg):** Phase 8 (Uebungen inkl. Muscle-Map) **laeuft.** Konzept
-  abgestimmt und freigegeben; gebaut wird in kleinen Schritten in dieser Reihenfolge:
+- **Naechste Sitzung (Einstieg):** Phase 8 (Uebungen inkl. Muscle-Map) **laeuft.** Reihenfolge:
   (1) Vorbereitung SVG + Registry **[erledigt]**, (2) Uebungsliste **[erledigt]**,
-  (3) Detailseite mit Statistik/Chart/Verlauf, (4) generische MuscleMap-Komponente,
-  (5) "Uebung anpassen" als Popup ueber das vorhandene Overlay, (6) Anheften/Dashboard.
-  Naechster Schritt: (3) Detailseite fuellen - die Vollseite uebungen_.$exerciseId steht
-  schon (Kopf mit Zurueck/Name/Badge), jetzt die Statistik-Reihe (1RM/bestes Set/6 Wochen
-  bzw. Ziel/Metrik/Sessions), die Verlaufs-Chartkarte mit Metrik-Umschalter ueber das
-  ChartCanvas/D3-Fundament aus Phase 5, und darunter die Session-Verlaufsliste. Die
-  Muscle-Map (Schritt 4) kommt als eigener Schritt danach. Festgehaltene Entscheidungen:
-  Muscle-Map zeigt auf Handy UND Desktop beide Figuren nebeneinander (kein Front/Back-
-  Umschalter); Uebungs-Beteiligung aus der DB-Tabelle exercise_muscles (per V1-Import
-  befuellt), NICHT aus Seed-Code; "Uebung anpassen" nutzt das Overlay-Primitive aus Phase 7.
-- **Phase 8 Schritt 2 (Uebungsliste) erledigt, live testbar:** Der /uebungen-Tab zeigt jetzt
-  den Katalog statt des Platzhalters - gruppiert in Hauptuebungen/Assistenz/Core/
-  Koerpergewicht/Inaktiv (V1-Reihenfolge, leere Gruppen weg), Mobile gestapelt, Desktop
-  zweispaltig. Jede Zeile: Name, Muskelgruppen als Unterzeile (Fallback Uebungsart), rechts
-  ein Kennwert (1RM/Arbeitsgewicht bzw. Wdh/Haltezeit), Pfeil. Tippen oeffnet die Detailseite
-  (uebungen_.$exerciseId, eigenstaendige Vollseite wie der Journey-Picker; vorerst nur Kopf).
-  Reine Aufbereitung in lib/exercises.ts (groupExercises, exerciseRowMeta, exerciseRowSub) mit
-  9 Tests; Helfer fmtWeight (format.ts) und kindLabel (labels.ts) ergaenzt; View-Hook
-  useExercisesView (Katalog + Einheit). tsc/build/175 Tests gruen.
-- **Phase 8 Schritt 1 (Vorbereitung) erledigt (kein sichtbares Feature):** Master-SVG als
-  src/assets/body-muscles.svg abgelegt (14 Regionen, gebuendelt per ?raw). Reine Region-
-  Registry + Aggregations-Helfer in src/lib/muscles.ts (MUSCLES, MUSCLE_SECTIONS, MUSCLE_LOAD;
-  expand mit Spezifitaet region>group>section, muscleValuesFromRows fuer DB-Zeilen) - 1:1 aus
-  V1. Typ MuscleKategorie im Schema ergaenzt. 12 Unit-Tests.
+  (3) Detailseite: Statistik + Verlaufsliste **[erledigt]** / Verlaufsdiagramm **[offen]**,
+  (4) MuscleMap-Komponente, (5) "Uebung anpassen" als Popup ueber das Overlay,
+  (6) Anheften/Dashboard. Dazu vorgemerkt: den Skill-Uebungsverlauf anbinden (Skill-Saetze
+  werden beim Import mit exercise_id=null abgelegt, daher erscheinen sie noch NICHT im
+  Verlauf der Katalog-Uebung; V1 verknuepft sie zur Laufzeit ueber die Skill-Definition
+  skillId+phase+Index -> exerciseKey -> Katalog-Uebung; das ist als eigener Schritt
+  vorgemerkt). Naechster Schritt: (3) Verlaufsdiagramm - eine Chartkarte mit Metrik-
+  Umschalter (1RM/Top-Gewicht/Wdh/Volumen bzw. Haltezeit/Wdh bei Koerpergewicht) auf dem
+  ChartCanvas/D3-Fundament aus Phase 5 (components/ui/chart.tsx). Die Verlaufsdaten je Metrik
+  liegen schon aufbereitet vor (lib/exerciseHistory.ts). Festgehalten: Muscle-Map immer beide
+  Figuren (Handy + Desktop); "Uebung anpassen" nutzt das Overlay aus Phase 7.
+- **Phase 8 Schritt 3 Teil 1 (Detailseite: Statistik + Verlauf) erledigt, live testbar:**
+  Die Uebungs-Detailseite (uebungen_.$exerciseId) zeigt jetzt echten Inhalt statt des
+  Hinweises: Kopf (Zurueck, Name, Art-Badge, Beschreibung), eine Statistik-Reihe und den
+  Trainingsverlauf als Liste (neueste zuerst: Datum, bester Satz der Einheit, rechts 1RM bzw.
+  Ø-Score). Statistik je Uebungstyp wie V1: Hauptuebungen = geschaetztes 1RM / bestes Set /
+  6-Wochen-Veraenderung (akzentuiert); Koerpergewicht = Ziel / Metrik / Anzahl Sessions.
+  Reine Logik in lib/exerciseHistory.ts (buildExerciseHistory, exBestSet, exSixWeekPct) mit
+  8 Tests; neues generisches StatRow-Primitive (components/ui/stat-row.tsx, spaeter auch
+  Koerper-Seite); View-Hook useExerciseDetail. useSessionsDetailed um Score + getestetes 1RM
+  erweitert (additiv, Verlauf-Feature unberuehrt). tsc/build/183 Tests gruen.
+- **Phase 8 Schritt 2 (Uebungsliste) erledigt, live getestet:** /uebungen zeigt den Katalog
+  gruppiert (Haupt/Assistenz/Core/Koerpergewicht/Inaktiv), Tippen oeffnet das Detail. Nach
+  dem ersten Live-Test auf fliessende Multi-Column umgestellt (V1 ub-grid: column-count 2,
+  break-inside avoid), Desktop zweispaltig ohne Luecke, Mobile einspaltig. Reine Aufbereitung
+  in lib/exercises.ts (9 Tests), Helfer fmtWeight/kindLabel, View-Hook useExercisesView.
+- **Phase 8 Schritt 1 (Vorbereitung) erledigt:** Master-SVG (src/assets/body-muscles.svg, 14
+  Regionen, gebuendelt per ?raw) + Region-Registry/Helfer (src/lib/muscles.ts, 12 Tests) - 1:1
+  aus V1. Typ MuscleKategorie ergaenzt.
 - **Phase:** Phase 7 (Yoga) **abgeschlossen.** Yoga ist bewusst KEIN eigener Tab, sondern
   eine schnell abgehakte Einheit ueber die Zeile im Training-Tab. Neu und wichtig: das
   **generische Overlay-Primitive** (components/ui/overlay.tsx) als Popup-Fundament fuer alle
@@ -318,7 +322,11 @@ DB-Tabelle exercise_muscles. Charts ueber ChartCanvas/D3 (Phase 5).
 - [x] Uebungsliste (gruppiert Haupt/Assistenz/Core/Koerpergewicht/Inaktiv ueber
       Section+List/ListRow; Tippen oeffnet die Detailseite; Detail-Route als eigenstaendige
       Vollseite uebungen_.$exerciseId angelegt, vorerst nur Kopf)
-- [ ] Detailseite
+- [x] Detailseite – Statistik-Reihe + Trainingsverlauf (Liste). Skill-Uebungen ohne
+      Katalogbezug zeigen noch leer (Anbindung ueber Skill-Definition als eigener Schritt)
+- [ ] Detailseite – Verlaufsdiagramm mit Metrik-Umschalter (ChartCanvas/D3 aus Phase 5)
+- [ ] Skill-Uebungsverlauf anbinden (Skill-Saetze ueber die Skill-Definition der
+      Katalog-Uebung zuordnen)
 - [ ] Generische MuscleMap-Komponente (Doku: docs/Muskel-Map.md)
 - [ ] "Uebung anpassen" als Popup ueber das Overlay-Primitive
 - [ ] Anheften/Dashboard

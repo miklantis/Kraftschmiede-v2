@@ -1,12 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
-import { useExercises } from "@/hooks/useExercises";
+import { PageHeader } from "@/components/ui/page-header";
+import { Section } from "@/components/ui/section";
+import { List, ListRow } from "@/components/ui/list";
+import { StatRow } from "@/components/ui/stat-row";
+import { useExerciseDetail } from "@/hooks/useExerciseDetail";
 import { exerciseRowSub } from "@/lib/exercises";
+import { longDateShort } from "@/lib/format";
 
 // Uebungs-Detail. Eigenstaendige Vollseite (entschachtelt mit _), ersetzt die
-// Liste wie in V1 (Detail ist kein Unter-Outlet der Liste). Schritt 2 legt nur
-// den Kopf an (Zurueck, Name, Badge); Statistik, Verlaufschart, Muscle-Map und
-// "Uebung anpassen" folgen in den naechsten Schritten.
+// Liste wie in V1. Schritt 3 zeigt Kopf, Statistik-Reihe und den Trainings-
+// verlauf; Verlaufsdiagramm (Schritt 4) und Muscle-Map (Schritt 5) folgen.
 export const Route = createFileRoute("/uebungen_/$exerciseId")({
   component: ExerciseDetailPage,
 });
@@ -25,9 +29,10 @@ function BackLink(): React.ReactElement {
 
 function ExerciseDetailPage(): React.ReactElement {
   const { exerciseId } = Route.useParams();
-  const exercisesQ = useExercises();
+  const { isLoading, isError, error, exercise, stats, verlauf } =
+    useExerciseDetail(exerciseId);
 
-  if (exercisesQ.isLoading) {
+  if (isLoading) {
     return (
       <div>
         <BackLink />
@@ -36,9 +41,19 @@ function ExerciseDetailPage(): React.ReactElement {
     );
   }
 
-  const ex = (exercisesQ.data ?? []).find((e) => e.id === exerciseId) ?? null;
+  if (isError) {
+    return (
+      <div>
+        <BackLink />
+        <p className="text-sm text-danger">
+          Daten konnten nicht geladen werden
+          {error instanceof Error ? ": " + error.message : "."}
+        </p>
+      </div>
+    );
+  }
 
-  if (!ex) {
+  if (!exercise) {
     return (
       <div>
         <BackLink />
@@ -52,22 +67,44 @@ function ExerciseDetailPage(): React.ReactElement {
   return (
     <div>
       <BackLink />
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <h1 className="text-[28px] font-bold tracking-[-0.4px] text-foreground min-[960px]:text-[34px] min-[960px]:tracking-[-0.5px]">
-          {ex.name}
-        </h1>
+      <PageHeader title={exercise.name} className="mb-3 min-[960px]:mb-4" />
+      <div className="-mt-2 mb-4 flex flex-wrap items-center gap-2">
         <span className="rounded-[20px] bg-muted px-2.5 py-1 text-[13px] font-medium text-muted-foreground">
-          {exerciseRowSub(ex)}
+          {exerciseRowSub(exercise)}
         </span>
       </div>
-      {ex.description && (
-        <p className="mt-3 text-[15px] leading-[1.5] text-muted-foreground">
-          {ex.description}
+      {exercise.description && (
+        <p className="mb-5 text-[15px] leading-[1.5] text-muted-foreground">
+          {exercise.description}
         </p>
       )}
-      <p className="mt-6 text-sm text-muted-foreground">
-        Statistik, Verlaufsdiagramm und Muscle-Map folgen im nächsten Schritt.
-      </p>
+
+      <StatRow cells={stats} className="mb-6" />
+
+      <Section eyebrow="Verlauf">
+        {verlauf.length === 0 ? (
+          <p className="text-[15px] text-muted-foreground">
+            Noch keine absolvierte Session mit dieser Übung.
+          </p>
+        ) : (
+          <List bordered>
+            {verlauf.map((r, i) => (
+              <ListRow
+                key={i}
+                title={longDateShort(r.date)}
+                subtitle={r.line || undefined}
+                trailing={
+                  r.right ? (
+                    <span className="font-mono text-[14px] text-muted-foreground tabular-nums">
+                      {r.right}
+                    </span>
+                  ) : undefined
+                }
+              />
+            ))}
+          </List>
+        )}
+      </Section>
     </div>
   );
 }

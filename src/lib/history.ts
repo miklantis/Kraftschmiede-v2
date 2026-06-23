@@ -19,6 +19,7 @@ export interface HistorySet {
   weight: number | null;
   durationSec: number | null;
   adjusted: boolean;
+  score?: number | null;
 }
 
 export interface HistoryExercise {
@@ -27,6 +28,7 @@ export interface HistoryExercise {
   metric: "reps" | "duration" | null;
   position: number;
   sets: HistorySet[];
+  tested1RM?: number | null;
 }
 
 export interface HistorySessionInput {
