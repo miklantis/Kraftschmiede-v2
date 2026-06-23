@@ -17,6 +17,27 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
+- **Phase 12 ABGESCHLOSSEN (2026-06-24): Voll-Restore gebaut, Voll-Export auf nur-Datei
+  reduziert.** Damit ist die Daten-Sektion der Einstellungen komplett: Datenstand, Export
+  (Sicherung), Wiederherstellen und Coach-Export.
+  - **Voll-Restore.** Neue Karte „Wiederherstellen": einen eigenen V2-Export laden (Datei
+    waehlen ODER JSON einfuegen), „Pruefen" zeigt im Overlay eine Vorschau (Einheiten/Saetze/
+    Journeys/Uebungen) mit Warnhinweis, „Alles ersetzen" tauscht nach Rueckfrage den kompletten
+    Bestand. Kein Anhaengen/Aktualisieren. FK-sicher: erst alle eigenen Zeilen loeschen (Kinder
+    vor Eltern), dann Eltern-vor-Kinder wieder einfuegen; je Zeile user_id auf den aktuellen
+    Nutzer gesetzt, ids/Fremdschluessel bleiben (Beziehungen halten); settings per Upsert; danach
+    alle Queries invalidiert. Lehnt V1-JSON/Fremddateien klar ab (app + schemaVersion v2 als
+    Schranke), verwirft beim Import die abgeleiteten Felder (rir/rpe/scoreLabel, _scoreScale) wie
+    V1 stripDerived. Neu/domaenenfrei: reines lib/restoreData.ts (parseRestore: Zod-Huellenpruefung
+    + Strippen + Entschachteln, getestet), Hook useRestore (destruktiver Schreiber), Komponente
+    DataRestore (Overlay-Rueckfrage).
+  - **Voll-Export nur noch Datei.** Auf Kadirs Wunsch ist der Zwischenablage-Knopf beim
+    Voll-Export raus (Sicherung = Datei). Die Zwischenablage hat jetzt nur der Coach-Export.
+  - tsc/build/296 Tests gruen (5 neue restoreData).
+- **Phase 12 komplett, naechste Phase: Phase 13 (Politur)** - PWA / Service Worker,
+  iOS-Safari-Fixes, Bugfixing, zusammenhaengender Paritaetsdurchlauf gegen V1. Vor Beginn
+  Konzept/Reihenfolge mit Kadir abstimmen.
+
 - **Phase 12 Schritt 4 (Coach-Export) gebaut (2026-06-24), live testbar.** Neben dem
   Voll-Export sitzt in der Daten-Sektion jetzt die Karte „Fuer Coaching": ein schlankes,
   sprechendes JSON rein fuers Gespraech mit dem Coach (nur Zwischenablage, kein Datei-
@@ -33,12 +54,6 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   gemeinsame Sammelabfrage lib/exportSource.ts (Voll- und Coach-Export teilen sie), reines
   lib/coachExport.ts (buildCoachExport, getestet), Hook useCoachExport, Komponente CoachExport;
   useExport auf die gemeinsame Quelle umgestellt. tsc/build/290 Tests gruen (7 neue coachExport).
-- **Naechster Schritt: Phase 12 Schritt 3 (Voll-Restore).** Nimmt einen eigenen V2-Export
-  (NUR V2), zeigt erst eine Vorschau (Anzahl Sessions/Saetze/Journeys), ersetzt nach
-  Rueckfrage den kompletten Bestand (kein Anhaengen/Aktualisieren). Reine, Zod-gepruefte
-  Import-Pruefung in `src/lib/` (parst + validiert, verwirft die abgeleiteten Felder wie V1
-  stripDerived), Hook `useRestore`, Rueckfrage ueber das Overlay-Primitive. Damit waere
-  Phase 12 komplett.
 
 - **Live-Korrektur Ende-Popup-Optik auf V1-Paritaet (2026-06-23).** Das Sitzungsende-Popup
   (Workout UND Skill) sah anders aus als V1; jetzt 1:1 nach klar-app.css (kl-end-/kl-summary-):
@@ -758,10 +773,11 @@ Ueberschreiben.
       Anreicherung je Arbeitssatz (rir/rpe/scoreLabel) + _scoreScale-Notiz, beim Import
       verworfen. Zwei Wege wie V1: Datei `kraftschmiede_DATUM.json` und Zwischenablage.
       Sitzt in den Einstellungen in der Sektion „Daten".
-- [ ] **Voll-Restore (danach).** Nimmt einen eigenen V2-Export (NUR V2, kein V1-JSON),
-      zeigt erst eine Vorschau (Anzahl Sessions/Saetze/Journeys - wie der alte Migrations-
-      Knopf), ersetzt nach Rueckfrage den kompletten Bestand. Kein Anhaengen, kein
-      Aktualisieren. Kein erzwungenes Backup davor (Export liegt direkt daneben).
+- [x] **Voll-Restore (danach).** Nimmt einen eigenen V2-Export (NUR V2, kein V1-JSON),
+      zeigt erst eine Vorschau (Anzahl Sessions/Saetze/Journeys), ersetzt nach Rueckfrage
+      den kompletten Bestand. Kein Anhaengen, kein Aktualisieren. Datei waehlen ODER JSON
+      einfuegen. Hinweis (2026-06-24): Der Voll-Export braucht keinen Zwischenablage-Knopf
+      mehr - nur noch Datei-Download (Sicherung); die Zwischenablage hat nur der Coach-Export.
 - [x] **Coach-Export (schlank, nur Zwischenablage).** Entscheidung (2026-06-24): Spanne =
       letzte X Wochen (Auswahl 8/12/26/Alle, Standard 12). Wichtig war Kadir die volle
       Nachvollziehbarkeit: jede Einheit zeigt Journey, Phase, Woche und (bei Kraft) das
@@ -834,6 +850,14 @@ spaetere Option moeglich, vorerst nicht gebaut.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-24 - Phase 12 (Import/Export) ABGESCHLOSSEN. Voll-Restore gebaut: eigenen
+  V2-Export laden (Datei/Einfuegen) -> Vorschau im Overlay -> nach Rueckfrage kompletten
+  Bestand FK-sicher ersetzen (loeschen Kinder-vor-Eltern, einfuegen Eltern-vor-Kinder,
+  user_id gesetzt, settings per Upsert, danach alle Queries invalidiert); lehnt V1/Fremd-JSON
+  ab, strippt abgeleitete Felder. Reines restoreData.ts (getestet), useRestore, DataRestore.
+  Voll-Export auf nur-Datei reduziert (Zwischenablage nur noch Coach-Export). Damit ist die
+  Daten-Sektion komplett (Datenstand, Export, Wiederherstellen, Coaching). tsc/build/296 gruen.
 
 - 2026-06-24 - Phase 12 Schritt 4 (Coach-Export) GEBAUT. Schlankes, sprechendes JSON rein
   fuers Coaching-Gespraech, nur Zwischenablage, Spanne 8/12/26 Wochen oder Alle (Standard 12).
