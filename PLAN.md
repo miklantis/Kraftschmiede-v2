@@ -36,6 +36,13 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   Import-Pruefung in `src/lib/` (parst + validiert, verwirft die abgeleiteten Felder wie V1
   stripDerived), Hook `useRestore`, Rueckfrage ueber das Overlay-Primitive. Details in der
   Phase-12-Sektion.
+- **Neu geplant: Coach-Export (Phase 12 Schritt 4, Konzeptstand 2026-06-24).** Zweiter,
+  schlanker Export nur fuer das Gespraech mit dem Coach (nur Zwischenablage, kein
+  Wiederherstellen): laesst allen DB-Ballast weg (ids/FKs, Definitions-Kataloge, Inventar,
+  _scoreScale, Satz-Rauschen), behaelt Journey/Phasen, Uebungen sprechend, Einheiten mit
+  kompakten Satz-Strings, Skill-Fortschritt, Body-Trend. Konzeptblock steht in der
+  Phase-12-Sektion. OFFEN vor dem Bauen: Verlaufsspanne (alles vs. letzte ~12 Wochen).
+  Gebaut wird erst nach Kadirs Entscheidung dazu.
 
 - **Live-Korrektur Ende-Popup-Optik auf V1-Paritaet (2026-06-23).** Das Sitzungsende-Popup
   (Workout UND Skill) sah anders aus als V1; jetzt 1:1 nach klar-app.css (kl-end-/kl-summary-):
@@ -759,6 +766,11 @@ Ueberschreiben.
       zeigt erst eine Vorschau (Anzahl Sessions/Saetze/Journeys - wie der alte Migrations-
       Knopf), ersetzt nach Rueckfrage den kompletten Bestand. Kein Anhaengen, kein
       Aktualisieren. Kein erzwungenes Backup davor (Export liegt direkt daneben).
+- [ ] **Coach-Export (schlank, nur Zwischenablage).** Konzeptstand (2026-06-24), offen: die
+      Verlaufsspanne (alles vs. letzte ~12 Wochen). Zweiter Export NUR fuer das Gespraech mit
+      dem Coach (nicht zum Wiederherstellen), darum bewusst „trockenarm": weglassen, was nur
+      die DB braucht, behalten, was ein Coach zum Bewerten braucht. Details im Konzeptblock
+      unten. Eigener Knopf „Fuer Coaching kopieren" neben dem Voll-Export, kein Datei-Download.
 
 **Komponentenschnitt (intern, fuer den frischen Chat):** reine, getestete Export-Aufbau-
 Funktion in `src/lib/` (DOM-frei, baut das JSON aus dem Zustand, analog V1 enrichExport);
@@ -770,6 +782,43 @@ vorhandenen Einstellungs-Bausteine (Section/List/Button/Overlay fuer die Rueckfr
 **Reihenfolge:** Migration entfernen -> Export -> Voll-Restore. Kleine Schritte, jeder
 einzeln live testbar. Konzept ist abgestimmt, also direkt bauen (kein erneutes Abstimmen
 noetig); nur bei Detailfragen kurz ruecksprechen.
+
+### Coach-Export (Schritt 4, Konzeptstand 2026-06-24)
+
+Hintergrund: Kadir hat in V1 den (vollen) JSON-Export genutzt, um mit dem Coach ueber seine
+Journey zu reden (Ideen, Bewertung der Saetze/Uebungen/Workouts/Yoga). Der V2-Voll-Export ist
+dafuer zu gross (Beispiel: 224 KB ggue. 94 KB in V1), weil er fuer das Wiederherstellen alle
+ids/Fremdschluessel, Definitions-Kataloge, Inventar, _scoreScale und je Satz ~20 Felder
+mitfuehrt. Darum ein ZWEITER, schlanker Export rein fuer das Gespraech - getrennt vom
+Voll-Export, nur Zwischenablage.
+
+Leitlinie: weglassen, was nur die Maschine zum Zurueckspielen braucht; behalten, was ein
+Coach zum Bewerten braucht. Format bleibt JSON (kompakt, sprechend), kein Datei-Download.
+
+Inhalt (schlank):
+- Kopf: Essenz der Einstellungen (Einheit, Wochen-Frequenzziel, 1RM-Formel).
+- Aktive Journey mit Phasen (Name, Fokus, Wochen, Rep-Band) + aktuelle Woche.
+- Uebungen sprechend: Name, Rep-Band, Arbeitsgewicht, geschaetztes 1RM (keine ids/
+  Muskelkarten/Recovery/position).
+- Einheiten chronologisch: Datum, Typ (Kraft/Yoga/Skill); je Uebung Name + Saetze kompakt
+  als ein String (z. B. „5×20 @ S1", Haltezeit „30 s", Ziel nur wenn abgewichen); bei Skill
+  Phase/Ergebnis; bei Yoga die Minuten; kurze Notiz/Befinden.
+- Skill-Fortschritt: Name, aktuelle Phase, gemeistert ja/nein.
+- Body-Trend: Befinden (Readiness/Kater) und Messungen (Gewicht/Fett/Muskel) als knappe Reihen.
+
+Weggelassen: alle UUIDs/FKs/user_id, Definitions-Kataloge (Journey-Vorlagen, Skill-
+Definitionen, Muskel-Zuordnungen, Vorlagen-Details), Inventar-Rohzeilen, _scoreScale, die
+target_/adjusted/done/met-Felder, Zeitstempel, position.
+
+Komponentenschnitt: reine, getestete Aufbau-Funktion in `src/lib/` (analog buildExport, baut
+das schlanke Objekt aus denselben rohen Zeilen; verdichtet Saetze zu Strings); Hook
+wiederverwendet die Sammel-Abfrage aus useExport (oder ein gemeinsamer Daten-Hook); ein
+zweiter Knopf in der Daten-Karte (DataExport oder eigene kleine Komponente), nutzt den schon
+vorhandenen copyText-Baustein.
+
+Offen (vor dem Bauen klaeren): Verlaufsspanne - kompletter Verlauf oder nur die letzten
+~12 Wochen / eine waehlbare Spanne, damit es bei vielen Einheiten spaeter nicht wieder gross
+wird.
 
 ## Phase 13 – Politur
 
@@ -783,6 +832,12 @@ noetig); nur bei Detailfragen kurz ruecksprechen.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-24 - Coach-Export als Phase 12 Schritt 4 in den Plan aufgenommen (nur Doku,
+  Konzeptstand). Zweiter, schlanker Export rein fuers Coaching-Gespraech (nur Zwischenablage),
+  getrennt vom Voll-Export, weil der zu gross ist (224 KB). Inhalt sprechend statt DB-treu;
+  Konzept-/Komponentenblock in der Phase-12-Sektion. Offen: Verlaufsspanne (alles vs. ~12
+  Wochen) - Kadir entscheidet vor dem Bauen.
 
 - 2026-06-23 - Phase 12 Konzept abgestimmt (nur Doku, kein Code). Entscheidung: V1-Migration
   wird entfernt (Daten laengst in V2), Phase 12 = Export + schlankes Voll-Restore. Kein
