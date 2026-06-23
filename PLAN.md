@@ -17,8 +17,18 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Naechste Sitzung (Einstieg):** Phase 8 Schritt 5 ("Uebung anpassen") **gebaut, live zu
-  testen.** Auf der Uebungs-Detailseite gibt es unten den Knopf "Uebung anpassen" (Stift) -
+- **Naechste Sitzung (Einstieg):** Phase 8 Schritt 6 (Anheften/Dashboard) - **Konzept gegen
+  V1 abgestimmt, wartet auf Sign-off, dann bauen.** V1-Befund: das "Dashboard" ist die
+  "Angeheftet"-Sektion ganz oben auf /uebungen (exPinnedHTML); Anheften-Umschalter sitzt im
+  Chartkarten-Kopf der Detailseite (data-action pin-chart, je Uebung+Metrik). Speicherung in
+  V1 bewusst geraete-lokal, NICHT in der DB, NICHT im Export, NICHT synchronisiert
+  (localStorage-Key fs_dash_v013). Keine Sortierung/kein Entfernen in der Sektion - verwaltet
+  wird ueber den Umschalter auf der Detailseite (Drag&Drop-Code in V1 betrifft nur das
+  ungenutzte alte dashboardHTML, nicht die Live-Sektion). Fuer V2 -> kleiner geraete-lokaler
+  Store (localStorage), Eintrag {exerciseId, metric}, Hook usePinnedCharts; Sektion oben auf
+  /uebungen ueber Section + bestehende ExerciseChart-Karte, Umschalter in ExerciseChartCard.
+- **Schritt 5 ("Uebung anpassen") live getestet und freigegeben (2026-06-23).** Auf der
+  Uebungs-Detailseite gibt es unten den Knopf "Uebung anpassen" (Stift) -
   Desktop unten in der rechten Spalte, mobil ganz am Ende (order-5, nach dem Verlauf), wie
   V1. Er oeffnet ein Popup ueber das Overlay-Primitive aus Phase 7 (Desktop zentriert, mobil
   Bodenblatt) mit drei Steppern: Arbeitsgewicht (nur Gewichtsuebungen, Schrittweite aus den
@@ -32,8 +42,8 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   (genau die drei Felder, laedt den Katalog neu), Hook useActivePhaseRepBand (Repband der
   laufenden Phase ueber journeyPlacement) und in der Engine die reinen Helfer
   repTargetForFocus + phaseRepBand (aus V1 portiert, mit Tests). tsc/build/195 Tests gruen.
-- **Naechster Schritt: (6) Anheften/Dashboard** (auch der Anheften-Knopf in der Chartkarte),
-  plus die Skill-Uebungsverlauf-Anbindung (Skill-Saetze mit exercise_id=null ueber die Skill-
+- **Naechster Schritt: (6) Anheften/Dashboard** (auch der Anheften-Knopf in der Chartkarte) -
+  Konzept liegt vor, Sign-off ausstehend; plus die Skill-Uebungsverlauf-Anbindung (Skill-Saetze mit exercise_id=null ueber die Skill-
   Definition skillId+phase+Index -> exerciseKey -> Katalog-Uebung verknuepfen; eigener Schritt).
 - **Phase 8 Schritt 4 (Generische MuscleMap) gebaut, live getestet (mit Korrekturen unten).**
   Auf der Uebungs-Detailseite steht zwischen Diagramm und Verlauf eine
@@ -444,6 +454,7 @@ getrennt: was hier liegt, gehoert nicht auf den Trainings-Screen.
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
 
+- 2026-06-23 - Phase 8 Schritt 5 live getestet und freigegeben ("Uebung anpassen").
 - 2026-06-23 - Phase 8 Schritt 5 abgeschlossen ("Uebung anpassen"), wartet auf Live-Test.
   Die Uebungs-Detailseite bekommt unten den Knopf "Uebung anpassen" (Stift), der ein Popup
   ueber das Overlay-Primitive aus Phase 7 oeffnet - 1:1 wie V1 (app.js buildExEditInner/
