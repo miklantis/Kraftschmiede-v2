@@ -24,6 +24,12 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   Auto-Start) + Rest-Bar, Audio/Vibration im Ablauf, fokus-erhaltende Eingaben (Wdh/kg/RIR),
   +/- Satz, Stangenwechsel, Scheiben-Schalter. Erst Konzept gegen V1 (live.js: toggleSetDone/
   onSetCompleted/startRest/refreshActive + Inline-Updates), dann bauen. Wake-Lock bleibt L6.
+- **Live-Korrektur Start-Popup auf V1-Paritaet (2026-06-23).** Das Start-Popup zeigte nur die
+  Uebungsnamen; jetzt wie V1 (live.js buildStartInner): Untertitel „Vorschau deiner Saetze",
+  je Uebung eine weisse Karte mit „N × Satz" plus den Satz-Chips (Wdh × kg, deutsches Komma),
+  und bei heute noch nicht erfasstem Koerperzustand das amber Hinweis-Banner („Eintragen" ->
+  Koerper-Seite, verwirft die Vormerkung). StartModal liest dafuer den letzten Body-Eintrag
+  (Vergleich Datum == heute) und nutzt useNavigate. tsc/build/254 Tests gruen.
 - **Phase 11 Lieferung 2 (Sitzungsaufbau aus Vorlage + Coach) gebaut (2026-06-23), live
   testbar.** Beim Start baut der Coach die Einheit einmal vor (1:1 wie V1 buildLive); das
   Panel zeigt jetzt die echten Karten statt des Platzhalters: oben das allgemeine Aufwaermen
@@ -598,6 +604,15 @@ Fortschritt wird hier je Lieferung gefuehrt:
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-23 - Start-Popup auf V1-Paritaet gebracht (Live-Korrektur zu L2). Vorher nur die
+  Uebungsnamen; jetzt wie V1 (live.js buildStartInner/startPreviewData): Untertitel „Vorschau
+  deiner Saetze", je Uebung eine Karte mit „N × Satz" und den Satz-Chips (Wdh × kg, deutsches
+  Komma), sowie - nur wenn heute noch kein Koerperzustand erfasst ist - das amber Banner
+  „Koerperzustand noch nicht erfasst / Kurz eintragen -> bessere Gewichtsvorschlaege" mit
+  „Eintragen", das die Vormerkung verwirft und zur Koerper-Seite navigiert. StartModal liest
+  den letzten Body-Eintrag (useLatestBody, Datum == heute) und nutzt useNavigate. Reine UI-
+  Verdrahtung auf den schon aufgebauten entries; tsc/build/254 Tests gruen.
 
 - 2026-06-23 - Phase 11 Lieferung 2 (Sitzungsaufbau aus Vorlage + Coach) gebaut, wartet auf
   Live-Test. Der L1-Platzhalter im Live-Panel ist durch die echte, vom Coach aufgebaute Einheit
