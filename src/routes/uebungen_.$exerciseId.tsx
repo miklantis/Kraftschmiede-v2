@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
 import { List, ListRow } from "@/components/ui/list";
 import { StatRow } from "@/components/ui/stat-row";
+import { ExerciseChartCard } from "@/components/exercise/ExerciseChartCard";
 import { useExerciseDetail } from "@/hooks/useExerciseDetail";
 import { exerciseRowSub } from "@/lib/exercises";
 import { longDateShort } from "@/lib/format";
@@ -29,8 +30,18 @@ function BackLink(): React.ReactElement {
 
 function ExerciseDetailPage(): React.ReactElement {
   const { exerciseId } = Route.useParams();
-  const { isLoading, isError, error, exercise, stats, verlauf } =
-    useExerciseDetail(exerciseId);
+  const {
+    isLoading,
+    isError,
+    error,
+    exercise,
+    stats,
+    verlauf,
+    chartHistory,
+    metricOptions,
+    defaultMetric,
+    unit,
+  } = useExerciseDetail(exerciseId);
 
   if (isLoading) {
     return (
@@ -80,6 +91,17 @@ function ExerciseDetailPage(): React.ReactElement {
       )}
 
       <StatRow cells={stats} className="mb-6" />
+
+      {metricOptions.length > 0 && (
+        <div className="mb-6">
+          <ExerciseChartCard
+            history={chartHistory}
+            options={metricOptions}
+            defaultMetric={defaultMetric}
+            unit={unit}
+          />
+        </div>
+      )}
 
       <Section eyebrow="Verlauf">
         {verlauf.length === 0 ? (

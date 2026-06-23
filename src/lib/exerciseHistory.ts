@@ -136,3 +136,98 @@ export function exSixWeekPct(h: readonly ExHistoryEntry[]): string | null {
   const pct = (last.est1RM / base.est1RM - 1) * 100;
   return (pct >= 0 ? "+" : "") + Math.round(pct) + "%";
 }
+
+// ---------------------------------------------------------------------------
+// Chart-Metriken (1:1 aus V1 app.js: exMetricOptions, METRIC_LABELS,
+// exerciseChartData). Reine Aufbereitung; das Zeichnen liegt in der Komponente.
+
+import { isoWeekKey } from "@/engine/journey";
+
+// Linien-Metriken (eine Kurve je Einheit). "volume" ist gesondert (Balken).
+export type ExLineMetric = "rm" | "weight" | "reps" | "duration";
+export type ExMetric = ExLineMetric | "volume";
+
+export interface ExMetricOption {
+  key: ExMetric;
+  label: string; // kurzes Chip-Label
+}
+
+// Kartentitel je Metrik (V1 METRIC_LABELS).
+export const EX_METRIC_TITLE: Record<ExMetric, string> = {
+  rm: "1RM-Verlauf",
+  weight: "Arbeitsgewicht (Top-Satz)",
+  reps: "Wiederholungen (Summe Arbeitssätze)",
+  duration: "Haltezeit (Sek., bester Satz)",
+  volume: "Wochenvolumen",
+};
+
+// Waehlbare Metriken je Uebungstyp (V1 exMetricOptions).
+export function exMetricOptions(
+  profile: string,
+  metric: "reps" | "duration" | null,
+): ExMetricOption[] {
+  if (profile === "bodyweight") {
+    if (metric === "duration") return [{ key: "duration", label: "Haltezeit" }];
+    return [
+      { key: "reps", label: "Wdh" },
+      { key: "volume", label: "Volumen" },
+    ];
+  }
+  return [
+    { key: "rm", label: "1RM" },
+    { key: "weight", label: "Top-Gewicht" },
+    { key: "reps", label: "Wdh" },
+    { key: "volume", label: "Volumen" },
+  ];
+}
+
+// Standard-Metrik je Uebungstyp (V1 exDetailParts.metric).
+export function exDefaultMetric(
+  profile: string,
+  metric: "reps" | "duration" | null,
+): ExMetric {
+  if (profile === "bodyweight") return metric === "duration" ? "duration" : "reps";
+  return "rm";
+}
+
+export interface ExLinePoint {
+  y: number;
+  flag: boolean; // Abweichung in dieser Einheit
+}
+
+export interface ExBar {
+  label: string;
+  value: number;
+}
+
+// Linienpunkte je Einheit (aelteste zuerst). Beim 1RM nur Einheiten mit Wert.
+export function exLineSeries(
+  h: readonly ExHistoryEntry[],
+  metric: ExLineMetric,
+): ExLinePoint[] {
+  if (metric === "rm") {
+    return h
+      .filter((x) => x.est1RM != null)
+      .map((x) => ({ y: x.est1RM as number, flag: x.dev }));
+  }
+  const pick =
+    metric === "weight"
+      ? (x: ExHistoryEntry) => x.topW
+      : metric === "reps"
+        ? (x: ExHistoryEntry) => x.reps
+        : (x: ExHistoryEntry) => x.sec || 0;
+  return h.map((x) => ({ y: pick(x), flag: x.dev }));
+}
+
+// Wochenvolumen als Balken (Summe reps*weight je ISO-Woche, chronologisch).
+// Label = letzte drei Zeichen des Wochenschluessels (z. B. "W12"), wie V1.
+export function exVolumeSeries(h: readonly ExHistoryEntry[]): ExBar[] {
+  const byWeek = new Map<string, number>();
+  for (const x of h) {
+    const wk = isoWeekKey(x.date);
+    byWeek.set(wk, (byWeek.get(wk) ?? 0) + x.vol);
+  }
+  return [...byWeek.keys()]
+    .sort()
+    .map((wk) => ({ label: wk.slice(-3), value: byWeek.get(wk) as number }));
+}

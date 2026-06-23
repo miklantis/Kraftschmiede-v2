@@ -29,15 +29,20 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   Umgesetzt: useSessionsDetailed holt zusaetzlich done/failed je Satz; HistorySet traegt
   beide; buildExerciseHistory bekommt einen rmFormula-Parameter und rechnet est1RM ueber
   die Engine; useExerciseDetail reicht settings.rm_formula durch. tsc/build/183 Tests gruen.
-- **Naechster Schritt: (3) Verlaufsdiagramm** - eine Chartkarte mit Metrik-Umschalter
-  (1RM/Top-Gewicht/Wdh/Volumen bzw. Haltezeit/Wdh bei Koerpergewicht) auf dem ChartCanvas/
-  D3-Fundament aus Phase 5 (components/ui/chart.tsx). Die Verlaufsdaten je Metrik liegen
-  schon aufbereitet vor (lib/exerciseHistory.ts). Danach in dieser Reihenfolge: Muscle-Map,
-  "Uebung anpassen" (Popup ueber das Overlay aus Phase 7), Anheften/Dashboard, plus die
-  Skill-Uebungsverlauf-Anbindung (Skill-Saetze werden beim Import mit exercise_id=null
-  abgelegt; V1 verknuepft sie zur Laufzeit ueber die Skill-Definition skillId+phase+Index ->
-  exerciseKey -> Katalog-Uebung; eigener Schritt). Festgehalten: Muscle-Map immer beide
-  Figuren (Handy + Desktop).
+- **Phase 8 Schritt 3 (Detailseite) komplett:** Statistik + Verlaufsliste + Verlaufsdiagramm
+  stehen und sind live testbar. Das Diagramm ist eine Chartkarte zwischen Statistik und
+  Verlaufsliste mit Metrik-Umschalter (Chip-Reihe), die je Uebungstyp die richtigen Metriken
+  anbietet; gebaut auf dem ChartCanvas/D3-Fundament aus Phase 5. Reine Aufbereitung
+  (exMetricOptions/exDefaultMetric/exLineSeries/exVolumeSeries) in lib/exerciseHistory.ts mit
+  Tests; neue Primitives ChipSwitch (components/ui) und der Balken-Helfer topRoundedBarPath
+  im Chart-Fundament.
+- **Naechster Schritt: (4) Generische MuscleMap-Komponente** (Doku docs/Muskel-Map.md), beide
+  Figuren (Handy + Desktop), Beteiligung aus exercise_muscles; Master-SVG + Registry liegen
+  aus Schritt 1 bereit (assets/body-muscles.svg, lib/muscles.ts). Danach: (5) "Uebung
+  anpassen" als Popup ueber das Overlay aus Phase 7, (6) Anheften/Dashboard (auch der
+  Anheften-Knopf in der Chartkarte), plus die Skill-Uebungsverlauf-Anbindung (Skill-Saetze
+  mit exercise_id=null ueber die Skill-Definition skillId+phase+Index -> exerciseKey ->
+  Katalog-Uebung verknuepfen; eigener Schritt).
 - **Phase 8 Schritt 3 Teil 1 (Detailseite: Statistik + Verlauf) erledigt, live testbar:**
   Die Uebungs-Detailseite (uebungen_.$exerciseId) zeigt jetzt echten Inhalt statt des
   Hinweises: Kopf (Zurueck, Name, Art-Badge, Beschreibung), eine Statistik-Reihe und den
@@ -180,6 +185,10 @@ erfinden Abstaende/Groessen nicht neu.** Alle Werte sind aus dem V1-"Klar"-Theme
 - **Schalter (`Switch`):** barrierefreier An/Aus-Schalter (role=switch), gruene Wanne an,
   graue aus. Generisch; nutzbar fuer Skill aktivieren/deaktivieren und spaeter die
   Einstellungen (Equipment, Theme). (Phase 6 gebaut.)
+- **Chip-Umschalter (`ChipSwitch`):** generischer Einfach-Auswahl-Chips (genau einer aktiv);
+  Optik aus V1 (.ub-metric): kleine Buttons, inaktiv dezent grau, aktiv markengruen gefuellt.
+  Anders als `SegmentedControl` (graue Wanne) eine lockere Chip-Reihe. Genutzt fuer den
+  Uebungs-Metrik-Umschalter, spaeter Koerper-Metriken. (Phase 8 gebaut.)
 - **Popup (`Overlay`):** generisches Popup-Fundament fuer ALLE modalen Dialoge (1:1 aus
   dem V1-Verhalten: Yoga-Eintrag, Workout-Start, Sitzungsende, Login teilen alle dieselbe
   Mechanik). Desktop (>=960px) zentriertes Fenster (440px, Radius 22px, weicher Schatten);
@@ -329,7 +338,11 @@ DB-Tabelle exercise_muscles. Charts ueber ChartCanvas/D3 (Phase 5).
       Vollseite uebungen_.$exerciseId angelegt, vorerst nur Kopf)
 - [x] Detailseite – Statistik-Reihe + Trainingsverlauf (Liste). Skill-Uebungen ohne
       Katalogbezug zeigen noch leer (Anbindung ueber Skill-Definition als eigener Schritt)
-- [ ] Detailseite – Verlaufsdiagramm mit Metrik-Umschalter (ChartCanvas/D3 aus Phase 5)
+- [x] Detailseite – Verlaufsdiagramm mit Metrik-Umschalter (ChartCanvas/D3 aus Phase 5):
+      Chartkarte zwischen Statistik und Verlaufsliste; Chip-Umschalter je Uebungstyp
+      (Haupt: 1RM/Top-Gewicht/Wdh/Volumen, Standard 1RM; Koerper-Wdh: Wdh/Volumen;
+      Koerper-Haltezeit: nur Haltezeit). Linie je Einheit (Tooltip, roter Punkt bei
+      Abweichung), Volumen als Wochenbalken. "Anheften" folgt mit Schritt 6.
 - [ ] Skill-Uebungsverlauf anbinden (Skill-Saetze ueber die Skill-Definition der
       Katalog-Uebung zuordnen)
 - [ ] Generische MuscleMap-Komponente (Doku: docs/Muskel-Map.md)
@@ -394,6 +407,26 @@ getrennt: was hier liegt, gehoert nicht auf den Trainings-Screen.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-23 - Phase 8 Schritt 3 abgeschlossen (Verlaufsdiagramm), wartet auf Live-Test.
+  Die Uebungs-Detailseite bekommt eine Chartkarte zwischen Statistik und Verlaufsliste, 1:1
+  aus V1 (charts.js drawExLine/drawExBars, app.js exMetricOptions/exerciseChartData). Oben ein
+  Metrik-Umschalter als Chip-Reihe, der je Uebungstyp die richtigen Metriken anbietet (Haupt/
+  Assistenz/Core: 1RM/Top-Gewicht/Wdh/Volumen, Standard 1RM; Koerpergewicht mit Wdh: Wdh/
+  Volumen; Koerpergewicht mit Haltezeit: nur Haltezeit, kein Umschalter). 1RM/Top-Gewicht/Wdh/
+  Haltezeit zeichnen eine glatte Kurve je Einheit (weiche Flaeche, heller Endpunkt-Ring,
+  Tooltip bei Hover/Tipp), Abweichungs-Einheiten mit rotem Punkt; Volumen als Wochenbalken
+  (oben gerundet, gruener Verlauf). Leere Metrik zeigt "noch keine Daten". Gebaut auf dem
+  D3-Chart-Fundament aus Phase 5. Neu/erweitert: reine Aufbereitung in lib/exerciseHistory.ts
+  (exMetricOptions, exDefaultMetric, exLineSeries, exVolumeSeries, EX_METRIC_TITLE; Volumen je
+  ISO-Woche ueber engine.isoWeekKey) mit 7 neuen Tests; generisches Primitive ChipSwitch
+  (components/ui/chip-switch.tsx, Einfach-Auswahl, V1 ub-metric-Optik) fuer spaeter auch die
+  Koerper-Metriken; im Chart-Fundament der wiederverwendbare topRoundedBarPath plus optionale
+  Bodenopazitaet an appendAreaGradient (fuer die Balkenfuellung). Komponenten
+  components/exercise/ExerciseChart (Linie + Balken) und ExerciseChartCard (Titel + Umschalter
+  + Chart, lokaler Metrik-Zustand). useExerciseDetail liefert chartHistory/metricOptions/
+  defaultMetric/unit mit; Detail-Route bindet die Karte ein. Der "Anheften"-Knopf der Karte
+  ist bewusst Schritt 6. tsc, build und 190 Tests gruen (7 neue).
 
 - 2026-06-23 - Phase 8: 1RM-Historie repariert (Variante B), Voraussetzung fuer das
   Verlaufsdiagramm. Das je Einheit geschaetzte 1RM wird jetzt zur Anzeigezeit aus den sauberen

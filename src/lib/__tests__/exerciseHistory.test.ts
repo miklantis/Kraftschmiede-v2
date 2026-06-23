@@ -3,6 +3,10 @@ import {
   buildExerciseHistory,
   exBestSet,
   exSixWeekPct,
+  exMetricOptions,
+  exDefaultMetric,
+  exLineSeries,
+  exVolumeSeries,
 } from "@/lib/exerciseHistory";
 import type { HistorySessionInput, HistoryExercise } from "@/lib/history";
 
@@ -156,5 +160,81 @@ describe("exSixWeekPct", () => {
       ]),
     ];
     expect(exSixWeekPct(buildExerciseHistory("squat", sessions))).toBeNull();
+  });
+});
+
+describe("exMetricOptions / exDefaultMetric", () => {
+  it("Hauptuebung: vier Metriken, Standard 1RM", () => {
+    expect(exMetricOptions("strength", null).map((o) => o.key)).toEqual([
+      "rm",
+      "weight",
+      "reps",
+      "volume",
+    ]);
+    expect(exDefaultMetric("strength", null)).toBe("rm");
+  });
+
+  it("Koerpergewicht mit Wdh: Wdh + Volumen, Standard Wdh", () => {
+    expect(exMetricOptions("bodyweight", "reps").map((o) => o.key)).toEqual([
+      "reps",
+      "volume",
+    ]);
+    expect(exDefaultMetric("bodyweight", "reps")).toBe("reps");
+  });
+
+  it("Koerpergewicht mit Haltezeit: nur Haltezeit", () => {
+    expect(exMetricOptions("bodyweight", "duration").map((o) => o.key)).toEqual([
+      "duration",
+    ]);
+    expect(exDefaultMetric("bodyweight", "duration")).toBe("duration");
+  });
+});
+
+describe("exLineSeries", () => {
+  const sessions = [
+    session("2026-01-01", [
+      strengthEx("squat", [{ kind: "work", weight: 80, reps: 5, adjusted: true }]),
+    ]),
+    session("2026-01-08", [
+      strengthEx("squat", [{ kind: "work", weight: 90, reps: 3 }]),
+    ]),
+  ];
+  const h = buildExerciseHistory("squat", sessions);
+
+  it("rm: nur Einheiten mit 1RM, Abweichungs-Flag uebernommen", () => {
+    const s = exLineSeries(h, "rm");
+    expect(s).toHaveLength(2);
+    expect(s[0].flag).toBe(true);
+    expect(s[1].flag).toBe(false);
+    expect(s[0].y).toBeGreaterThan(0);
+  });
+
+  it("weight: Top-Gewicht je Einheit", () => {
+    expect(exLineSeries(h, "weight").map((p) => p.y)).toEqual([80, 90]);
+  });
+
+  it("reps: Summe der Arbeitssatz-Wdh", () => {
+    expect(exLineSeries(h, "reps").map((p) => p.y)).toEqual([5, 3]);
+  });
+});
+
+describe("exVolumeSeries", () => {
+  it("summiert das Volumen je ISO-Woche, chronologisch", () => {
+    const sessions = [
+      session("2026-01-05", [
+        strengthEx("squat", [{ kind: "work", weight: 100, reps: 5 }]),
+      ]),
+      session("2026-01-06", [
+        strengthEx("squat", [{ kind: "work", weight: 100, reps: 3 }]),
+      ]),
+      session("2026-01-12", [
+        strengthEx("squat", [{ kind: "work", weight: 100, reps: 4 }]),
+      ]),
+    ];
+    const v = exVolumeSeries(buildExerciseHistory("squat", sessions));
+    expect(v).toHaveLength(2);
+    expect(v[0].value).toBe(800); // 500 + 300 (gleiche Woche)
+    expect(v[1].value).toBe(400);
+    expect(v[0].label.startsWith("W")).toBe(true);
   });
 });

@@ -5,7 +5,11 @@ import {
   buildExerciseHistory,
   exBestSet,
   exSixWeekPct,
+  exMetricOptions,
+  exDefaultMetric,
   type ExHistoryEntry,
+  type ExMetric,
+  type ExMetricOption,
 } from "@/lib/exerciseHistory";
 import { fmtNum, fmtWeight } from "@/lib/format";
 import type { ExerciseRow } from "@/schemas";
@@ -25,6 +29,11 @@ export interface ExerciseDetailView {
   isBodyweight: boolean;
   stats: StatCell[];
   verlauf: VerlaufRow[];
+  // Chart-Daten (Schritt 3): Verlaufseintraege + Metrik-Umschalter.
+  chartHistory: ExHistoryEntry[];
+  metricOptions: ExMetricOption[];
+  defaultMetric: ExMetric;
+  unit: string;
 }
 
 // Beste-Satz-Zeile einer Einheit: hoechstes Gewicht, dann meiste Wiederholungen.
@@ -109,6 +118,13 @@ export function useExerciseDetail(exerciseId: string): ExerciseDetailView {
             : "",
     }));
 
+  const metricOptions = exercise
+    ? exMetricOptions(exercise.profile, exercise.metric)
+    : [];
+  const defaultMetric: ExMetric = exercise
+    ? exDefaultMetric(exercise.profile, exercise.metric)
+    : "rm";
+
   return {
     isLoading,
     isError,
@@ -117,5 +133,9 @@ export function useExerciseDetail(exerciseId: string): ExerciseDetailView {
     isBodyweight,
     stats,
     verlauf,
+    chartHistory: history,
+    metricOptions,
+    defaultMetric,
+    unit,
   };
 }

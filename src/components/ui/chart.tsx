@@ -62,13 +62,14 @@ export function smoothArea<T>(
     .curve(curveCatmullRom.alpha(0.5));
 }
 
-// Vertikaler Verlauf (oben getoent, unten transparent) als Flaechenfuellung.
-// Gibt die fuer fill="url(#id)" verwendbare Id zurueck.
+// Vertikaler Verlauf (oben getoent, unten transparent oder schwach) als
+// Fuellung. Gibt die fuer fill="url(#id)" verwendbare Id zurueck.
 export function appendAreaGradient(
   defs: ChartDefs,
   id: string,
   color: string,
   topOpacity: number,
+  bottomOpacity = 0,
 ): string {
   const gr = defs
     .append("linearGradient")
@@ -84,8 +85,27 @@ export function appendAreaGradient(
   gr.append("stop")
     .attr("offset", "100%")
     .attr("stop-color", color)
-    .attr("stop-opacity", 0);
+    .attr("stop-opacity", bottomOpacity);
   return id;
+}
+
+// Balken-Pfad mit nur oben abgerundeten Ecken (SVG-rect rundet sonst alle vier).
+export function topRoundedBarPath(
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
+): string {
+  const rr = Math.min(r, w / 2, h);
+  return (
+    `M${x} ${y + h}` +
+    `V${y + rr}` +
+    `Q${x} ${y} ${x + rr} ${y}` +
+    `H${x + w - rr}` +
+    `Q${x + w} ${y} ${x + w} ${y + rr}` +
+    `V${y + h}Z`
+  );
 }
 
 // Heller, offener Ring auf der Kurve (Endpunkt bzw. "jetzt"-Marker).
