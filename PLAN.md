@@ -40,6 +40,11 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   ein Stapel (Statistik, Diagramm, Muskeln, Verlauf) ueber display:contents + order. Die
   Figur nimmt ~78% Breite (V1-Wert), damit Abstand zwischen Rand und Illustration bleibt.
   tsc/build/190 Tests gruen.
+- **Einheitlicher Zurueck-Link (Primitive):** Der Zurueck-Link oben links auf Unterseiten
+  ist jetzt ein gemeinsames Primitive components/ui/back-link.tsx (Markengruen/halbfett/
+  Chevron/mb-4, wie zuvor auf der Journey-Vorlagenseite). Vorher war er auf der Uebungs-
+  Detailseite grau und wich ab. Eingesetzt auf journey_.waehlen und uebungen_.$exerciseId;
+  Props to (typsicher ueber LinkProps) + label. tsc/build/190 Tests gruen.
 - **GEKLAERT (1RM-Historie, Variante B umgesetzt):** Das je Einheit geschaetzte 1RM wird
   jetzt – wie in V1 zur Anzeigezeit – aus den sauberen Arbeitssaetzen berechnet
   (engine.best1RMFromSets + settings.rm_formula), nicht mehr aus dem beim Import leer

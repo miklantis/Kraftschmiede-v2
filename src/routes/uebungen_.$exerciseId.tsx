@@ -1,6 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { ChevronLeft } from "lucide-react";
+import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/ui/page-header";
+import { BackLink } from "@/components/ui/back-link";
 import { Section } from "@/components/ui/section";
 import { List, ListRow } from "@/components/ui/list";
 import { StatRow } from "@/components/ui/stat-row";
@@ -17,18 +17,6 @@ import { longDateShort } from "@/lib/format";
 export const Route = createFileRoute("/uebungen_/$exerciseId")({
   component: ExerciseDetailPage,
 });
-
-function BackLink(): React.ReactElement {
-  return (
-    <Link
-      to="/uebungen"
-      className="mb-3 inline-flex items-center gap-1 text-[15px] font-medium text-muted-foreground hover:text-foreground"
-    >
-      <ChevronLeft className="size-[18px]" />
-      Übungen
-    </Link>
-  );
-}
 
 function ExerciseDetailPage(): React.ReactElement {
   const { exerciseId } = Route.useParams();
@@ -49,7 +37,7 @@ function ExerciseDetailPage(): React.ReactElement {
   if (isLoading) {
     return (
       <div>
-        <BackLink />
+        <BackLink to="/uebungen" label="Übungen" />
         <p className="text-sm text-muted-foreground">Wird geladen …</p>
       </div>
     );
@@ -58,7 +46,7 @@ function ExerciseDetailPage(): React.ReactElement {
   if (isError) {
     return (
       <div>
-        <BackLink />
+        <BackLink to="/uebungen" label="Übungen" />
         <p className="text-sm text-danger">
           Daten konnten nicht geladen werden
           {error instanceof Error ? ": " + error.message : "."}
@@ -70,7 +58,7 @@ function ExerciseDetailPage(): React.ReactElement {
   if (!exercise) {
     return (
       <div>
-        <BackLink />
+        <BackLink to="/uebungen" label="Übungen" />
         <p className="text-sm text-muted-foreground">
           Diese Übung wurde nicht gefunden.
         </p>
@@ -80,7 +68,7 @@ function ExerciseDetailPage(): React.ReactElement {
 
   return (
     <div>
-      <BackLink />
+      <BackLink to="/uebungen" label="Übungen" />
       <PageHeader title={exercise.name} className="mb-3 min-[960px]:mb-4" />
       <div className="-mt-2 mb-4 flex flex-wrap items-center gap-2">
         <span className="rounded-[20px] bg-muted px-2.5 py-1 text-[13px] font-medium text-muted-foreground">

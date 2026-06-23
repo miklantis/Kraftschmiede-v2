@@ -1,5 +1,5 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ChevronLeft } from "lucide-react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { BackLink } from "@/components/ui/back-link";
 import {
   TemplateCard,
   type TemplateCardModel,
@@ -39,15 +39,7 @@ function JourneyPickerPage(): React.ReactElement {
     });
   };
 
-  const back = (
-    <Link
-      to="/journey"
-      className="mb-4 inline-flex items-center gap-1.5 text-[15px] font-semibold text-primary"
-    >
-      <ChevronLeft className="size-4" />
-      Journey
-    </Link>
-  );
+  const back = <BackLink to="/journey" label="Journey" />;
 
   if (templatesQ.isLoading || journeyQ.isLoading) {
     return (
