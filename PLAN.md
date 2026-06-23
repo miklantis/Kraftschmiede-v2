@@ -22,23 +22,31 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   Log/Phase 7).
 - **Naechste Sitzung (Einstieg):** Phase 8 (Uebungen inkl. Muscle-Map) **laeuft.** Konzept
   abgestimmt und freigegeben; gebaut wird in kleinen Schritten in dieser Reihenfolge:
-  (1) Vorbereitung SVG + Registry **[erledigt]**, (2) Uebungsliste, (3) Detailseite mit
-  Statistik/Chart/Verlauf, (4) generische MuscleMap-Komponente, (5) "Uebung anpassen" als
-  Popup ueber das vorhandene Overlay, (6) Anheften/Dashboard. Naechster Schritt: (2)
-  Uebungsliste (Gruppen Haupt/Assistenz/Core/Koerpergewicht/Inaktiv, Zeilen ueber List/
-  ListRow, Tippen oeffnet Detail). Festgehaltene Entscheidungen: Muscle-Map zeigt auf Handy
-  UND Desktop beide Figuren nebeneinander (V1-Code-Realitaet, kein Front/Back-Umschalter);
-  Uebungs-Beteiligung kommt aus der DB-Tabelle exercise_muscles (per V1-Import schon
-  befuellt), NICHT aus Seed-Code; Verlaufscharts nutzen das ChartCanvas/D3-Fundament aus
-  Phase 5; "Uebung anpassen" nutzt das Overlay-Primitive aus Phase 7.
-- **Phase 8 Schritt 1 (Vorbereitung) erledigt, wartet nicht auf Live-Test (kein sichtbares
-  Feature):** Master-SVG als src/assets/body-muscles.svg abgelegt (14 Regionen, gebuendelt
-  per ?raw geladen statt zur Laufzeit gefetcht - offline-fest, kein Pages-Pfad-Problem).
-  Reine Region-Registry + Aggregations-Helfer in src/lib/muscles.ts (MUSCLES 14 Regionen mit
-  view/group/labels de+en, MUSCLE_SECTIONS, MUSCLE_LOAD primaer/sekundaer/stabilisierend =
-  1.0/0.55/0.25; Helfer kategorieToValue, regionsForGroup/Section, expand mit Spezifitaet
-  region>group>section, muscleValuesFromRows fuer DB-Zeilen) - 1:1 aus V1 portiert. Typ
-  MuscleKategorie im Schema ergaenzt. 12 Unit-Tests. tsc/build/166 Tests gruen.
+  (1) Vorbereitung SVG + Registry **[erledigt]**, (2) Uebungsliste **[erledigt]**,
+  (3) Detailseite mit Statistik/Chart/Verlauf, (4) generische MuscleMap-Komponente,
+  (5) "Uebung anpassen" als Popup ueber das vorhandene Overlay, (6) Anheften/Dashboard.
+  Naechster Schritt: (3) Detailseite fuellen - die Vollseite uebungen_.$exerciseId steht
+  schon (Kopf mit Zurueck/Name/Badge), jetzt die Statistik-Reihe (1RM/bestes Set/6 Wochen
+  bzw. Ziel/Metrik/Sessions), die Verlaufs-Chartkarte mit Metrik-Umschalter ueber das
+  ChartCanvas/D3-Fundament aus Phase 5, und darunter die Session-Verlaufsliste. Die
+  Muscle-Map (Schritt 4) kommt als eigener Schritt danach. Festgehaltene Entscheidungen:
+  Muscle-Map zeigt auf Handy UND Desktop beide Figuren nebeneinander (kein Front/Back-
+  Umschalter); Uebungs-Beteiligung aus der DB-Tabelle exercise_muscles (per V1-Import
+  befuellt), NICHT aus Seed-Code; "Uebung anpassen" nutzt das Overlay-Primitive aus Phase 7.
+- **Phase 8 Schritt 2 (Uebungsliste) erledigt, live testbar:** Der /uebungen-Tab zeigt jetzt
+  den Katalog statt des Platzhalters - gruppiert in Hauptuebungen/Assistenz/Core/
+  Koerpergewicht/Inaktiv (V1-Reihenfolge, leere Gruppen weg), Mobile gestapelt, Desktop
+  zweispaltig. Jede Zeile: Name, Muskelgruppen als Unterzeile (Fallback Uebungsart), rechts
+  ein Kennwert (1RM/Arbeitsgewicht bzw. Wdh/Haltezeit), Pfeil. Tippen oeffnet die Detailseite
+  (uebungen_.$exerciseId, eigenstaendige Vollseite wie der Journey-Picker; vorerst nur Kopf).
+  Reine Aufbereitung in lib/exercises.ts (groupExercises, exerciseRowMeta, exerciseRowSub) mit
+  9 Tests; Helfer fmtWeight (format.ts) und kindLabel (labels.ts) ergaenzt; View-Hook
+  useExercisesView (Katalog + Einheit). tsc/build/175 Tests gruen.
+- **Phase 8 Schritt 1 (Vorbereitung) erledigt (kein sichtbares Feature):** Master-SVG als
+  src/assets/body-muscles.svg abgelegt (14 Regionen, gebuendelt per ?raw). Reine Region-
+  Registry + Aggregations-Helfer in src/lib/muscles.ts (MUSCLES, MUSCLE_SECTIONS, MUSCLE_LOAD;
+  expand mit Spezifitaet region>group>section, muscleValuesFromRows fuer DB-Zeilen) - 1:1 aus
+  V1. Typ MuscleKategorie im Schema ergaenzt. 12 Unit-Tests.
 - **Phase:** Phase 7 (Yoga) **abgeschlossen.** Yoga ist bewusst KEIN eigener Tab, sondern
   eine schnell abgehakte Einheit ueber die Zeile im Training-Tab. Neu und wichtig: das
   **generische Overlay-Primitive** (components/ui/overlay.tsx) als Popup-Fundament fuer alle
@@ -307,7 +315,9 @@ DB-Tabelle exercise_muscles. Charts ueber ChartCanvas/D3 (Phase 5).
       Uebung-anpassen/Mobile-Map geklaert; Schritt-Reihenfolge oben)
 - [x] Vorbereitung: Master-SVG (src/assets/body-muscles.svg) + Region-Registry/Helfer
       (src/lib/muscles.ts) mit 12 Unit-Tests
-- [ ] Uebungsliste
+- [x] Uebungsliste (gruppiert Haupt/Assistenz/Core/Koerpergewicht/Inaktiv ueber
+      Section+List/ListRow; Tippen oeffnet die Detailseite; Detail-Route als eigenstaendige
+      Vollseite uebungen_.$exerciseId angelegt, vorerst nur Kopf)
 - [ ] Detailseite
 - [ ] Generische MuscleMap-Komponente (Doku: docs/Muskel-Map.md)
 - [ ] "Uebung anpassen" als Popup ueber das Overlay-Primitive

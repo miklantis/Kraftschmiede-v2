@@ -61,3 +61,12 @@ export function longDateShort(dateStr: string): string {
 export function fmtKg(w: number | null | undefined): string {
   return fmtNum(w).replace(".", ",");
 }
+
+// Gewicht mit Einheit (V1 fmtW): Zahl ohne unnoetige Nullen + Einheit, z. B.
+// "60 kg". Einheit kommt aus den Einstellungen (kg/lb).
+export function fmtWeight(
+  x: number | null | undefined,
+  unit: string,
+): string {
+  return fmtNum(x) + " " + unit;
+}

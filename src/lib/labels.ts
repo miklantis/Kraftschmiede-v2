@@ -22,3 +22,15 @@ export function skillMetricUnit(metric: string | null | undefined): string {
   if (metric === "duration") return "Sek.";
   return "";
 }
+
+// Anzeigename der Uebungsart (kind). 1:1 aus V1 (data.js kindLabel).
+const KIND_LABELS: Record<string, string> = {
+  main: "Hauptübung",
+  accessory: "Assistenz",
+  core: "Core",
+  bodyweight: "Körpergewicht",
+};
+export function kindLabel(kind: string | null | undefined): string {
+  if (!kind) return "–";
+  return KIND_LABELS[kind] ?? kind;
+}
