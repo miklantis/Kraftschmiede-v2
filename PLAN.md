@@ -20,7 +20,18 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 - **Naechste Sitzung (Einstieg):** Phase 7 (Yoga) **abgeschlossen und freigegeben.** Popup
   und Yoga-Eintrag funktionieren live; das Mobile-Gleiten des Bodenblatts ist behoben (siehe
   Log/Phase 7).
-- **Naechste Sitzung (Einstieg):** Phase 8 (Uebungen inkl. Muscle-Map) **laeuft.** Reihenfolge:
+- **ZUERST klaeren (vor dem Verlaufsdiagramm):** Der Uebungs-Verlauf hat KEINE 1RM-Werte je
+  Einheit, daher bleibt die Detail-Statistik "6 Wochen" leer und die Verlaufsliste zeigt
+  rechts den Ø-Score statt eines 1RM (Screenshot Back Squat 2026-06-23). Ursache ist eine
+  Import-Luecke, KEIN korrektes Verhalten: V1 speichert das je Einheit geschaetzte 1RM im
+  Feld `est1RM` (live.js: en.est1RM = best1RMFromSets(...)), der V1-Import (src/lib/v1import.ts
+  Z609) liest aber `field(eo, "tested1RM", "tested_1rm")` - und `tested1RM` ist in V1 immer
+  null (nur initialisiert, nie gefuellt). Dadurch geht die gesamte 1RM-Historie verloren; auch
+  der geplante 1RM-Chart waere sonst leer. Zwei Wege: (A) Importfeld auf `est1RM` als Quelle
+  korrigieren -> einmal neu importieren noetig (Altdaten); (B) das 1RM je Einheit zur Anzeige
+  aus den Arbeitssaetzen berechnen (engine best1RMFromSets + settings.rmFormula), unabhaengig
+  vom gespeicherten Wert -> fuellt sofort, kein Neuimport. Empfehlung B (mit Kadir abstimmen).
+  Erst danach das Verlaufsdiagramm bauen.
   (1) Vorbereitung SVG + Registry **[erledigt]**, (2) Uebungsliste **[erledigt]**,
   (3) Detailseite: Statistik + Verlaufsliste **[erledigt]** / Verlaufsdiagramm **[offen]**,
   (4) MuscleMap-Komponente, (5) "Uebung anpassen" als Popup ueber das Overlay,
