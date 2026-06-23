@@ -117,8 +117,11 @@ describe("buildCoachExport - Zuordnung und Saetze", () => {
     expect(s.week).toBe(4);
     expect(s.workout).toBe("Push A");
     expect(s.exercises?.[0].exercise).toBe("Back Squat");
-    // nur Arbeitssaetze, Aufwaermsatz raus
-    expect(s.exercises?.[0].sets).toEqual(["5×20 @S3", "4×20 @S5 (Ziel 6×20)"]);
+    // nur Arbeitssaetze, Aufwaermsatz raus; RIR aus dem Score abgeleitet
+    expect(s.exercises?.[0].sets).toEqual([
+      "5×20 @S3 RIR 2",
+      "4×20 @S5 RIR 0 (Ziel 6×20)",
+    ]);
   });
 
   it("zeigt aktive Journey mit Phasenplan und aktueller Phase", () => {
@@ -190,6 +193,13 @@ describe("buildCoachExport - Skill und Yoga", () => {
 });
 
 describe("buildCoachExport - schlank", () => {
+  it("gibt die Score-Skala mit RIR/RPE zum Nachschlagen", () => {
+    const out = buildCoachExport(emptyRaw(), { weeks: null, today: TODAY });
+    expect(out.scoreScale.map[3].rir).toBe("2");
+    expect(out.scoreScale.map[5].label).toBe("Versagen");
+    expect(out.scoreScale.note).toContain("NICHT in der DB");
+  });
+
   it("traegt keine ids/user_id in den Einheiten", () => {
     const raw = emptyRaw();
     raw.sessions = [

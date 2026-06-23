@@ -5,7 +5,7 @@
 // zaehlt. Wichtig: jede Einheit zeigt klar, WOZU sie gehoert - Journey, Phase,
 // Woche und (bei Kraft) das Workout. Spanne: letzte X Wochen (oder alles).
 
-import { SCORE_MAP, scoreInfo } from "@/engine/score";
+import { SCORE_MAP, scoreInfo, type ScoreInfo } from "@/engine/score";
 import { journeyPlacement, type JourneySession } from "@/engine/journey";
 import { todayISO } from "@/lib/format";
 import type {
@@ -102,7 +102,10 @@ export interface CoachExport {
   kind: "coach";
   generatedAt: string;
   range: { weeks: number | "all"; from: string | null };
-  scoreLegend: string;
+  scoreScale: {
+    note: string;
+    map: Record<number, ScoreInfo>;
+  };
   settings: {
     unit: string | null;
     weeklyFrequencyTarget: number | null;
@@ -133,9 +136,18 @@ const RESULT_LABEL: Record<string, string> = {
   skipped: "uebersprungen",
 };
 
-const SCORE_LEGEND = Object.entries(SCORE_MAP)
-  .map(([k, v]) => `S${k} ${v.label}`)
-  .join(" · ");
+const SCORE_SCALE_NOTE =
+  "score (1-5) ist die gepflegte Groesse; RIR (Reps in Reserve), RPE und das " +
+  "Label sind daraus abgeleitet und liegen NICHT in der DB. Je Satz steht nur " +
+  "der Score (z. B. @S3) - die Bedeutung steht hier in der Skala.";
+
+function buildScoreScale(): Record<number, ScoreInfo> {
+  const out: Record<number, ScoreInfo> = {};
+  for (const [key, info] of Object.entries(SCORE_MAP)) {
+    out[Number(key)] = { ...info };
+  }
+  return out;
+}
 
 function repBand(min: number | null, max: number | null): string | null {
   if (min == null && max == null) return null;
@@ -164,7 +176,10 @@ function setString(set: RawSet, isSkill: boolean): string {
   const weight = num(set, "weight");
   const score = num(set, "score");
   let s = `${reps ?? "–"}×${weight ?? "–"}`;
-  if (!isSkill && score != null && scoreInfo(score) != null) s += ` @S${score}`;
+  if (!isSkill && score != null) {
+    const info = scoreInfo(score);
+    if (info != null) s += ` @S${score} RIR ${info.rir}`;
+  }
   if (isSkill && set.met === false) s += " (verfehlt)";
   const tr = num(set, "target_reps");
   const tw = num(set, "target_weight");
@@ -416,7 +431,10 @@ export function buildCoachExport(
     kind: "coach",
     generatedAt: today.toISOString(),
     range: { weeks: opts.weeks ?? "all", from },
-    scoreLegend: SCORE_LEGEND,
+    scoreScale: {
+      note: SCORE_SCALE_NOTE,
+      map: buildScoreScale(),
+    },
     settings: {
       unit: str(raw.settings ?? {}, "unit"),
       weeklyFrequencyTarget: num(raw.settings ?? {}, "weekly_frequency_target"),

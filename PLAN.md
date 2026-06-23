@@ -21,7 +21,7 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   Voll-Export sitzt in der Daten-Sektion jetzt die Karte „Fuer Coaching": ein schlankes,
   sprechendes JSON rein fuers Gespraech mit dem Coach (nur Zwischenablage, kein Datei-
   Download). Spanne ueber SegmentedControl waehlbar: 8/12/26 Wochen oder Alle (Standard 12).
-  Inhalt sprechend statt DB-treu: Kopf mit Score-Legende + Essenz der Einstellungen; aktive
+  Inhalt sprechend statt DB-treu: Kopf mit Score-Skala (Score 1-5 -> RIR/RPE/Label, Hinweis dass RIR/RPE nicht in der DB, sondern abgeleitet) + Essenz der Einstellungen; aktive
   Journey mit komplettem Phasenplan (Index, Fokus, Wochen, Satz-Rampe, Deload, Rep-Band) und
   aktueller Woche/Phase (ueber die getestete Placement-Engine); Uebungskatalog sprechend
   (Name, Rep-Band, Arbeitsgewicht, 1RM); Einheiten chronologisch mit voller Zuordnung
