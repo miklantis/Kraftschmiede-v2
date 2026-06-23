@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
@@ -42,7 +42,10 @@ export function Overlay({
   const [mounted, setMounted] = useState(open);
   const [shown, setShown] = useState(false);
   const closeTimer = useRef<number | null>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
 
+  // Mounten/Aushaengen am open-Zustand. Beim Schliessen erst ausblenden, dann
+  // nach Ablauf der Transition aus dem DOM nehmen.
   useEffect(() => {
     if (open) {
       if (closeTimer.current !== null) {
@@ -50,10 +53,7 @@ export function Overlay({
         closeTimer.current = null;
       }
       setMounted(true);
-      // Naechster Frame: Startzustand (unten/transparent) ist gesetzt, jetzt den
-      // Endzustand scharf schalten -> CSS faehrt die Transition.
-      const id = window.requestAnimationFrame(() => setShown(true));
-      return () => window.cancelAnimationFrame(id);
+      return undefined;
     }
     setShown(false);
     closeTimer.current = window.setTimeout(() => {
@@ -62,6 +62,20 @@ export function Overlay({
     }, EXIT_MS);
     return undefined;
   }, [open]);
+
+  // Reinfahren: erst wenn das Overlay frisch im DOM steht, den Startzustand
+  // (Blatt unten, Hintergrund transparent) per erzwungenem Reflow materialisieren
+  // und dann auf sichtbar schalten. Ohne diesen Schritt fasst der Browser Start-
+  // und Endzustand in einem Frame zusammen und springt ohne Transition ans Ziel
+  // (Popup "taucht auf" statt reinzufahren). Entspricht dem V1-Reflow-Trick.
+  useLayoutEffect(() => {
+    if (!open || !mounted) return undefined;
+    if (rootRef.current) void rootRef.current.offsetHeight;
+    const id = window.requestAnimationFrame(() => {
+      if (open) setShown(true);
+    });
+    return () => window.cancelAnimationFrame(id);
+  }, [open, mounted]);
 
   // Escape schliesst; Body-Scroll sperren, solange das Overlay im DOM ist.
   useEffect(() => {
@@ -82,6 +96,7 @@ export function Overlay({
 
   return createPortal(
     <div
+      ref={rootRef}
       className={cn(
         "fixed inset-0 z-50 flex items-end justify-center transition-colors duration-300 min-[960px]:items-center min-[960px]:p-8",
         shown ? "bg-[rgba(20,24,40,0.42)]" : "bg-[rgba(20,24,40,0)]",
