@@ -17,6 +17,15 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
+- **Live-Korrektur L3-Optik auf V1-Paritaet (2026-06-23).** Nach erstem Live-Test an V1
+  angeglichen: die Satz-Eingaben (Wdh/kg/RIR, Aufwaerm-Dauer/Art) haben keinen sichtbaren
+  Kasten mehr (transparenter Grund, kein Rahmen, RIR/Art ohne Pfeil), nur beim Tippen ein
+  dezenter Hintergrund - die grosse Tippflaeche bleibt; erledigte Saetze sind leicht gruen
+  hinterlegt (Akzent ~7%) statt nur abgedunkelt; der aktive Satz hat den gruenen 2px-Rahmen
+  (weisser Grund), die Zeilen-Trennlinien sind raus (nur unter den Spaltenkoepfen bleibt eine);
+  die Haken sind rund (offen grauer Ring, aktiv gruener Ring, erledigt gruen gefuellt); "+ Satz"
+  gruen, "- Satz" dezent als Textlinks; Scheiben-Knopf als Zielscheiben-Symbol. tsc/build/265
+  Tests gruen.
 - **Naechste Sitzung (Einstieg):** **Phase 11 Lieferung 4 – Beenden + Speichern.** L3
   (gefuehrter Ablauf) ist gebaut und wartet auf den Live-Test/Freigabe. L4 schreibt die
   erledigten Saetze normalisiert in den Verlauf (echter Unterschied Speichern/Verwerfen)

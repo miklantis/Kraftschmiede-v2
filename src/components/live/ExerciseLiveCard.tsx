@@ -1,4 +1,4 @@
-import { Circle } from "lucide-react";
+import { CircleDot } from "lucide-react";
 import { scoreInfo } from "@/engine";
 import { fmtNum } from "@/lib/format";
 import type { LiveEntry } from "@/lib/liveSession";
@@ -18,12 +18,14 @@ import { SetCheck } from "./SetCheck";
 const ROW = "grid grid-cols-[28px_1fr_1fr_minmax(44px,56px)_28px] items-center gap-2";
 const RIR_VALUES = [1, 2, 3, 4, 5];
 
-function rowCls(active: boolean, done: boolean): string {
-  return (
-    ROW +
-    " border-t border-border py-2 text-[14px]" +
-    (done ? " opacity-55" : active ? " bg-primary/5" : "")
-  );
+// Zeilenstil wie V1: 2px-Rahmen (transparent als Basis, damit aktiv kein Sprung),
+// aktiver Satz weisser Grund + gruener Rahmen, erledigter Satz leicht gruen.
+function rowCls(active: boolean, done: boolean, warm: boolean): string {
+  const base = ROW + " my-0.5 rounded-[11px] border-2 px-1.5 py-2 text-[14px]";
+  const tone = warm ? " text-muted-foreground" : "";
+  if (done) return base + tone + " border-transparent bg-primary/[0.07]";
+  if (active) return base + tone + " border-primary bg-card";
+  return base + tone + " border-transparent";
 }
 
 export function ExerciseLiveCard({
@@ -114,7 +116,7 @@ export function ExerciseLiveCard({
                 : "border-border text-muted-foreground")
             }
           >
-            <Circle className="size-[15px]" strokeWidth={2} />
+            <CircleDot className="size-[15px]" strokeWidth={2} />
           </button>
         )}
       </div>
@@ -122,7 +124,7 @@ export function ExerciseLiveCard({
       <div className="px-4 py-2">
         <div
           className={
-            ROW + " py-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground"
+            ROW + " border-b border-border px-1.5 pb-1.5 pt-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground"
           }
         >
           <span>Satz</span>
@@ -136,7 +138,7 @@ export function ExerciseLiveCard({
           const act = isActive(active, ei, wi, true) && !ws.done;
           return (
             <div key={"w" + wi}>
-              <div className={rowCls(act, ws.done)}>
+              <div className={rowCls(act, ws.done, true)}>
                 <span className="text-muted-foreground">A{wi + 1}</span>
                 <LiveNumberInput
                   value={ws.reps}
@@ -167,7 +169,7 @@ export function ExerciseLiveCard({
           const act = isActive(active, ei, si, false) && !st.done;
           return (
             <div key={"s" + si}>
-              <div className={rowCls(act, st.done)}>
+              <div className={rowCls(act, st.done, false)}>
                 <span className="text-muted-foreground">S{si + 1}</span>
                 <LiveNumberInput
                   value={st.reps}
@@ -184,7 +186,7 @@ export function ExerciseLiveCard({
                 <select
                   aria-label={"RIR Satz " + (si + 1)}
                   title="RIR / Score je Satz"
-                  className="w-full rounded-[8px] border border-border bg-background px-1 py-1 text-center font-mono text-[13px] text-foreground outline-none focus:border-primary"
+                  className="w-full appearance-none rounded-[8px] bg-transparent px-1 py-1 text-center font-mono text-[14px] text-foreground outline-none focus:bg-secondary/70"
                   value={st.score}
                   onChange={(e) => onSetValue(si, "score", Number(e.target.value))}
                 >
@@ -209,11 +211,11 @@ export function ExerciseLiveCard({
           );
         })}
 
-        <div className="flex gap-2 pt-2">
+        <div className="flex gap-4 px-1.5 pt-2">
           <button
             type="button"
             onClick={onAddSet}
-            className="rounded-[8px] bg-secondary px-3 py-1 text-[13px] font-medium text-foreground"
+            className="text-[13px] font-semibold text-primary"
           >
             + Satz
           </button>
@@ -221,7 +223,7 @@ export function ExerciseLiveCard({
             <button
               type="button"
               onClick={onDelSet}
-              className="rounded-[8px] px-3 py-1 text-[13px] font-medium text-muted-foreground"
+              className="text-[13px] font-semibold text-muted-foreground"
             >
               – Satz
             </button>

@@ -39,7 +39,7 @@ export function GeneralWarmupCard({
       <div className="px-4 py-2">
         <div
           className={
-            ROW + " py-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground"
+            ROW + " border-b border-border px-1.5 pb-1.5 pt-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground"
           }
         >
           <span>Satz</span>
@@ -52,8 +52,8 @@ export function GeneralWarmupCard({
             key={i}
             className={
               ROW +
-              " border-t border-border py-2 text-[14px]" +
-              (ws.done ? " opacity-55" : "")
+              " my-0.5 rounded-[11px] border-2 border-transparent px-1.5 py-2 text-[14px]" +
+              (ws.done ? " bg-primary/[0.07]" : "")
             }
           >
             <span className="text-muted-foreground">S{i + 1}</span>
@@ -65,7 +65,7 @@ export function GeneralWarmupCard({
             />
             <select
               aria-label={"Art Aufwaermsatz " + (i + 1)}
-              className="w-full rounded-[8px] border border-border bg-background px-2 py-1 text-[14px] text-foreground outline-none focus:border-primary"
+              className="w-full appearance-none rounded-[8px] bg-transparent px-1 py-1 text-center text-[14px] text-foreground outline-none focus:bg-secondary/70"
               value={ws.mode}
               onChange={(e) => onMode(i, e.target.value)}
             >
@@ -83,11 +83,11 @@ export function GeneralWarmupCard({
             />
           </div>
         ))}
-        <div className="flex gap-2 pt-2">
+        <div className="flex gap-4 px-1.5 pt-2">
           <button
             type="button"
             onClick={onAdd}
-            className="rounded-[8px] bg-secondary px-3 py-1 text-[13px] font-medium text-foreground"
+            className="text-[13px] font-semibold text-primary"
           >
             + Satz
           </button>
@@ -95,7 +95,7 @@ export function GeneralWarmupCard({
             <button
               type="button"
               onClick={onDel}
-              className="rounded-[8px] px-3 py-1 text-[13px] font-medium text-muted-foreground"
+              className="text-[13px] font-semibold text-muted-foreground"
             >
               – Satz
             </button>

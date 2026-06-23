@@ -24,12 +24,12 @@ export function SetCheck({
       aria-pressed={done}
       onClick={onToggle}
       className={cn(
-        "ml-auto flex size-[24px] items-center justify-center rounded-md border transition-colors",
+        "ml-auto flex size-[24px] items-center justify-center rounded-full border-2 transition-colors",
         done
-          ? "border-primary bg-primary text-primary-foreground"
+          ? "border-transparent bg-primary text-primary-foreground"
           : active
-            ? "border-primary bg-background text-transparent"
-            : "border-border bg-background text-transparent",
+            ? "border-primary bg-transparent text-transparent"
+            : "border-border bg-transparent text-transparent",
       )}
     >
       <Check className="size-[15px]" strokeWidth={3} />

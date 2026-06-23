@@ -60,7 +60,7 @@ export function LiveNumberInput({
       inputMode={decimal ? "decimal" : "numeric"}
       aria-label={ariaLabel}
       className={cn(
-        "w-full rounded-[8px] border border-border bg-background px-2 py-1 text-center font-mono text-[14px] text-foreground outline-none focus:border-primary",
+        "w-full rounded-[8px] bg-transparent px-1 py-1 text-center font-mono text-[15px] text-foreground outline-none focus:bg-secondary/70",
         className,
       )}
       value={text}
