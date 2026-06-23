@@ -17,6 +17,16 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
+- **Phase 11 (Live-Session) abgeschlossen (2026-06-23).** L6 (Wake-Lock) live freigegeben.
+  Kadir hat L1–L6 jeweils einzeln gegen V1 geprueft und abgenommen; den zusammenhaengenden
+  Paritaetsdurchlauf am Stueck hat er bewusst zurueckgestellt (meldet sich, falls noch etwas
+  auffaellt). Damit steht die komplette gefuehrte Durchfuehrung fuer Kraft und Skill inkl.
+  Beenden/Speichern, Offline und Wake-Lock.
+- **Naechster Schritt: Phase 12 (Migration + Import/Export).** Migrations-Import (V1-Blob ->
+  normalisierte Zeilen, Import-Knopf auf der Startseite) und der Seed stehen schon. Offen:
+  Konzept abstimmen, dann JSON-Import/Export (Export-Haelfte + Politur, wandert nach
+  Einstellungen) und Abgleich alt/neu. **Erst Konzept gegen V1, dann Code.**
+
 - **Live-Korrektur Ende-Popup-Optik auf V1-Paritaet (2026-06-23).** Das Sitzungsende-Popup
   (Workout UND Skill) sah anders aus als V1; jetzt 1:1 nach klar-app.css (kl-end-/kl-summary-):
   der laufende Uhr-Chip ist gruen und sitzt im Kopf neben dem X (nicht mehr als eigene Zeile),
@@ -99,14 +109,10 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   enabled = laufende Session && timers.wakeLock && Unterstuetzung. timersSchema additiv um
   optionales wakeLock erweitert; TimerSettings um die Schalter-Reihe ergaenzt. tsc/build/284
   Tests gruen (1 neuer Schema-Test: wakeLock optional + rueckwaertskompatibel).
-- **Naechste Sitzung (Einstieg):** 1) **L6 (Wake-Lock) live testen und freigeben** -
-  steht noch aus (gebaut, aber an diesem Abend nicht mehr getestet): Schalter in den
-  Einstellungen (Pausen-Timer -> „Bildschirm wachhalten") an, Einheit starten, pruefen ob
-  der Bildschirm wach bleibt und nach dem Beenden wieder abdunkelt. 2) **Paritaetsdurchlauf
-  Live gegen V1** - L1-L6 am Stueck gegen V1 pruefen (Start, Aufbau/Coach, gefuehrter Ablauf,
-  Beenden/Speichern, Skill-Live, Wake-Lock) + Abschluss-Test. Damit ist **Phase 11 fertig**.
-  3) Danach **Phase 12 (Import/Export)** - dort zuerst Konzept gegen V1 abstimmen (JSON-
-  Export-Haelfte + Politur, Abgleich alt/neu), dann bauen.
+- **Naechste Sitzung (Einstieg):** **Phase 12 (Migration + Import/Export).** Zuerst Konzept
+  gegen V1 abstimmen: wie V1 exportiert/importiert (Datenform, Trigger, Stelle in der App),
+  was davon nach V2 gehoert, wo es in V2 sitzt (Einstellungen) und wie der Abgleich alt/neu
+  aussieht. Erst nach Konsens bauen. Migrations-Import (Startseite) und Seed stehen bereits.
 - **L4 (Beenden + Speichern) bleibt vorgemerkt** (nicht starten vor L3-Freigabe): erledigte
   Saetze normalisiert in den Verlauf schreiben (echter Unterschied Speichern/Verwerfen),
   volles Offline-Zusammenspiel. Erst Konzept gegen V1 (app.js finishSession: nur abgehakte
@@ -693,14 +699,16 @@ Fortschritt wird hier je Lieferung gefuehrt:
 - [x] **L5 – Skill-Live.** *(live freigegeben 2026-06-23)* Gefuehrte Skill-Einheit
       (Start-Popup, Werte/Stoppuhr mit 5s-Vorlauf, Abhaken + Satzpause, Beenden mit
       Konsekutiv-Fortschreibung); Skill-Start auf der Trainingsseite verdrahtet.
-- [x] **L6 – Wake-Lock.** *(gebaut 2026-06-23, live testbar)* Bewusste Erweiterung
+- [x] **L6 – Wake-Lock.** *(live freigegeben 2026-06-23)* Bewusste Erweiterung
       ueber V1 hinaus (V1 hatte keinen). Schalter „Bildschirm wachhalten" in den
       Einstellungen im Block Pausen-Timer (unter Auto-Start/Ton/Vibration),
       Standard aus, Konto-Einstellung (gilt auf allen Geraeten, keine DB-Migration:
       liegt im bestehenden timers-jsonb). Greift nur bei laufender Einheit (Kraft +
       Skill), gibt beim Beenden/Verwerfen frei, fordert nach App-Wechsel neu an;
       No-op auf Geraeten ohne Screen Wake Lock API (z. B. iOS < 16.4).
-- [ ] Paritaetsdurchlauf Live gegen V1 + Abschluss-Test
+- [x] Paritaetsdurchlauf Live gegen V1 + Abschluss-Test *(2026-06-23: Kadir hat L1–L6
+      jeweils einzeln gegen V1 geprueft und freigegeben; den zusammenhaengenden Durchlauf
+      am Stueck bewusst zurueckgestellt — meldet sich, falls noch etwas auffaellt.)*
 
 ## Phase 12 – Migration + Import/Export
 
@@ -725,6 +733,15 @@ Fortschritt wird hier je Lieferung gefuehrt:
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-23 - Phase 11 (Live-Session) ABGESCHLOSSEN. L6 (Wake-Lock) live freigegeben.
+  Kadir hat L1–L6 jeweils einzeln gegen V1 geprueft und abgenommen; den zusammenhaengenden
+  Paritaetsdurchlauf am Stueck bewusst zurueckgestellt (meldet sich, falls noch etwas
+  auffaellt). Damit steht die gefuehrte Durchfuehrung komplett: Panel/Dialoge/Toene (L1),
+  Aufbau aus Vorlage + Coach (L2), gefuehrter Ablauf mit Pausen-Timer (L3), Beenden/Speichern
+  normalisiert + offline (L4), Skill-Live mit Stoppuhr + Konsekutiv-Fortschreibung (L5),
+  Wake-Lock als Erweiterung ueber V1 hinaus (L6). Naechstes: Phase 12 (Import/Export), erst
+  Konzept gegen V1.
 
 - 2026-06-23 - Phase 11 Lieferung 6 (Wake-Lock) gebaut, wartet auf Live-Test. Bewusste
   Erweiterung ueber V1 hinaus (V1 hatte keinen), mit Kadir abgestimmt: rein, Schalter unter
