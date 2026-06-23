@@ -11,7 +11,6 @@ import {
   InventoryKettlebells,
 } from "@/components/settings/InventoryWeights";
 import { InventoryEquipment } from "@/components/settings/InventoryEquipment";
-import { Datenstand } from "@/components/Datenstand";
 import { DataExport } from "@/components/settings/DataExport";
 import { DataRestore } from "@/components/settings/DataRestore";
 import { CoachExport } from "@/components/settings/CoachExport";
@@ -31,8 +30,7 @@ export const Route = createFileRoute("/einstellungen")({
 // Steuerelement rechts. Oben das Konto-/Verbindungs-Panel, darunter auf dem
 // Desktop ein zweispaltiges Raster der Bereiche (mobil ein Stapel). Reihenfolge
 // wie V1: Engine, Timer, Inventar (Stangen/Scheiben/Kettlebells/Geraete), Score,
-// dann "Daten" (vorerst nur die Datenstand-Anzeige; Export/Restore folgen in
-// Phase 12). Plate-Loader bekommt
+// dann "Daten" (Export/Wiederherstellen/Coaching). Plate-Loader bekommt
 // keine eigene UI - das Inventar fuettert den schon portierten Engine-Loader.
 function EinstellungenPage(): React.ReactElement {
   const settingsQuery = useSettings();
@@ -92,7 +90,6 @@ function EinstellungenPage(): React.ReactElement {
 
           <Section eyebrow="Daten">
             <div className="flex flex-col gap-3">
-              <Datenstand />
               <DataExport />
               <DataRestore />
               <CoachExport />

@@ -2,10 +2,12 @@ import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { AppShell } from "@/components/shell/AppShell";
 import { LiveLayer } from "@/components/live/LiveLayer";
+import { SeedBootstrap } from "@/components/SeedBootstrap";
 
 // Grundrahmen aller Seiten. Die AppShell (Sidebar/Bottom-Nav/Kopf) umschliesst
 // das Outlet, in dem die jeweilige Seite rendert. Die LiveLayer (Live-Session-
 // Panel + Dialoge) liegt darueber und ist tab-uebergreifend sichtbar.
+// SeedBootstrap stoesst unsichtbar den Erststart-Seed an (rendert nichts).
 export const Route = createRootRoute({
   component: RootLayout,
 });
@@ -13,6 +15,7 @@ export const Route = createRootRoute({
 function RootLayout(): React.ReactElement {
   return (
     <>
+      <SeedBootstrap />
       <AppShell>
         <Outlet />
       </AppShell>

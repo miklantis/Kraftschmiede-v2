@@ -17,6 +17,15 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
+- **Datenstand-Anzeige entfernt (2026-06-24).** Die „Datenstand"-Karte in der Daten-Sektion
+  der Einstellungen ist raus (auf Kadirs Wunsch), Komponente src/components/Datenstand.tsx
+  geloescht. Wichtig: an Datenstand haing der EINZIGE Erststart-Seed-Anstoss
+  (ensureDefinitionsSeeded). Damit ein neues Konto weiterhin die Startdaten bekommt, laeuft
+  der (idempotente) Seed jetzt unsichtbar im App-Start: neue Komponente
+  src/components/SeedBootstrap.tsx (rendert nichts, stoesst den Seed einmal je Sitzung an),
+  eingehaengt im Wurzel-Layout __root.tsx. Die Daten-Sektion zeigt jetzt nur noch Export,
+  Wiederherstellen und Coaching. tsc/build/297 Tests gruen.
+
 - **Live-Korrektur Coach-Export Messungen (2026-06-24).** Die Messungen im Coach-Export
   waren zu duenn (nur Gewicht/Fett%/Muskel). Jetzt alle vorhandenen Werte je Messung:
   Gewicht, Koerperfett (kg + %), Skelettmuskel, Koerperwasser (tbw), Phasenwinkel,
