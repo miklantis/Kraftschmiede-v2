@@ -99,10 +99,14 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   enabled = laufende Session && timers.wakeLock && Unterstuetzung. timersSchema additiv um
   optionales wakeLock erweitert; TimerSettings um die Schalter-Reihe ergaenzt. tsc/build/284
   Tests gruen (1 neuer Schema-Test: wakeLock optional + rueckwaertskompatibel).
-- **Naechste Sitzung (Einstieg):** **Phase 11 abschliessen** mit dem **Paritaetsdurchlauf
-  Live gegen V1** (L1-L6 am Stueck gegen V1 pruefen: Start, Aufbau/Coach, gefuehrter Ablauf,
-  Beenden/Speichern, Skill-Live, Wake-Lock) + Abschluss-Test. Danach ist Phase 11 fertig; es
-  folgt Phase 12 (Import/Export) - dort zuerst Konzept gegen V1.
+- **Naechste Sitzung (Einstieg):** 1) **L6 (Wake-Lock) live testen und freigeben** -
+  steht noch aus (gebaut, aber an diesem Abend nicht mehr getestet): Schalter in den
+  Einstellungen (Pausen-Timer -> „Bildschirm wachhalten") an, Einheit starten, pruefen ob
+  der Bildschirm wach bleibt und nach dem Beenden wieder abdunkelt. 2) **Paritaetsdurchlauf
+  Live gegen V1** - L1-L6 am Stueck gegen V1 pruefen (Start, Aufbau/Coach, gefuehrter Ablauf,
+  Beenden/Speichern, Skill-Live, Wake-Lock) + Abschluss-Test. Damit ist **Phase 11 fertig**.
+  3) Danach **Phase 12 (Import/Export)** - dort zuerst Konzept gegen V1 abstimmen (JSON-
+  Export-Haelfte + Politur, Abgleich alt/neu), dann bauen.
 - **L4 (Beenden + Speichern) bleibt vorgemerkt** (nicht starten vor L3-Freigabe): erledigte
   Saetze normalisiert in den Verlauf schreiben (echter Unterschied Speichern/Verwerfen),
   volles Offline-Zusammenspiel. Erst Konzept gegen V1 (app.js finishSession: nur abgehakte
