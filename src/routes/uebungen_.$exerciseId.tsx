@@ -93,48 +93,62 @@ function ExerciseDetailPage(): React.ReactElement {
         </p>
       )}
 
-      <StatRow cells={stats} className="mb-6" />
+      {/* Mobil ein Stapel (Statistik, Diagramm, Muskeln, Verlauf); ab 960px
+          zwei Spalten wie V1: links (breiter) Diagramm + Verlauf, rechts
+          Statistik + Muskeln. Platzierung ueber col-/row-start; die Quell-
+          reihenfolge ergibt direkt die gewuenschte Mobil-Abfolge. */}
+      <div className="grid grid-cols-1 items-start gap-6 min-[960px]:grid-cols-[1.6fr_1fr] min-[960px]:gap-x-[26px] min-[960px]:gap-y-7">
+        <StatRow
+          cells={stats}
+          className="min-[960px]:col-start-2 min-[960px]:row-start-1"
+        />
 
-      {metricOptions.length > 0 && (
-        <div className="mb-6">
-          <ExerciseChartCard
-            history={chartHistory}
-            options={metricOptions}
-            defaultMetric={defaultMetric}
-            unit={unit}
-          />
-        </div>
-      )}
-
-      <div className="mb-6 rounded-[18px] bg-card p-4 shadow-card min-[960px]:px-5 min-[960px]:py-[18px]">
-        <div className="mb-2 text-[14px] font-semibold">Beanspruchte Muskeln</div>
-        <MuscleMap values={muscleValues} className="max-w-[320px]" />
-      </div>
-
-      <Section eyebrow="Verlauf">
-        {verlauf.length === 0 ? (
-          <p className="text-[15px] text-muted-foreground">
-            Noch keine absolvierte Session mit dieser Übung.
-          </p>
-        ) : (
-          <List bordered>
-            {verlauf.map((r, i) => (
-              <ListRow
-                key={i}
-                title={longDateShort(r.date)}
-                subtitle={r.line || undefined}
-                trailing={
-                  r.right ? (
-                    <span className="font-mono text-[14px] text-muted-foreground tabular-nums">
-                      {r.right}
-                    </span>
-                  ) : undefined
-                }
-              />
-            ))}
-          </List>
+        {metricOptions.length > 0 && (
+          <div className="min-w-0 min-[960px]:col-start-1 min-[960px]:row-start-1">
+            <ExerciseChartCard
+              history={chartHistory}
+              options={metricOptions}
+              defaultMetric={defaultMetric}
+              unit={unit}
+            />
+          </div>
         )}
-      </Section>
+
+        <Section
+          eyebrow="Beanspruchte Muskeln"
+          className="min-[960px]:col-start-2 min-[960px]:row-start-2"
+        >
+          <MuscleMap values={muscleValues} className="max-w-[320px]" />
+        </Section>
+
+        <Section
+          eyebrow="Verlauf"
+          className="min-w-0 min-[960px]:col-start-1 min-[960px]:row-start-2"
+        >
+          {verlauf.length === 0 ? (
+            <p className="text-[15px] text-muted-foreground">
+              Noch keine absolvierte Session mit dieser Übung.
+            </p>
+          ) : (
+            <List bordered>
+              {verlauf.map((r, i) => (
+                <ListRow
+                  key={i}
+                  title={longDateShort(r.date)}
+                  subtitle={r.line || undefined}
+                  trailing={
+                    r.right ? (
+                      <span className="font-mono text-[14px] text-muted-foreground tabular-nums">
+                        {r.right}
+                      </span>
+                    ) : undefined
+                  }
+                />
+              ))}
+            </List>
+          )}
+        </Section>
+      </div>
     </div>
   );
 }

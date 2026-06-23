@@ -30,6 +30,14 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   useExerciseDetail liefert die fertige Werte-Map. Leere Beteiligung -> nur graue
   Silhouette. Doku docs/Muskel-Map.md um eine V2-Umsetzungssektion ergaenzt.
   tsc/build/190 Tests gruen.
+- **Live-Korrekturen MuscleMap (nach erstem Test):** (a) Einfaerbung war grau statt
+  Markengruen - die Default-Rampe las --accent (im V2-Token-Set ein helles Grau, shadcn-
+  Hover), jetzt --primary (#0c9d77, wie die Charts). (b) Muskelblock ohne Karten-
+  Hintergrund/Schatten - nur Eyebrow "Beanspruchte Muskeln" + Figuren direkt auf der Seite
+  (Section statt Karte). (c) Detailseite ab 960px zweispaltig wie V1: links (1.6fr)
+  Diagramm + Verlauf, rechts (1fr) Statistik + Muskeln; mobil weiter ein Stapel
+  (Statistik, Diagramm, Muskeln, Verlauf). Platzierung ueber col-/row-start im Grid.
+  tsc/build/190 Tests gruen.
 - **GEKLAERT (1RM-Historie, Variante B umgesetzt):** Das je Einheit geschaetzte 1RM wird
   jetzt – wie in V1 zur Anzeigezeit – aus den sauberen Arbeitssaetzen berechnet
   (engine.best1RMFromSets + settings.rm_formula), nicht mehr aus dem beim Import leer

@@ -38,10 +38,10 @@ function clamp01(v: number): number {
   return v < 0 ? 0 : v > 1 ? 1 : v;
 }
 
-function readAccent(): string {
+function readPrimary(): string {
   if (typeof window === "undefined") return "#0c9d77";
   const v = getComputedStyle(document.documentElement)
-    .getPropertyValue("--accent")
+    .getPropertyValue("--primary")
     .trim();
   return v || "#0c9d77";
 }
@@ -88,8 +88,8 @@ export interface MuscleMapProps {
   // Welche Ansicht. Standard "both" (beide Figuren nebeneinander, kein Umschalter).
   view?: MuscleMapView;
   // Farbfunktion fuer beanspruchte Regionen (v 0..1 -> Farbe). Ohne Vorgabe:
-  // Rampe weiss -> --accent (schwach hell, stark kraeftig). Hier wird die
-  // Komponente fuer andere Zwecke umgefaerbt (z. B. Koerper-Seite, Phase 9).
+  // Rampe weiss -> --primary (Markengruen; schwach hell, stark kraeftig). Hier
+  // wird die Komponente fuer andere Zwecke umgefaerbt (z. B. Koerper-Seite, Phase 9).
   colorFn?: (v: number) => string;
   // Silhouetten-Farbe (Koerperform).
   base?: string;
@@ -128,9 +128,9 @@ export function MuscleMap({
     svg.style.height = "auto";
 
     // Einfaerben: Silhouette = base, beanspruchte Region = colorFn(v), Rest = idle.
-    const accent = readAccent();
+    const brand = readPrimary();
     const paint =
-      colorFn ?? ((v: number) => mix("#ffffff", accent, 0.35 + 0.65 * clamp01(v)));
+      colorFn ?? ((v: number) => mix("#ffffff", brand, 0.35 + 0.65 * clamp01(v)));
     const regionValues = expand(values ?? {});
 
     for (const id of SILHOUETTE_IDS) {

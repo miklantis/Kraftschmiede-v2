@@ -296,7 +296,7 @@ Reine Darstellung, kennt keine Domaene und keine feste Farbe.
 | --------- | -------------------------------------------------------------------- |
 | `values`  | Region-, Gruppen- oder Sektions-Keys -> Intensitaet 0..1 (via `expand`). |
 | `view`    | `"both"` (Standard), `"front"` oder `"back"`. Kein Umschalter.       |
-| `colorFn` | `(v) => Farbe` fuer beanspruchte Regionen. Standard: Rampe weiss -> `--accent`. |
+| `colorFn` | `(v) => Farbe` fuer beanspruchte Regionen. Standard: Rampe weiss -> `--primary`. |
 | `base`    | Silhouetten-Farbe (Standard hellgrau).                               |
 | `idle`    | Farbe nicht beanspruchter Regionen (Standard etwas dunkler).         |
 
