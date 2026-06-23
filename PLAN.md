@@ -17,23 +17,21 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Naechste Sitzung (Einstieg):** Das Gleiten-Problem des Mobile-Popups ist **geloest.**
-  Ursache war nicht das Timing/der Reflow, sondern eine falsche `transition-property`: In
-  Tailwind v4 schieben `translate-y-*` das Blatt ueber die eigene `translate`-Eigenschaft
-  (nicht mehr ueber `transform`), und am Desktop laeuft die Bewegung ueber `scale`. Die
-  Animationsliste nannte aber nur `transform,opacity` - also wurde die Deckkraft animiert
-  (Popup "tauchte auf"), die Position aber sprang. Korrigiert auf
-  `transform,translate,scale,opacity`. Der Reflow/rAF-Trick bleibt unveraendert noetig und
-  korrekt. Naechster Schritt: am Handy live testen (Yoga-Zeile -> Bodenblatt faehrt von
-  unten rein und beim Schliessen wieder raus). Nach Freigabe das letzte Kaestchen in Phase 7
-  abhaken, dann Phase 8 (Uebungen). Hinweis: die Skill-Live-Session (Trainieren) bleibt fuer
-  Phase 11 vorgemerkt.
-- **Phase:** Phase 7 (Yoga) **gebaut.** Yoga ist bewusst KEIN eigener Tab, sondern eine
-  schnell abgehakte Einheit ueber die Zeile im Training-Tab. Neu und wichtig: das
+- **Naechste Sitzung (Einstieg):** Phase 7 (Yoga) **abgeschlossen und freigegeben.** Popup
+  und Yoga-Eintrag funktionieren live; das Mobile-Gleiten des Bodenblatts ist behoben (siehe
+  Log/Phase 7). Naechster Schritt: Phase 8 (Uebungen inkl. Muscle-Map). Zuerst gemeinsam das
+  Konzept abstimmen (Funktionsschnitt gegen V1: Uebungsliste, Detailseite, generische
+  MuscleMap-Komponente), dann bauen, dann live testen. Hinweise: die generische
+  ChartCanvas/D3-Grundlage aus Phase 5 ist fuer die Uebungs-Verlaufscharts (Phase 8/spaeter)
+  zur Wiederverwendung gedacht; die Skill-Live-Session (Trainieren) bleibt fuer Phase 11
+  vorgemerkt.
+- **Phase:** Phase 7 (Yoga) **abgeschlossen.** Yoga ist bewusst KEIN eigener Tab, sondern
+  eine schnell abgehakte Einheit ueber die Zeile im Training-Tab. Neu und wichtig: das
   **generische Overlay-Primitive** (components/ui/overlay.tsx) als Popup-Fundament fuer alle
-  kuenftigen Dialoge - Desktop zentriertes Fenster, Mobile von unten hereinfahrendes
+  kuenftigen Dialoge - Desktop zentriertes Fenster, Mobile von unten hereingleitendes
   Bodenblatt, Schliessen per Hintergrund/X/Escape, Portal an <body>, Scroll-Lock,
-  verzoegertes Aushaengen nach der Ausblende-Animation. Darauf das Yoga-Eintrag-Popup
+  verzoegertes Aushaengen nach der Ausblende-Animation; animierte Eigenschaften
+  transform,translate,scale,opacity (Tailwind-v4-korrekt). Darauf das Yoga-Eintrag-Popup
   (training/YogaEntryModal): drei Schnellwahl-Tage, Dauer-Stepper (80/5/5-180), Lila-Akzent.
   Schreib-Hook useAddYoga legt die Einheit an und laedt Uebersicht + Verlauf neu. Schema/
   Token/Verlaufs-Darstellung/yogaSubtitle waren schon da (Phasen 0-4). Naechste Phase: 8
@@ -281,7 +279,8 @@ fuehrt vorerst zu einem Platzhalter, bis Live steht.
       eine erledigte Yoga-Einheit an -> erscheint sofort im Verlauf und als "Zuletzt" oben.
       Neu: generisches Overlay-Primitive (Desktop zentriert, Mobile Bodenblatt) als Fundament
       fuer alle kuenftigen Popups; Schreib-Hook useAddYoga.)
-- [ ] Live getestet
+- [x] Live getestet und freigegeben (Popup + Yoga-Eintrag funktionieren; Mobile-Gleiten
+      des Bodenblatts korrigiert).
 
 ## Phase 8 – Uebungen (inkl. Muscle-Map)
 
@@ -348,6 +347,19 @@ getrennt: was hier liegt, gehoert nicht auf den Trainings-Screen.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-23 - Phase 7 (Yoga) abgeschlossen: live getestet und freigegeben. Yoga ist kein
+  eigener Tab, sondern eine schnell abgehakte Einheit ueber die Zeile im Training-Tab; das
+  Eintrag-Popup (drei Schnellwahl-Tage, Dauer-Stepper 80/5/5-180, Lila) schreibt eine
+  erledigte Einheit, die sofort im Verlauf und als "Zuletzt" oben erscheint. Strikt V1 (keine
+  freie Datumswahl, kein Notizfeld). Kernstueck: das neue generische Overlay-Primitive
+  (components/ui/overlay.tsx) als Fundament fuer alle kuenftigen Dialoge - Desktop zentriert,
+  Mobile von unten hereingleitendes Bodenblatt. Vor der Freigabe ein Bugfix: das Bodenblatt
+  glitt am Handy nicht herein, sondern blendete nur ein. Ursache war eine falsche
+  transition-property - in Tailwind v4 laeuft die Verschiebung ueber die eigene
+  translate-Eigenschaft (Desktop ueber scale), nicht ueber transform; die Animationsliste
+  nannte aber nur transform,opacity, sodass nur die Deckkraft animierte und die Position
+  sprang. Korrigiert auf transform,translate,scale,opacity. tsc, build und 154 Tests gruen.
 
 - 2026-06-22 - Phase 5 (Journey) abgeschlossen: live getestet und freigegeben (Seite mit
   aktiver-Journey-Karte, Periodisierungskurve, Phasen-Ablauf und dem Vorlagen-Waehler/
