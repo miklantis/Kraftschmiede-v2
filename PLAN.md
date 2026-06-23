@@ -17,19 +17,25 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Phase 12 Schritt 1 (Migration entfernt) gebaut (2026-06-23), live testbar.** Die
-  einmalige V1-Migration ist raus: `<V1Import />` aus der Daten-Sektion der Einstellungen
-  entfernt, dazu die drei Migrationsdateien geloescht (`src/components/V1Import.tsx`,
-  `src/lib/v1import.ts`, `src/lib/__tests__/v1import.test.ts`). Bewusst unberuehrt: der
-  laufende Composition-Import (InBody/BIA) und die Datenstand-Anzeige - beide bleiben.
-  Unter „Daten" steht jetzt nur noch der Datenstand; Export und Voll-Restore kommen in den
-  naechsten beiden Schritten daneben. tsc/build/276 Tests gruen (8 v1import-Tests entfielen).
-- **Naechster Schritt: Phase 12 Schritt 2 (Export).** Kompletter Bestand des Nutzers als ein
-  lesbares JSON (Sessions mit geschachtelten Saetzen im V1-Format, Uebungen, Vorlagen,
-  Journeys, Skill-Fortschritt, Composition, Einstellungen, Inventar), V1-Anreicherung je
-  Arbeitssatz (rir/rpe/scoreLabel) + _scoreScale-Notiz, Datei `kraftschmiede_DATUM.json` +
-  Zwischenablage. Reine Aufbau-Funktion in `src/lib/` + Hook `useExport`. Details in der
-  Phase-12-Sektion. Konzept ist abgestimmt, also direkt bauen.
+- **Phase 12 Schritt 2 (Export) gebaut (2026-06-23), live testbar.** In den Einstellungen
+  unter „Daten" sichert jetzt eine Export-Karte den kompletten Bestand als ein lesbares
+  JSON: Einheiten mit geschachtelten Uebungen (entries) und Saetzen wie in V1, dazu Uebungen,
+  Vorlagen, Journeys, Skill-Fortschritt, Composition, Einstellungen und Inventar (gebuendelt)
+  - faktisch alle 23 Tabellen samt ids/Fremdschluesseln, damit das Voll-Restore (Schritt 3)
+  spaeter sauber alles zurueckspielen kann. V1-Anreicherung uebernommen: je Satz mit Score
+  haengen rir/rpe/scoreLabel aus der Score-Skala dran (nur fuer den Export, beim Re-Import
+  verworfen), plus eine _scoreScale-Notiz. Zwei Wege wie V1: Datei `kraftschmiede_DATUM.json`
+  oder Zwischenablage. Neu und domaenenfrei: das reine, DOM-/Supabase-freie Aufbau-Modul
+  lib/exportData.ts (buildExport gruppiert/ordnet/reichert an, getestet) und der DOM-nahe
+  download-Baustein lib/download.ts (Datei-Download + Clipboard mit Fallback). Hook useExport
+  holt alle Tabellen (RLS scoped) und orchestriert. tsc/build/283 Tests gruen (7 neue
+  exportData).
+- **Naechster Schritt: Phase 12 Schritt 3 (Voll-Restore).** Nimmt einen eigenen V2-Export
+  (NUR V2), zeigt erst eine Vorschau (Anzahl Sessions/Saetze/Journeys), ersetzt nach
+  Rueckfrage den kompletten Bestand (kein Anhaengen/Aktualisieren). Reine, Zod-gepruefte
+  Import-Pruefung in `src/lib/` (parst + validiert, verwirft die abgeleiteten Felder wie V1
+  stripDerived), Hook `useRestore`, Rueckfrage ueber das Overlay-Primitive. Details in der
+  Phase-12-Sektion.
 
 - **Live-Korrektur Ende-Popup-Optik auf V1-Paritaet (2026-06-23).** Das Sitzungsende-Popup
   (Workout UND Skill) sah anders aus als V1; jetzt 1:1 nach klar-app.css (kl-end-/kl-summary-):
@@ -743,7 +749,7 @@ Ueberschreiben.
       das ist ein normales Feature, keine Migration. Die Datenstand-Anzeige (`Datenstand`)
       bleibt und wandert in die neue Daten-Karte neben Export/Restore (schlichter
       Bestandsueberblick, auch ohne Migration nuetzlich).
-- [ ] **Export (zuerst, sofort live testbar).** Kompletter Bestand des Nutzers als ein
+- [x] **Export (zuerst, sofort live testbar).** Kompletter Bestand des Nutzers als ein
       lesbares JSON: Sessions mit geschachtelten Saetzen im V1-Format, dazu Uebungen,
       Vorlagen, Journeys, Skill-Fortschritt, Composition, Einstellungen, Inventar. V1-
       Anreicherung je Arbeitssatz (rir/rpe/scoreLabel) + _scoreScale-Notiz, beim Import

@@ -12,6 +12,7 @@ import {
 } from "@/components/settings/InventoryWeights";
 import { InventoryEquipment } from "@/components/settings/InventoryEquipment";
 import { Datenstand } from "@/components/Datenstand";
+import { DataExport } from "@/components/settings/DataExport";
 import { useSettings } from "@/hooks/useSettings";
 import {
   useBars,
@@ -90,6 +91,7 @@ function EinstellungenPage(): React.ReactElement {
           <Section eyebrow="Daten">
             <div className="flex flex-col gap-3">
               <Datenstand />
+              <DataExport />
             </div>
           </Section>
         </div>
