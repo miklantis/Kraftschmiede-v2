@@ -64,7 +64,7 @@ export function skillEndSummary(
       count: done + " / " + we.sets.length,
       allDone: we.sets.length > 0 && done === we.sets.length,
       chips: we.sets.map((s) => ({
-        label: s.value == null ? "–" : s.value + unit,
+        label: (s.value == null ? "–" : String(s.value)) + unit,
         done: s.done,
       })),
     };

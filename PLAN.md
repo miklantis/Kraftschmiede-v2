@@ -17,6 +17,17 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
+- **Live-Korrektur Ende-Popup-Optik auf V1-Paritaet (2026-06-23).** Das Sitzungsende-Popup
+  (Workout UND Skill) sah anders aus als V1; jetzt 1:1 nach klar-app.css (kl-end-/kl-summary-):
+  der laufende Uhr-Chip ist gruen und sitzt im Kopf neben dem X (nicht mehr als eigene Zeile),
+  je Uebung eine weisse Karte mit Schatten (Name links, „erledigt / gesamt" rechts), die Saetze
+  als Chips mit 7px-Radius (erledigt gruen, offen grau), gleicher Hinweistext „Speichern
+  uebernimmt nur erledigte Saetze in den Verlauf." fuer beide Arten, keine „N/M Saetze"-Meta-
+  Zeile mehr beim Skill, Skill-Dauer-Chips mit Einheit auch bei offenen Saetzen („– s"). Das
+  Overlay-Primitive bekam dafuer einen domaenenfreien Kopf-Slot (headerTrailing); Workout- und
+  Skill-Ende teilen sich jetzt dieselbe Zusammenfassungs-/Knopf-Darstellung. tsc/build/283
+  Tests gruen.
+
 - **Live-Korrektur L3-Optik auf V1-Paritaet (2026-06-23).** Nach erstem Live-Test an V1
   angeglichen: die Satz-Eingaben (Wdh/kg/RIR, Aufwaerm-Dauer/Art) haben keinen sichtbaren
   Kasten mehr (transparenter Grund, kein Rahmen, RIR/Art ohne Pfeil), nur beim Tippen ein

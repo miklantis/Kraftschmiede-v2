@@ -27,12 +27,16 @@ export function Overlay({
   open,
   onClose,
   title,
+  headerTrailing,
   children,
   className,
 }: {
   open: boolean;
   onClose: () => void;
   title?: string;
+  /** Optionales Element im Kopf, zwischen Titel und Schliessen-Knopf
+   *  (z. B. der laufende Uhr-Chip im Sitzungsende-Dialog). */
+  headerTrailing?: ReactNode;
   children: ReactNode;
   className?: string;
 }): React.ReactElement | null {
@@ -130,6 +134,7 @@ export function Overlay({
             <div className="flex-1 text-[20px] font-bold text-foreground">
               {title}
             </div>
+            {headerTrailing}
             <button
               type="button"
               aria-label="Schliessen"

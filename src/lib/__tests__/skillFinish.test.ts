@@ -73,7 +73,7 @@ describe("skillEndSummary", () => {
     expect(sum.entries[0].count).toBe("1 / 2");
     expect(sum.entries[0].allDone).toBe(false);
     expect(sum.entries[0].chips[0]).toEqual({ label: "32 s", done: true });
-    expect(sum.entries[0].chips[1]).toEqual({ label: "–", done: false });
+    expect(sum.entries[0].chips[1]).toEqual({ label: "– s", done: false });
     expect(sum.entries[1].count).toBe("1 / 1");
     expect(sum.entries[1].allDone).toBe(true);
     expect(sum.entries[1].chips[0]).toEqual({ label: "5", done: true });
