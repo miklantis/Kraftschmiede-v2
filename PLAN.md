@@ -18,12 +18,13 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 ## Aktueller Stand
 
 - **Naechste Sitzung (Einstieg):** **Phase 11 Lieferung 3 – Gefuehrter Ablauf.** L2
-  (Sitzungsaufbau + Coach) ist gebaut und wartet auf den Live-Test (s. u.). L3 macht die
-  Karten interaktiv: Saetze abhaken (Aufwaermen/Arbeit/allg. Aufwaermen), aktiver-Satz-
-  Fokus, Coach beim Durchfuehren (Progression), Pausen-/Rest-Timer (Satz/Uebung getrennt,
-  Auto-Start) + Rest-Bar, Audio/Vibration im Ablauf, fokus-erhaltende Eingaben (Wdh/kg/RIR),
-  +/- Satz, Stangenwechsel, Scheiben-Schalter. Erst Konzept gegen V1 (live.js: toggleSetDone/
-  onSetCompleted/startRest/refreshActive + Inline-Updates), dann bauen. Wake-Lock bleibt L6.
+  (Sitzungsaufbau + Coach inkl. Start-Popup) ist gebaut, live getestet und **freigegeben**
+  (2026-06-23, s. Log). L3 macht die Karten interaktiv: Saetze abhaken (Aufwaermen/Arbeit/allg.
+  Aufwaermen), aktiver-Satz-Fokus, Coach beim Durchfuehren (Progression), Pausen-/Rest-Timer
+  (Satz/Uebung getrennt, Auto-Start) + Rest-Bar, Audio/Vibration im Ablauf, fokus-erhaltende
+  Eingaben (Wdh/kg/RIR), +/- Satz, Stangenwechsel, Scheiben-Schalter. Erst Konzept gegen V1
+  (live.js: toggleSetDone/onSetCompleted/startRest/refreshActive + Inline-Updates), dann bauen.
+  Wake-Lock bleibt L6.
 - **Live-Korrektur Start-Popup auf V1-Paritaet (2026-06-23).** Das Start-Popup zeigte nur die
   Uebungsnamen; jetzt wie V1 (live.js buildStartInner): Untertitel „Vorschau deiner Saetze",
   je Uebung eine weisse Karte mit „N × Satz" plus den Satz-Chips (Wdh × kg, deutsches Komma),
@@ -604,6 +605,19 @@ Fortschritt wird hier je Lieferung gefuehrt:
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-23 - Deploy: SPA-Fallback fuer GitHub Pages ergaenzt. Direkt aufgerufene Unterseiten
+  (z. B. /journey, /verlauf) oder ein Reload darauf lieferten 404, weil Pages dafuer keine
+  eigene Datei hat (Client-Routing). Der Deploy-Workflow kopiert jetzt nach dem Build die
+  index.html als 404.html; Pages liefert damit fuer jede unbekannte Tiefe die App-Huelle aus,
+  und der Router (mit Basepath /Kraftschmiede-v2/) zeigt die richtige Seite. Nur Workflow-
+  Aenderung (.github/workflows/deploy.yml), kein App-Code.
+
+- 2026-06-23 - Phase 11 Lieferung 2 (Sitzungsaufbau aus Vorlage + Coach) inkl. Start-Popup
+  live getestet und FREIGEGEBEN. Werte (Vorschlaege, Satzzahl, Aufwaermrampe, Scheiben) gegen
+  V1 geprueft und fuer gut befunden; das Start-Popup auf V1-Paritaet (Satz-Chips + Koerper-
+  Banner) bestaetigt. Die Optik der Karten bleibt bewusst schlicht (Schliff spaeter); Abhaken/
+  Timer/Eingaben sind L3. Naechste Lieferung: L3 (gefuehrter Ablauf) - erst Konzept gegen V1.
 
 - 2026-06-23 - Start-Popup auf V1-Paritaet gebracht (Live-Korrektur zu L2). Vorher nur die
   Uebungsnamen; jetzt wie V1 (live.js buildStartInner/startPreviewData): Untertitel „Vorschau

@@ -35,6 +35,13 @@ jobs:
       - name: Bauen
         run: npm run build
 
+      # SPA-Fallback fuer GitHub Pages: direkt aufgerufene Unterseiten (z. B.
+      # /journey) haben keine eigene Datei -> Pages liefert sonst 404. Eine Kopie
+      # der index.html als 404.html liefert stattdessen die App-Huelle aus; der
+      # Router (mit Basepath) zeigt dann die richtige Seite.
+      - name: SPA-Fallback (404.html)
+        run: cp dist/index.html dist/404.html
+
       - name: Pages konfigurieren
         uses: actions/configure-pages@v5
 
