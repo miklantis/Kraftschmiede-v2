@@ -4,10 +4,11 @@ import {
   pad2,
   parseLive,
   serializeLive,
-  type LiveSession,
+  type WorkoutSession,
+  type SkillSession,
 } from "@/lib/liveSession";
 
-const SESSION: LiveSession = {
+const SESSION: WorkoutSession = {
   id: "live_abc",
   kind: "workout",
   templateId: "tpl-1",
@@ -90,12 +91,45 @@ describe("liveSession", () => {
       expect(parseLive(raw)).toEqual({ session: null, collapsed: true });
     });
 
-    it("verwirft fremde kind-Werte (z. B. Skill kommt erst spaeter)", () => {
+    it("macht einen Roundtrip einer Skill-Einheit", () => {
+      const skill: SkillSession = {
+        id: "live_sk1",
+        kind: "skill",
+        title: "Strict Pull-Up",
+        startedAt: 1_700_000_000_000,
+        skillId: "skill-uuid",
+        phaseIndex: 1,
+        mastered: false,
+        exercises: [
+          {
+            name: "Dead Hang",
+            metric: "duration",
+            target: 30,
+            tempo: null,
+            sets: [
+              { value: null, done: false, met: false },
+              { value: 32, done: true, met: true },
+            ],
+          },
+          {
+            name: "Scapular Pull-Up",
+            metric: "reps",
+            target: 5,
+            tempo: "langsam",
+            sets: [{ value: 5, done: true, met: true }],
+          },
+        ],
+      };
+      const raw = serializeLive({ session: skill, collapsed: false });
+      expect(parseLive(raw)).toEqual({ session: skill, collapsed: false });
+    });
+
+    it("verwirft eine Skill-Einheit ohne skillId", () => {
       const raw = JSON.stringify({
-        collapsed: false,
-        session: { ...SESSION, kind: "skill" },
+        collapsed: true,
+        session: { id: "x", kind: "skill", title: "S", startedAt: 1 },
       });
-      expect(parseLive(raw).session).toBeNull();
+      expect(parseLive(raw)).toEqual({ session: null, collapsed: true });
     });
 
     it("verwirft Eintraege ohne exerciseId und stellt Default-Werte her", () => {
@@ -110,7 +144,8 @@ describe("liveSession", () => {
         },
       });
       const out = parseLive(raw).session;
-      expect(out?.entries).toEqual([
+      expect(out?.kind).toBe("workout");
+      expect(out?.kind === "workout" ? out.entries : null).toEqual([
         {
           exerciseId: "ex-9",
           exerciseName: "",
@@ -130,7 +165,8 @@ describe("liveSession", () => {
         collapsed: false,
         session: { ...SESSION, generalWarmup: { sets: [{}] } },
       });
-      expect(parseLive(raw).session?.generalWarmup.sets).toEqual([
+      const out = parseLive(raw).session;
+      expect(out?.kind === "workout" ? out.generalWarmup.sets : null).toEqual([
         { minutes: 5, mode: "bike", done: false },
       ]);
     });

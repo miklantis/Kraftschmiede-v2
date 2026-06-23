@@ -11,7 +11,13 @@ export interface SkillPhaseAssembled {
   label: string;
   equipment: string[];
   consecutiveSessions: number;
-  exercises: Array<{ metric: Metric; target: number; sets: number }>;
+  exercises: Array<{
+    name: string;
+    metric: Metric;
+    target: number;
+    sets: number;
+    tempo: string | null;
+  }>;
 }
 
 export interface SkillDefAssembled {
@@ -22,9 +28,11 @@ export interface SkillDefAssembled {
 }
 
 interface SkillPhaseExerciseLink {
+  name: string;
   metric: Metric;
   target: number;
   sets: number;
+  tempo: string | null;
   position: number;
 }
 
@@ -59,7 +67,7 @@ export function useSkills() {
       const { data, error } = await supabase
         .from("skills")
         .select(
-          "id, key, name, position, skill_phases(id, label, consecutive_sessions, position, skill_phase_exercises(metric, target, sets, position), skill_phase_equipment(equipment_key))",
+          "id, key, name, position, skill_phases(id, label, consecutive_sessions, position, skill_phase_exercises(name, metric, target, sets, tempo, position), skill_phase_equipment(equipment_key))",
         )
         .order("position", { ascending: true });
       if (error) throw new Error(error.message);
@@ -82,9 +90,11 @@ export function useSkills() {
               .slice()
               .sort((a, b) => a.position - b.position)
               .map((ex) => ({
+                name: ex.name,
                 metric: ex.metric,
                 target: ex.target,
                 sets: ex.sets,
+                tempo: ex.tempo,
               })),
           })),
       }));

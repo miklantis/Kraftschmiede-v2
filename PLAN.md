@@ -35,16 +35,40 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   Arbeitsgewicht/rm im Katalog, Journey/Phase/Woche + Body eingefroren), Verwerfen raeumt nur
   lokal; Ende-Popup mit V1-Vorschau (Saetze-Chips + Dauer); offline ueber pausierbare Mutation.
   Von Kadir live abgenommen. Damit stehen L1-L4 der Live-Session.
-- **Naechste Sitzung (Einstieg):** **Phase 11 Lieferung 5 (Skill-Live)** - zuerst Konzept gegen
-  V1 abstimmen, dann bauen. Quelle: V1 live.js buildSkillLive/liveSkillSession/finishSkillSession
-  + js/skills.js + engine.skillAdvice/skillSetMet/skillSessionResult. Inhalt: gefuehrte Skill-
-  Einheit (Werte je Satz gegen das Phasen-Ziel, geschafft/nicht; bei Haltezeit die Stoppuhr mit
-  5s-Vorlauf), Konsekutiv-Logik beim Beenden (completed -> consecutiveCount hoch, ab Schwelle
-  Phase weiter bzw. gemeistert; missed -> Reset), Schreiben als skill-Einheit (session_exercises
-  ohne Katalogbezug, sets mit value/met, skill_phase/skill_result), und den Skill-Start-Knopf auf
-  der Trainingsseite verdrahten (zeigt bis dahin den Platzhalter). Engine-Teile (skillAdvice etc.)
-  liegen schon portiert vor; die Skill-Verlaufs-Anbindung an die Uebungs-Detailseite steht aus
-  Phase 8. NICHT mit L5 beginnen, bevor das Konzept besprochen ist.
+- **Phase 11 Lieferung 5 (Skill-Live) gebaut (2026-06-23), live testbar.** Die gefuehrte
+  Skill-Einheit ist da; der Skill-Start auf der Trainingsseite ist verdrahtet (ersetzt den
+  Platzhalter). Klick auf einen aktiven (nicht gesperrten) Skill oeffnet das Start-Popup
+  (teilt sich das Overlay mit dem Workout, ohne Koerper-Banner): Untertitel „N Uebungen ·
+  Vorschau", je Uebung „N × Satz" mit Ziel-Chips (Ziel-Wdh bzw. Ziel-Sekunden), bei
+  gemeistertem Skill der Hinweis „Erhaltungstraining der letzten Phase". Im Panel je
+  Phasen-Uebung eine Karte (Kopf Name + Tempo + WDH/DAUER-Tag) mit Tabelle Satz/Ziel/
+  Ergebnis/Haken: Ergebnis eintragen, abhaken; nach einem abgehakten Satz startet bei
+  Auto-Start die Satzpause (gleiche Pausen-Leiste wie Kraft). Kein Coach waehrend der
+  Durchfuehrung und kein aktiver-Satz-Highlight (V1-Paritaet). Bei Haltezeit-Uebungen die
+  Stoppuhr: 5-Sekunden-Vorlauf (rot, Tick je Sekunde), Start-Signal (Piep + Vibration),
+  dann hochzaehlende Uhr -> schreibt den Wert, piept beim Erreichen des Ziels; Wert bleibt
+  von Hand ueberschreibbar; nur eine Uhr zugleich. Beenden wertet wie V1 aus: nur abgehakte
+  Saetze zaehlen, je Satz „geschafft" = Wert >= Ziel; Ergebnis uebersprungen/gemeistert/
+  verfehlt -> Konsekutiv-Logik (completed zaehlt hoch, ab Schwelle Phase weiter bzw. am Ende
+  gemeistert; missed -> 0; skipped unveraendert). Gespeichert wird als Skill-Einheit (type
+  skill, ohne Katalogbezug: exercise_id null + Phasen-Uebungsname + metric, Saetze mit Wert
+  in reps/duration_sec + met, skill_phase/skill_result, Dauer); alle Phasen-Uebungen als
+  Zeile (Position erhalten, damit die Uebungs-Detailseite zuordnen kann). Offline ueber eine
+  zweite pausierbare Mutation (finishSkill: Verlaufszeilen + Fortschritt fortschreiben).
+  Neu/portiert: reiner Aufbau lib/skillLiveBuild.ts und reines Beenden lib/skillFinish.ts
+  (beide DOM-frei, getestet); die Skill-Schreib-Mutation lib/finishSkillMutation.ts (in
+  queryClient registriert); die Hooks useSkillLiveBuilder + useFinishSkill; die Komponenten
+  SkillLiveCard, SkillWatchValue (lokal tickende Stoppuhr wie die Pausen-Leiste). LiveSession
+  ist jetzt eine Union (WorkoutSession | SkillSession); Store, Start-/Ende-Popup und Panel
+  verzweigen nach kind. useSkills additiv um Uebungsname + Tempo ergaenzt. tsc/build/283
+  Tests gruen (12 neue: 5 skillLiveBuild, 7 skillFinish).
+- **Naechste Sitzung (Einstieg):** **Phase 11 Lieferung 5 live testen und freigeben.** Pruefen:
+  Skill auf der Trainingsseite starten, Werte/Stoppuhr (5s-Vorlauf, Ziel-Piep), abhaken +
+  Satzpause, Beenden -> Verlauf (Uebungs-Detailseite zeigt die Skill-Saetze) und Fortschritt
+  (Konsekutiv-Zaehler/Phasenaufstieg/gemeistert auf der Skills-Seite). Danach **L6 (Wake-Lock)**
+  - Entscheidung weglassen vs. mitnehmen (V1 hat KEINEN), dann der Paritaetsdurchlauf Live gegen
+  V1 + Abschluss-Test. Mit L1-L5 steht die Live-Session funktional; offen sind nur noch
+  L6 + Paritaetsdurchlauf.
 - **L4 (Beenden + Speichern) bleibt vorgemerkt** (nicht starten vor L3-Freigabe): erledigte
   Saetze normalisiert in den Verlauf schreiben (echter Unterschied Speichern/Verwerfen),
   volles Offline-Zusammenspiel. Erst Konzept gegen V1 (app.js finishSession: nur abgehakte
@@ -628,8 +652,8 @@ Fortschritt wird hier je Lieferung gefuehrt:
       Erledigte Saetze normalisiert in den Verlauf
       schreiben (echter Unterschied Speichern/Verwerfen); volles Offline-Zusammenspiel
       (Aufzeichnen ohne Netz, spaeter Sync).
-- [ ] **L5 – Skill-Live.** Gefuehrte Skill-Einheit (Stoppuhr/Fortschritt); Skill-Start
-      auf der Trainingsseite wird hier verdrahtet.
+- [ ] **L5 – Skill-Live.** *(gebaut 2026-06-23, wartet auf Live-Test/Freigabe)* Gefuehrte
+      Skill-Einheit (Stoppuhr/Fortschritt); Skill-Start auf der Trainingsseite verdrahtet.
 - [ ] **L6 – Wake-Lock.** Entscheidung weglassen vs. mitnehmen faellt erst hier
       (V1 hat KEINEN Wake-Lock).
 - [ ] Paritaetsdurchlauf Live gegen V1 + Abschluss-Test

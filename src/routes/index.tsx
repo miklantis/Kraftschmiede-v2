@@ -11,9 +11,11 @@ import { YogaEntryModal } from "@/components/training/YogaEntryModal";
 import { useTrainingOverview } from "@/hooks/useTrainingOverview";
 import { useLiveSession } from "@/hooks/useLiveSession";
 import { useLiveBuilder } from "@/hooks/useLiveBuilder";
+import { useSkillLiveBuilder } from "@/hooks/useSkillLiveBuilder";
 
 // Startroute = Training (wie V1). Reine Uebersichts-/Empfehlungsseite: zeigt an
-// und fuehrt hin, fuehrt aber nicht durch (gefuehrte Session = Phase 11).
+// und fuehrt hin. Workout- und Skill-Start oeffnen das Live-Start-Popup; die
+// gefuehrte Durchfuehrung selbst liegt im global gemounteten Live-Panel.
 export const Route = createFileRoute("/")({
   component: TrainingPage,
 });
@@ -21,9 +23,9 @@ export const Route = createFileRoute("/")({
 function TrainingPage(): React.ReactElement {
   const navigate = useNavigate();
   const { isLoading, isError, error, data } = useTrainingOverview();
-  const { openStartWorkout } = useLiveSession();
+  const { openStartWorkout, openStartSkill } = useLiveSession();
   const builder = useLiveBuilder();
-  // Skill-Durchfuehrung folgt in Lieferung 5; bis dahin Platzhalter-Hinweis.
+  const skillBuilder = useSkillLiveBuilder();
   const [note, setNote] = useState<string | null>(null);
   const [yogaOpen, setYogaOpen] = useState(false);
 
@@ -48,8 +50,20 @@ function TrainingPage(): React.ReactElement {
     );
   }
 
-  const placeholder = (): void =>
-    setNote("Die geführte Skill-Einheit folgt in Lieferung 5.");
+  const startSkill = (skillId: string): void => {
+    const built = skillBuilder.buildSkill(skillId);
+    if (!built) {
+      setNote("Die Skill-Einheit konnte nicht aufgebaut werden.");
+      return;
+    }
+    openStartSkill({
+      skillId: built.skillId,
+      skillName: built.skillName,
+      phaseIndex: built.phaseIndex,
+      mastered: built.mastered,
+      exercises: built.exercises,
+    });
+  };
 
   const startWorkout = (w: {
     id: string;
@@ -124,7 +138,7 @@ function TrainingPage(): React.ReactElement {
                 subtitle={sk.subtitle}
                 chevron
                 disabled={sk.gated}
-                onClick={sk.gated ? undefined : placeholder}
+                onClick={sk.gated ? undefined : () => startSkill(sk.id)}
               />
             ))
           ) : (

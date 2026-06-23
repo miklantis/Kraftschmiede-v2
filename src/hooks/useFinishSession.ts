@@ -10,7 +10,7 @@ import {
   type FinishPayload,
 } from "@/lib/finishMutation";
 import type { BodySnapshot } from "@/schemas";
-import type { LiveSession } from "@/lib/liveSession";
+import type { WorkoutSession } from "@/lib/liveSession";
 import { useUserId } from "./useUserId";
 import { useSettings } from "./useSettings";
 import { useSessions } from "./useSessions";
@@ -25,7 +25,7 @@ function asRmFormula(v: string | null | undefined): RmFormula {
 export interface UseFinishSession {
   /** Beendet die Einheit: Verlaufszeilen schreiben + Katalog fortschreiben.
    *  Bei fehlendem Netz wird der Schreibvorgang pausiert und spaeter nachgeholt. */
-  finishWorkout: (session: LiveSession) => void;
+  finishWorkout: (session: WorkoutSession) => void;
   isSaving: boolean;
 }
 
@@ -41,7 +41,7 @@ export function useFinishSession(): UseFinishSession {
   });
 
   const finishWorkout = useCallback(
-    (session: LiveSession): void => {
+    (session: WorkoutSession): void => {
       if (!userId) return;
       const date = todayISO();
       const rmFormula = asRmFormula(settingsQ.data?.rm_formula);

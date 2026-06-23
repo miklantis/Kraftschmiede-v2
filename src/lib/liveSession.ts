@@ -33,8 +33,8 @@ export function fmtDur(sec: number): string {
 
 // ---- Live-Session-Objekt ----------------------------------------------------
 
-/** Art der laufenden Einheit. Skill kommt in Lieferung 5 dazu. */
-export type LiveKind = "workout";
+/** Art der laufenden Einheit: gefuehrtes Kraft-Workout oder Skill-Einheit. */
+export type LiveKind = "workout" | "skill";
 
 /**
  * Ein Arbeitssatz der laufenden Einheit. Geplant (target*) vs. tatsaechlich;
@@ -67,7 +67,28 @@ export interface LiveGeneralWarmupSet {
   done: boolean;
 }
 
-/** Eine Uebung der laufenden Einheit samt Aufwaerm- und Arbeitssaetzen. */
+// ---- Skill-Einheit (Lieferung 5) -------------------------------------------
+// Eine Skill-Einheit ist bewusst einfacher als ein Workout: keine Aufwaermsaetze,
+// kein Coach waehrend der Durchfuehrung, kein Gewicht/Score. Je Satz nur ein
+// Ergebniswert (Wdh oder Sekunden) gegen das feste Phasen-Ziel.
+
+/** Ein Satz einer Skill-Uebung: Ergebniswert, abgehakt, Ziel erreicht (met). */
+export interface SkillLiveSet {
+  value: number | null;
+  done: boolean;
+  met: boolean;
+}
+
+/** Eine Uebung der laufenden Skill-Einheit (aus der aktuellen Phase). */
+export interface SkillLiveExercise {
+  name: string;
+  metric: "reps" | "duration";
+  target: number;
+  tempo: string | null;
+  sets: SkillLiveSet[];
+}
+
+/** Eine Uebung der laufenden Kraft-Einheit samt Aufwaerm- und Arbeitssaetzen. */
 export interface LiveEntry {
   exerciseId: string;
   exerciseName: string;
@@ -82,10 +103,19 @@ export interface LiveEntry {
   sets: LiveSet[];
 }
 
-export interface LiveSession {
+/** Gemeinsame Felder beider Einheit-Arten. */
+interface LiveSessionBase {
   /** Lokale Lauf-ID (kollidiert nicht mit DB-UUIDs der gespeicherten Session). */
   id: string;
   kind: LiveKind;
+  /** Anzeigename (Kopf, Mini-Streifen, Dialoge). */
+  title: string;
+  /** Startzeitpunkt in ms (Date.now). Die Uhr rechnet immer ab hier. */
+  startedAt: number;
+}
+
+export interface WorkoutSession extends LiveSessionBase {
+  kind: "workout";
   /** Vorlage, aus der die Einheit aufgebaut wurde. */
   templateId: string;
   /** Aktive Journey/Phase zum Startzeitpunkt - eingefroren wie in V1 buildLive.
@@ -93,15 +123,27 @@ export interface LiveSession {
    *  und steuern (nur bei Journey-Einheiten) die eingefrorene Wochennummer. */
   journeyId: string | null;
   phaseId: string | null;
-  /** Anzeigename der Vorlage (Kopf, Mini-Streifen, Dialoge). */
-  title: string;
-  /** Startzeitpunkt in ms (Date.now). Die Uhr rechnet immer ab hier. */
-  startedAt: number;
   /** Allgemeines Aufwaermen (Cardio) vor den Uebungen. */
   generalWarmup: { sets: LiveGeneralWarmupSet[] };
   /** Die vom Coach aufgebauten Uebungen mit ihren Saetzen (Lieferung 2). */
   entries: LiveEntry[];
 }
+
+/** Laufende Skill-Einheit (Lieferung 5). Traegt den Skill-Bezug und die
+ *  Uebungen der aktuellen Phase; beim Beenden werden Fortschritt (Konsekutiv-
+ *  Logik) und die erledigten Saetze fortgeschrieben. */
+export interface SkillSession extends LiveSessionBase {
+  kind: "skill";
+  /** DB-ID des Skills (skills.id) - steuert das Fortschreiben beim Beenden. */
+  skillId: string;
+  /** 0-basierter Index der aktuellen Phase zum Startzeitpunkt. */
+  phaseIndex: number;
+  /** Skill schon gemeistert (Erhaltungstraining der letzten Phase). */
+  mastered: boolean;
+  exercises: SkillLiveExercise[];
+}
+
+export type LiveSession = WorkoutSession | SkillSession;
 
 // ---- Lokale Persistenz ------------------------------------------------------
 // Wie die angehefteten Charts (usePinnedCharts) ueber localStorage: synchron,
@@ -128,27 +170,44 @@ export function parseLive(raw: string | null): PersistedLive {
     const sr = s as Record<string, unknown>;
     if (
       typeof sr.id !== "string" ||
-      sr.kind !== "workout" ||
-      typeof sr.templateId !== "string" ||
       typeof sr.title !== "string" ||
       typeof sr.startedAt !== "number"
     ) {
       return { session: null, collapsed };
     }
-    return {
-      session: {
-        id: sr.id,
-        kind: "workout",
-        templateId: sr.templateId,
-        journeyId: typeof sr.journeyId === "string" ? sr.journeyId : null,
-        phaseId: typeof sr.phaseId === "string" ? sr.phaseId : null,
-        title: sr.title,
-        startedAt: sr.startedAt,
-        generalWarmup: parseGeneralWarmup(sr.generalWarmup),
-        entries: parseEntries(sr.entries),
-      },
-      collapsed,
-    };
+    if (sr.kind === "skill") {
+      if (typeof sr.skillId !== "string") return { session: null, collapsed };
+      return {
+        session: {
+          id: sr.id,
+          kind: "skill",
+          title: sr.title,
+          startedAt: sr.startedAt,
+          skillId: sr.skillId,
+          phaseIndex: num(sr.phaseIndex, 0),
+          mastered: bool(sr.mastered),
+          exercises: parseSkillExercises(sr.exercises),
+        },
+        collapsed,
+      };
+    }
+    if (sr.kind === "workout" && typeof sr.templateId === "string") {
+      return {
+        session: {
+          id: sr.id,
+          kind: "workout",
+          templateId: sr.templateId,
+          journeyId: typeof sr.journeyId === "string" ? sr.journeyId : null,
+          phaseId: typeof sr.phaseId === "string" ? sr.phaseId : null,
+          title: sr.title,
+          startedAt: sr.startedAt,
+          generalWarmup: parseGeneralWarmup(sr.generalWarmup),
+          entries: parseEntries(sr.entries),
+        },
+        collapsed,
+      };
+    }
+    return { session: null, collapsed };
   } catch {
     return empty;
   }
@@ -216,6 +275,32 @@ function parseEntries(v: unknown): LiveEntry[] {
       };
     })
     .filter((e): e is LiveEntry => e !== null);
+}
+
+function parseSkillExercises(v: unknown): SkillLiveExercise[] {
+  if (!Array.isArray(v)) return [];
+  return v
+    .map((x): SkillLiveExercise | null => {
+      const o = (typeof x === "object" && x !== null ? x : {}) as Record<string, unknown>;
+      if (typeof o.name !== "string") return null;
+      const metric: SkillLiveExercise["metric"] = o.metric === "duration" ? "duration" : "reps";
+      const sets = (Array.isArray(o.sets) ? o.sets : []).map((s): SkillLiveSet => {
+        const so = (typeof s === "object" && s !== null ? s : {}) as Record<string, unknown>;
+        return {
+          value: typeof so.value === "number" && Number.isFinite(so.value) ? so.value : null,
+          done: bool(so.done),
+          met: bool(so.met),
+        };
+      });
+      return {
+        name: o.name,
+        metric,
+        target: num(o.target),
+        tempo: typeof o.tempo === "string" ? o.tempo : null,
+        sets,
+      };
+    })
+    .filter((e): e is SkillLiveExercise => e !== null);
 }
 
 export function serializeLive(state: PersistedLive): string {

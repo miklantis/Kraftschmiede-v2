@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { buildFinishRows, liveEndSummary } from "../liveFinish";
-import type { LiveSession, LiveEntry } from "../liveSession";
+import type { WorkoutSession, LiveEntry } from "../liveSession";
 
-function set(over: Partial<LiveSession["entries"][0]["sets"][0]> = {}) {
+function set(over: Partial<WorkoutSession["entries"][0]["sets"][0]> = {}) {
   return {
     reps: 5,
     weight: 100,
@@ -32,7 +32,7 @@ function entry(over: Partial<LiveEntry> = {}): LiveEntry {
   };
 }
 
-function session(entries: LiveEntry[]): LiveSession {
+function session(entries: LiveEntry[]): WorkoutSession {
   return {
     id: "s_local",
     kind: "workout",

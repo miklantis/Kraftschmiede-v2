@@ -5,12 +5,18 @@ import { useIsDesktop } from "@/hooks/useIsDesktop";
 import { usePlates, useBars } from "@/hooks/useInventory";
 import { useSettings } from "@/hooks/useSettings";
 import { computeActive, progressInfo } from "@/lib/liveFlow";
-import type { LiveSession } from "@/lib/liveSession";
+import type {
+  WorkoutSession,
+  SkillSession,
+  SkillLiveExercise,
+} from "@/lib/liveSession";
+import type { AudioPrefs } from "@/lib/liveAudio";
 import { useLiveClock } from "./useLiveClock";
 import { useGripDrag } from "./useGripDrag";
 import { LiveMiniBar } from "./LiveMiniBar";
 import { GeneralWarmupCard } from "./GeneralWarmupCard";
 import { ExerciseLiveCard } from "./ExerciseLiveCard";
+import { SkillLiveCard } from "./SkillLiveCard";
 import { RestBar } from "./RestBar";
 
 // Globales Live-Panel der gefuehrten Session.
@@ -28,7 +34,7 @@ function PanelContent({
   bars,
   unit,
 }: {
-  session: LiveSession;
+  session: WorkoutSession;
   live: UseLiveSession;
   plates: number[];
   bars: { id: string; name: string; weight: number }[];
@@ -67,6 +73,54 @@ function PanelContent({
       ))}
     </div>
   );
+}
+
+function SkillPanelContent({
+  session,
+  live,
+  audioPrefs,
+}: {
+  session: SkillSession;
+  live: UseLiveSession;
+  audioPrefs: AudioPrefs;
+}): React.ReactElement {
+  const watch = live.skillWatch;
+  return (
+    <div className="flex flex-col gap-3">
+      {session.mastered && (
+        <div className="rounded-[14px] border border-skill/30 bg-skill/10 px-4 py-3 text-[14px] font-medium text-foreground">
+          Skill gemeistert – Erhaltungstraining der letzten Phase.
+        </div>
+      )}
+      {session.exercises.map((ex, i) => (
+        <SkillLiveCard
+          key={ex.name + i}
+          exercise={ex}
+          watchSi={watch && watch.ei === i ? watch.si : null}
+          audioPrefs={audioPrefs}
+          onToggleSet={(si) => live.toggleSkillSet(i, si)}
+          onValue={(si, v) => live.commitSkillValue(i, si, v)}
+          onStartWatch={(si) => live.startSkillWatch(i, si)}
+          onStopWatch={live.stopSkillWatch}
+        />
+      ))}
+    </div>
+  );
+}
+
+/** Fortschritt der Skill-Einheit fuer Kopf/Mini-Streifen. */
+function skillProgressInfo(exercises: SkillLiveExercise[]): {
+  curLabel: string;
+  progress: string;
+} {
+  const total = exercises.reduce((n, e) => n + e.sets.length, 0);
+  const done = exercises.reduce((n, e) => n + e.sets.filter((s) => s.done).length, 0);
+  let idx = exercises.findIndex((e) => e.sets.some((s) => !s.done));
+  if (idx < 0) idx = Math.max(0, exercises.length - 1);
+  return {
+    curLabel: "Übung " + (idx + 1) + " von " + exercises.length,
+    progress: done + " / " + total + " Sätze",
+  };
 }
 
 function PanelHead({
@@ -135,9 +189,16 @@ export function LivePanel(): React.ReactElement | null {
     sound: timers?.sound ?? true,
     vibrate: timers?.vibrate ?? true,
   };
-  const title = "Workout " + s.title;
-  const prog = progressInfo(s.entries);
-  const subtitle = prog.exCount > 0 ? prog.curLabel + " · " + prog.progress : "läuft";
+  const isSkill = s.kind === "skill";
+  const title = (isSkill ? "Skill " : "Workout ") + s.title;
+  const prog = s.kind === "skill" ? skillProgressInfo(s.exercises) : progressInfo(s.entries);
+  const exCount = s.kind === "skill" ? s.exercises.length : s.entries.length;
+  const subtitle = exCount > 0 ? prog.curLabel + " · " + prog.progress : "läuft";
+  const content = s.kind === "skill" ? (
+    <SkillPanelContent session={s} live={live} audioPrefs={audioPrefs} />
+  ) : (
+    <PanelContent session={s} live={live} plates={plates} bars={bars} unit={unit} />
+  );
 
   const restBar =
     live.rest && !live.collapsed ? (
@@ -172,9 +233,7 @@ export function LivePanel(): React.ReactElement | null {
           grip={false}
         />
         <div className="kl-ov-scroll">
-          <div className="kl-ov-inner">
-            <PanelContent session={s} live={live} plates={plates} bars={bars} unit={unit} />
-          </div>
+          <div className="kl-ov-inner">{content}</div>
         </div>
         {restBar}
       </div>
@@ -199,9 +258,7 @@ export function LivePanel(): React.ReactElement | null {
           onEnd={live.requestEnd}
           grip
         />
-        <div className="kl-ov-scroll">
-          <PanelContent session={s} live={live} plates={plates} bars={bars} unit={unit} />
-        </div>
+        <div className="kl-ov-scroll">{content}</div>
       </div>
       {restBar}
     </>

@@ -6,6 +6,9 @@ import {
   serializeLive,
   type LiveEntry,
   type LiveSession,
+  type WorkoutSession,
+  type SkillSession,
+  type SkillLiveExercise,
 } from "@/lib/liveSession";
 import { appendedSet, restAfterSet } from "@/lib/liveFlow";
 import { clickTick, ensureAudio } from "@/lib/liveAudio";
@@ -73,6 +76,9 @@ interface LiveState {
   rest: RestState | null;
   /** Scheiben-Anzeige je Uebung (Index): 0 aus, 1 alle Saetze, 2 nur aktiver. */
   plateShow: Record<number, number>;
+  /** Laufende Stoppuhr einer Skill-Dauer-Uebung (Lieferung 5) oder null.
+   *  Fluechtig: nur eine Uhr zugleich; der Tick laeuft lokal in der Zelle. */
+  skillWatch: { ei: number; si: number } | null;
 }
 
 function read(): { session: LiveSession | null; collapsed: boolean } {
@@ -93,6 +99,7 @@ let state: LiveState = {
   entering: false,
   rest: null,
   plateShow: {},
+  skillWatch: null,
 };
 
 const listeners = new Set<() => void>();
@@ -136,6 +143,7 @@ function subscribe(cb: () => void): () => void {
         entering: false,
         rest: null,
         plateShow: {},
+        skillWatch: null,
       };
       emit();
     }
@@ -162,8 +170,8 @@ export interface StartWorkoutInput {
   title: string;
   journeyId: string | null;
   phaseId: string | null;
-  entries: LiveSession["entries"];
-  generalWarmup: LiveSession["generalWarmup"];
+  entries: WorkoutSession["entries"];
+  generalWarmup: WorkoutSession["generalWarmup"];
 }
 
 /** Start-Popup oeffnen: die Einheit vormerken (noch nicht laufen lassen). */
@@ -188,6 +196,30 @@ function cancelStart(): void {
   set({ pending: null });
 }
 
+export interface StartSkillInput {
+  skillId: string;
+  skillName: string;
+  phaseIndex: number;
+  mastered: boolean;
+  exercises: SkillLiveExercise[];
+}
+
+/** Skill-Start-Popup oeffnen: die Einheit vormerken (noch nicht laufen lassen). */
+function openStartSkill(input: StartSkillInput): void {
+  if (state.session) return;
+  const pending: SkillSession = {
+    id: newLiveId(),
+    kind: "skill",
+    title: input.skillName,
+    startedAt: Date.now(),
+    skillId: input.skillId,
+    phaseIndex: input.phaseIndex,
+    mastered: input.mastered,
+    exercises: input.exercises,
+  };
+  set({ pending });
+}
+
 /**
  * Starten bestaetigen: Popup ausfahren lassen, danach das Panel aufgeklappt
  * hereinfahren. Die Startzeit wird erst jetzt gesetzt (Vorschau-Zeit zaehlt
@@ -205,6 +237,7 @@ function confirmStart(): void {
       entering: !isDesktop(),
       rest: null,
       plateShow: {},
+      skillWatch: null,
     });
   }, START_EXIT_MS);
 }
@@ -241,6 +274,7 @@ function endSession(): void {
     entering: false,
     rest: null,
     plateShow: {},
+    skillWatch: null,
   });
 }
 
@@ -259,7 +293,7 @@ function syncPrefs(p: LivePrefs): void {
 /** Eine Uebung immutabel ersetzen. */
 function patchEntry(ei: number, fn: (e: LiveEntry) => LiveEntry): void {
   const s = state.session;
-  if (!s) return;
+  if (!s || s.kind !== "workout") return;
   const entries = s.entries.map((e, i) => (i === ei ? fn(e) : e));
   set({ session: { ...s, entries } });
 }
@@ -287,8 +321,9 @@ function skipRest(): void {
 /** Arbeitssatz abhaken/loesen; bei Abhaken ggf. Auto-Pause (V1 onSetCompleted). */
 function toggleWorkSet(ei: number, si: number): void {
   const s = state.session;
-  const cur = s?.entries[ei]?.sets[si];
-  if (!s || !cur) return;
+  if (!s || s.kind !== "workout") return;
+  const cur = s.entries[ei]?.sets[si];
+  if (!cur) return;
   const nextDone = !cur.done;
   ensureAudio();
   clickTick(nextDone, audioPrefs());
@@ -312,8 +347,9 @@ function toggleWorkSet(ei: number, si: number): void {
 /** Aufwaermsatz abhaken/loesen (kein Pausen-Timer). */
 function toggleWarmSet(ei: number, wi: number): void {
   const s = state.session;
-  const cur = s?.entries[ei]?.warmupSets[wi];
-  if (!s || !cur) return;
+  if (!s || s.kind !== "workout") return;
+  const cur = s.entries[ei]?.warmupSets[wi];
+  if (!cur) return;
   const nextDone = !cur.done;
   ensureAudio();
   clickTick(nextDone, audioPrefs());
@@ -326,8 +362,9 @@ function toggleWarmSet(ei: number, wi: number): void {
 /** Allgemeines Aufwaermen (Cardio) abhaken/loesen. */
 function toggleGeneralWarmup(si: number): void {
   const s = state.session;
-  const cur = s?.generalWarmup.sets[si];
-  if (!s || !cur) return;
+  if (!s || s.kind !== "workout") return;
+  const cur = s.generalWarmup.sets[si];
+  if (!cur) return;
   const nextDone = !cur.done;
   ensureAudio();
   clickTick(nextDone, audioPrefs());
@@ -406,9 +443,11 @@ function cyclePlateMode(ei: number): void {
   set({ plateShow: { ...state.plateShow, [ei]: next } });
 }
 
-function patchGeneralWarmup(fn: (sets: LiveSession["generalWarmup"]["sets"]) => LiveSession["generalWarmup"]["sets"]): void {
+function patchGeneralWarmup(
+  fn: (sets: WorkoutSession["generalWarmup"]["sets"]) => WorkoutSession["generalWarmup"]["sets"],
+): void {
   const s = state.session;
-  if (!s) return;
+  if (!s || s.kind !== "workout") return;
   set({ session: { ...s, generalWarmup: { sets: fn(s.generalWarmup.sets) } } });
 }
 
@@ -434,6 +473,58 @@ function delGeneralWarmup(): void {
   patchGeneralWarmup((sets) => (sets.length > 1 ? sets.slice(0, -1) : sets));
 }
 
+// ---- Skill-Einheit (Lieferung 5) -------------------------------------------
+
+/** Eine Skill-Uebung immutabel ersetzen. */
+function patchSkillExercise(
+  ei: number,
+  fn: (e: SkillLiveExercise) => SkillLiveExercise,
+): void {
+  const s = state.session;
+  if (!s || s.kind !== "skill") return;
+  const exercises = s.exercises.map((e, i) => (i === ei ? fn(e) : e));
+  set({ session: { ...s, exercises } });
+}
+
+/** Skill-Satz abhaken/loesen; bei Abhaken ggf. Auto-Pause (wie V1). */
+function toggleSkillSet(ei: number, si: number): void {
+  const s = state.session;
+  if (!s || s.kind !== "skill") return;
+  const cur = s.exercises[ei]?.sets[si];
+  if (!cur) return;
+  const nextDone = !cur.done;
+  ensureAudio();
+  clickTick(nextDone, audioPrefs());
+  const exercises = s.exercises.map((e, i) =>
+    i === ei
+      ? { ...e, sets: e.sets.map((x, j) => (j === si ? { ...x, done: nextDone } : x)) }
+      : e,
+  );
+  set({ session: { ...s, exercises } });
+  if (nextDone && prefs.autoStart) {
+    startRest("set", prefs.setRestSec);
+  }
+}
+
+/** Ergebniswert eines Skill-Satzes uebernehmen (Wdh oder Sekunden, ganzzahlig). */
+function commitSkillValue(ei: number, si: number, value: number): void {
+  const v = Number.isFinite(value) ? Math.max(0, Math.round(value)) : 0;
+  patchSkillExercise(ei, (e) => ({
+    ...e,
+    sets: e.sets.map((x, j) => (j === si ? { ...x, value: v } : x)),
+  }));
+}
+
+/** Stoppuhr einer Skill-Dauer-Uebung scharfschalten (nur eine zugleich). */
+function startSkillWatch(ei: number, si: number): void {
+  set({ skillWatch: { ei, si } });
+}
+
+/** Stoppuhr beenden. */
+function stopSkillWatch(): void {
+  if (state.skillWatch) set({ skillWatch: null });
+}
+
 export function isDesktop(): boolean {
   return (
     typeof window !== "undefined" &&
@@ -450,6 +541,7 @@ export interface LiveBarChoice {
 
 export interface UseLiveSession extends LiveState {
   openStartWorkout: (input: StartWorkoutInput) => void;
+  openStartSkill: (input: StartSkillInput) => void;
   cancelStart: () => void;
   confirmStart: () => void;
   clearEntering: () => void;
@@ -482,6 +574,11 @@ export interface UseLiveSession extends LiveState {
   delGeneralWarmup: () => void;
   adjustRest: (delta: number) => void;
   skipRest: () => void;
+  // Skill-Einheit (Lieferung 5)
+  toggleSkillSet: (ei: number, si: number) => void;
+  commitSkillValue: (ei: number, si: number, value: number) => void;
+  startSkillWatch: (ei: number, si: number) => void;
+  stopSkillWatch: () => void;
 }
 
 export function useLiveSession(): UseLiveSession {
@@ -489,6 +586,7 @@ export function useLiveSession(): UseLiveSession {
   return {
     ...snap,
     openStartWorkout,
+    openStartSkill,
     cancelStart,
     confirmStart,
     clearEntering,
@@ -515,5 +613,9 @@ export function useLiveSession(): UseLiveSession {
     delGeneralWarmup,
     adjustRest,
     skipRest,
+    toggleSkillSet,
+    commitSkillValue,
+    startSkillWatch,
+    stopSkillWatch,
   };
 }

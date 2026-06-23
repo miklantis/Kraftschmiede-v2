@@ -18,7 +18,7 @@ import type {
   SessionExerciseInsert,
   SetInsert,
 } from "@/schemas";
-import type { LiveSession, LiveSet } from "./liveSession";
+import type { WorkoutSession, LiveSet } from "./liveSession";
 
 // ---- Ende-Vorschau (Popup) --------------------------------------------------
 // Pro Uebung: Name, "erledigt / gesamt" der Arbeitssaetze und je Arbeitssatz ein
@@ -38,7 +38,7 @@ function commaWeight(w: number): string {
   return String(w).replace(".", ",");
 }
 
-export function liveEndSummary(session: LiveSession): EndSummaryEntry[] {
+export function liveEndSummary(session: WorkoutSession): EndSummaryEntry[] {
   return session.entries.map((en) => {
     const sets = en.sets ?? [];
     const done = sets.filter((s) => s.done).length;
@@ -56,7 +56,7 @@ export function liveEndSummary(session: LiveSession): EndSummaryEntry[] {
 // ---- Verdichtung zu Verlaufszeilen -----------------------------------------
 
 export interface FinishContext {
-  session: LiveSession;
+  session: WorkoutSession;
   userId: string;
   rmFormula: RmFormula;
   /** Eingefrorener Koerperzustand (heute, sonst zuletzt). */
