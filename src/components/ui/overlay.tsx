@@ -98,7 +98,7 @@ export function Overlay({
     <div
       ref={rootRef}
       className={cn(
-        "fixed inset-0 z-50 flex items-end justify-center transition-colors duration-300 min-[960px]:items-center min-[960px]:p-8",
+        "fixed inset-0 z-[95] flex items-end justify-center transition-colors duration-300 min-[960px]:items-center min-[960px]:p-8",
         shown ? "bg-[rgba(20,24,40,0.42)]" : "bg-[rgba(20,24,40,0)]",
       )}
       onClick={(e) => {
