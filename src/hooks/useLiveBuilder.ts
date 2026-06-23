@@ -60,6 +60,9 @@ export interface UseLiveBuilder {
   ready: boolean;
   /** Baut die Einheit aus der Vorlage; null, wenn die Vorlage fehlt. */
   buildWorkout: (templateId: string) => LiveBuildResult | null;
+  /** Aktive Journey und aktuelle Phase (zum Einfrieren auf die Einheit). */
+  journeyId: string | null;
+  phaseId: string | null;
 }
 
 export function useLiveBuilder(): UseLiveBuilder {
@@ -127,9 +130,12 @@ export function useLiveBuilder(): UseLiveBuilder {
     let phaseRepTarget: [number, number] | null = null;
     let volumePhase: VolumePhase | null = null;
     let weekInPhase = 0;
+    let journeyId: string | null = null;
+    let phaseId: string | null = null;
 
     const journey = journeyQ.data;
     if (journey) {
+      journeyId = journey.id;
       const placement = journeyPlacement(
         { id: journey.id, phases: journey.phases },
         (sessionsQ.data ?? []).map((s) => ({
@@ -143,6 +149,7 @@ export function useLiveBuilder(): UseLiveBuilder {
       );
       const phase = journey.phases[placement.phaseIndex] ?? null;
       if (phase) {
+        phaseId = phase.id;
         phaseFocus = { focus: phase.focus };
         volumePhase = {
           setsStart: phase.sets_start,
@@ -168,6 +175,8 @@ export function useLiveBuilder(): UseLiveBuilder {
       phaseRepTarget,
       volumePhase,
       weekInPhase,
+      journeyId,
+      phaseId,
     };
   }, [
     exercisesQ.data,
@@ -203,5 +212,5 @@ export function useLiveBuilder(): UseLiveBuilder {
     [templates, base],
   );
 
-  return { ready, buildWorkout };
+  return { ready, buildWorkout, journeyId: base.journeyId, phaseId: base.phaseId };
 }

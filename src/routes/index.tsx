@@ -64,6 +64,8 @@ function TrainingPage(): React.ReactElement {
     openStartWorkout({
       templateId: w.id,
       title: w.name,
+      journeyId: builder.journeyId,
+      phaseId: builder.phaseId,
       entries: built.entries,
       generalWarmup: built.generalWarmup,
     });

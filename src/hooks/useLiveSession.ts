@@ -160,6 +160,8 @@ function getSnapshot(): LiveState {
 export interface StartWorkoutInput {
   templateId: string;
   title: string;
+  journeyId: string | null;
+  phaseId: string | null;
   entries: LiveSession["entries"];
   generalWarmup: LiveSession["generalWarmup"];
 }
@@ -171,6 +173,8 @@ function openStartWorkout(input: StartWorkoutInput): void {
     id: newLiveId(),
     kind: "workout",
     templateId: input.templateId,
+    journeyId: input.journeyId,
+    phaseId: input.phaseId,
     title: input.title,
     startedAt: Date.now(),
     generalWarmup: input.generalWarmup,
@@ -224,9 +228,9 @@ function closeEnd(): void {
 }
 
 /**
- * Einheit beenden. Lieferung 1: beide Wege schliessen die Einheit nur lokal -
- * es gibt noch keine Saetze zu speichern. Das normalisierte Schreiben in den
- * Verlauf kommt mit Lieferung 4 (dann unterscheiden sich Speichern/Verwerfen).
+ * Laufende Einheit lokal raeumen. Verwerfen ruft das direkt; Speichern ruft es
+ * erst, nachdem der Schreib-Hook (useFinishSession) die Saetze normalisiert in
+ * den Verlauf geschrieben (bzw. die Mutation pausiert/vorgemerkt) hat.
  */
 function endSession(): void {
   set({
@@ -454,7 +458,7 @@ export interface UseLiveSession extends LiveState {
   setCollapsed: (value: boolean) => void;
   requestEnd: () => void;
   closeEnd: () => void;
-  save: () => void;
+  clear: () => void;
   discard: () => void;
   // Gefuehrter Ablauf (Lieferung 3)
   syncPrefs: (p: LivePrefs) => void;
@@ -493,7 +497,7 @@ export function useLiveSession(): UseLiveSession {
     setCollapsed,
     requestEnd,
     closeEnd,
-    save: endSession,
+    clear: endSession,
     discard: endSession,
     syncPrefs,
     toggleWorkSet,

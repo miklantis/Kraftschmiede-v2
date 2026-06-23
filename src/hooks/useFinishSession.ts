@@ -1,0 +1,114 @@
+import { useCallback } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { journeyWeekForDate } from "@/engine/journey";
+import type { RmFormula } from "@/engine/types";
+import { todayISO } from "@/lib/format";
+import { buildFinishRows } from "@/lib/liveFinish";
+import {
+  FINISH_MUTATION_KEY,
+  type ExercisePatch,
+  type FinishPayload,
+} from "@/lib/finishMutation";
+import type { BodySnapshot } from "@/schemas";
+import type { LiveSession } from "@/lib/liveSession";
+import { useUserId } from "./useUserId";
+import { useSettings } from "./useSettings";
+import { useSessions } from "./useSessions";
+import { useExercises } from "./useExercises";
+import { useBodyLog } from "./useBodyLog";
+
+const RM_FORMULAS: RmFormula[] = ["brzycki", "epley", "wathan", "mean"];
+function asRmFormula(v: string | null | undefined): RmFormula {
+  return RM_FORMULAS.includes(v as RmFormula) ? (v as RmFormula) : "mean";
+}
+
+export interface UseFinishSession {
+  /** Beendet die Einheit: Verlaufszeilen schreiben + Katalog fortschreiben.
+   *  Bei fehlendem Netz wird der Schreibvorgang pausiert und spaeter nachgeholt. */
+  finishWorkout: (session: LiveSession) => void;
+  isSaving: boolean;
+}
+
+export function useFinishSession(): UseFinishSession {
+  const userId = useUserId();
+  const settingsQ = useSettings();
+  const sessionsQ = useSessions();
+  const exercisesQ = useExercises();
+  const bodyQ = useBodyLog();
+
+  const mutation = useMutation<void, Error, FinishPayload>({
+    mutationKey: FINISH_MUTATION_KEY,
+  });
+
+  const finishWorkout = useCallback(
+    (session: LiveSession): void => {
+      if (!userId) return;
+      const date = todayISO();
+      const rmFormula = asRmFormula(settingsQ.data?.rm_formula);
+      const freqTarget = settingsQ.data?.weekly_frequency_target || 3;
+
+      // Body-Snapshot: heutiger Befinden-Eintrag, sonst der letzte, sonst leer.
+      const logs = bodyQ.data ?? [];
+      const b = logs.find((x) => x.date === date) ?? logs[0] ?? null;
+      const body: BodySnapshot = b
+        ? {
+            legs: b.legs,
+            upper_body: b.upper_body,
+            overall: b.overall,
+            readiness: b.readiness,
+            pain_flag: b.pain_flag,
+            pain_note: b.pain_note,
+            notes: "",
+          }
+        : { legs: 0, upper_body: 0, overall: 0, readiness: 3, pain_flag: false, pain_note: "", notes: "" };
+
+      // Globale Journey-Woche einfrieren (nur Journey-Einheiten).
+      let week: number | null = null;
+      if (session.journeyId) {
+        const sessions = (sessionsQ.data ?? []).map((s) => ({
+          date: s.date,
+          status: s.status,
+          type: s.type,
+          journeyId: s.journey_id,
+        }));
+        week = journeyWeekForDate(date, sessions, session.journeyId, freqTarget);
+      }
+
+      const rows = buildFinishRows({
+        session,
+        userId,
+        rmFormula,
+        body,
+        week,
+        date,
+        endedAt: Date.now(),
+        newId: () => crypto.randomUUID(),
+      });
+
+      // Katalog-Patches: Arbeitsgewicht immer; 1RM nur, wenn geschaetzt und die
+      // Uebung 1RM trackt (alles ausser reinem Koerpergewicht) - wie V1.
+      const byId = new Map((exercisesQ.data ?? []).map((e) => [e.id, e]));
+      const exercisePatches: ExercisePatch[] = rows.exerciseUpdates.map((u) => {
+        const exo = byId.get(u.exerciseId);
+        const tracksRm = exo ? exo.profile !== "bodyweight" : false;
+        const patch: ExercisePatch = { id: u.exerciseId, work_weight: u.workWeight };
+        if (u.est1RM != null && tracksRm) {
+          patch.rm = u.est1RM;
+          patch.rm_as_of = date;
+          patch.rm_stale = false;
+        }
+        return patch;
+      });
+
+      mutation.mutate({
+        sessionRow: rows.sessionRow,
+        exerciseRows: rows.exerciseRows,
+        setRows: rows.setRows,
+        exercisePatches,
+      });
+    },
+    [userId, settingsQ.data, sessionsQ.data, exercisesQ.data, bodyQ.data, mutation],
+  );
+
+  return { finishWorkout, isSaving: mutation.isPending };
+}

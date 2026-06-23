@@ -88,6 +88,11 @@ export interface LiveSession {
   kind: LiveKind;
   /** Vorlage, aus der die Einheit aufgebaut wurde. */
   templateId: string;
+  /** Aktive Journey/Phase zum Startzeitpunkt - eingefroren wie in V1 buildLive.
+   *  Beim Beenden landen sie als journey_id/phase_id in der gespeicherten Einheit
+   *  und steuern (nur bei Journey-Einheiten) die eingefrorene Wochennummer. */
+  journeyId: string | null;
+  phaseId: string | null;
   /** Anzeigename der Vorlage (Kopf, Mini-Streifen, Dialoge). */
   title: string;
   /** Startzeitpunkt in ms (Date.now). Die Uhr rechnet immer ab hier. */
@@ -135,6 +140,8 @@ export function parseLive(raw: string | null): PersistedLive {
         id: sr.id,
         kind: "workout",
         templateId: sr.templateId,
+        journeyId: typeof sr.journeyId === "string" ? sr.journeyId : null,
+        phaseId: typeof sr.phaseId === "string" ? sr.phaseId : null,
         title: sr.title,
         startedAt: sr.startedAt,
         generalWarmup: parseGeneralWarmup(sr.generalWarmup),

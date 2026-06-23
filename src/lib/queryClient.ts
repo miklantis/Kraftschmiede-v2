@@ -1,4 +1,5 @@
 import { QueryClient } from "@tanstack/react-query";
+import { registerFinishMutation } from "./finishMutation";
 
 // Wie lange ein nicht mehr aktiv genutzter Eintrag im Speicher gehalten wird.
 // Muss mindestens so lang sein wie die Lebensdauer des gespeicherten Caches
@@ -25,3 +26,7 @@ export const queryClient = new QueryClient({
     },
   },
 });
+
+// Beenden-Schreibvorgang als Mutations-Default registrieren (offline-pausierbar,
+// ueberlebt Neustart). Muss vor resumePausedMutations stehen - daher hier.
+registerFinishMutation(queryClient);
