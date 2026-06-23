@@ -17,9 +17,24 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Naechste Sitzung (Einstieg):** **Phase 9 (Koerper) – Konzept abstimmen.** Phase 8 ist
-  komplett abgeschlossen und live freigegeben. Erst Funktionsschnitt gegen V1 besprechen
-  (Body-Log, InBody-Composition, Verlaufscharts), dann bauen. Noch kein Code geschrieben.
+- **Naechste Sitzung (Einstieg):** **Phase 9 Lieferung 2 (Koerpermessung) bauen.** Die
+  Befinden-Haelfte steht und ist live testbar. Als Naechstes die Messung: Metrik-Chart
+  (D3 wie Phase 5/8), Read-only-Mess-Liste und die aufklappbare JSON-Import-Karte (passt
+  zum InBody-Skill), danach das Zwei-Spalten-Raster (links Befinden, rechts Messung) und
+  Live-Abnahme der ganzen Koerper-Seite.
+- **Phase 9 Lieferung 1 (Befinden) gebaut (2026-06-23), live testbar.** Koerper-Seite zeigt
+  jetzt das taegliche Befinden statt des Platzhalters: oben das Empfehlungs-Banner (Ampel
+  gruen/amber/neutral aus dem heutigen Zustand), die Muskelkater-Figur (generische MuscleMap
+  aus Phase 8, nur mit Kater-Farbskala + Verfall -1/Tag), die Eingabe-Karte (Beine/Oberkoerper/
+  Gesamt-Kater 0-3, Readiness 1-5, Schmerz-Schalter, Notiz, Eintragen/Aktualisieren = genau ein
+  Eintrag pro Tag) und der Verlauf der letzten Eintraege. Neu und wiederverwendbar: das
+  generische RatingScale-Primitive (components/ui/rating-scale.tsx, farbige Auswahl-Buttonreihe,
+  domaenenfrei - Farbe je Wert kommt ueber colorFor herein; aktuell 4 Bewertungen, spaeter mehr).
+  Reine Logik: restAdvice in engine/recovery.ts (V1-Ampel, getestet) und lib/body.ts (Kater-
+  Skala, Verfall, Region-Aggregation, Verlauf-Chips, getestet). Hooks useBodyLog (lesen),
+  useUpsertBodyToday (Tages-Upsert), View-Hook useBodyView. Vorerst einspaltig (breiten-
+  begrenzt); das Zwei-Spalten-Raster kommt mit der Messung. tsc/build/221 Tests gruen
+  (15 neue: 9 body + 6 recovery).
 - **Phase 8 abgeschlossen und live freigegeben (2026-06-23).** Gesamte Uebungs-Phase
   abgenommen: Liste, Detailseite (Statistik/Verlauf/Diagramm mit Metrik-Umschalter),
   MuscleMap, "Uebung anpassen", Anheften und Skill-Verlauf-Anbindung. Alle Haken gesetzt.
@@ -428,8 +443,12 @@ DB-Tabelle exercise_muscles. Charts ueber ChartCanvas/D3 (Phase 5).
 
 ## Phase 9 – Koerper
 
-- [ ] Konzept abgestimmt
-- [ ] Body-Log
+- [x] Konzept abgestimmt (voller V1-Funktionsschnitt: Befinden mit Empfehlungs-Banner,
+      Muskelkater-Figur, Eingabe, Verlauf + Messung mit Metrik-Chart/Liste/JSON-Import;
+      Bewertungs-Buttons als generisches Primitive; Bau in zwei Lieferungen Befinden -> Messung)
+- [x] Body-Log (Befinden): Empfehlungs-Banner, Muskelkater-Figur (generische MuscleMap +
+      Kater-Farbskala), Eingabe-Karte (Kater/Readiness ueber das neue RatingScale-Primitive,
+      Schmerz-Schalter, Notiz, Eintragen/Aktualisieren als Tages-Upsert), Verlaufsliste
 - [ ] InBody-Composition
 - [ ] Verlaufscharts
 - [ ] Live getestet
