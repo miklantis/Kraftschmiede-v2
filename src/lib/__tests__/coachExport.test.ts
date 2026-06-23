@@ -190,6 +190,33 @@ describe("buildCoachExport - Skill und Yoga", () => {
     expect(out.sessions[0].type).toBe("Yoga");
     expect(out.sessions[0].minutes).toBe(80);
   });
+
+  it("uebernimmt alle vorhandenen Mess-Werte", () => {
+    const raw = emptyRaw();
+    raw.composition = [
+      {
+        date: "2026-06-21",
+        weight: 90,
+        body_fat_kg: 17.2,
+        body_fat_pct: 19.1,
+        skeletal_muscle_kg: 41.7,
+        tbw_kg: 53.4,
+        phase_angle: 6.1,
+        visceral_fat: 9,
+      },
+    ];
+    const out = buildCoachExport(raw, { weeks: null, today: TODAY });
+    expect(out.measurements[0]).toEqual({
+      date: "2026-06-21",
+      weightKg: 90,
+      bodyFatKg: 17.2,
+      fatPct: 19.1,
+      muscleKg: 41.7,
+      waterKg: 53.4,
+      phaseAngle: 6.1,
+      visceralFat: 9,
+    });
+  });
 });
 
 describe("buildCoachExport - schlank", () => {

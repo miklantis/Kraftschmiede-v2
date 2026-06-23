@@ -93,8 +93,12 @@ export interface CoachBodyDay {
 export interface CoachMeasurement {
   date: string;
   weightKg?: number;
+  bodyFatKg?: number;
   fatPct?: number;
   muscleKg?: number;
+  waterKg?: number;
+  phaseAngle?: number;
+  visceralFat?: number;
 }
 
 export interface CoachExport {
@@ -419,10 +423,18 @@ export function buildCoachExport(
       const m: CoachMeasurement = { date: str(r, "date") ?? "" };
       const w = num(r, "weight");
       if (w != null) m.weightKg = w;
+      const fkg = num(r, "body_fat_kg");
+      if (fkg != null) m.bodyFatKg = fkg;
       const f = num(r, "body_fat_pct");
       if (f != null) m.fatPct = f;
       const mu = num(r, "skeletal_muscle_kg");
       if (mu != null) m.muscleKg = mu;
+      const tbw = num(r, "tbw_kg");
+      if (tbw != null) m.waterKg = tbw;
+      const pa = num(r, "phase_angle");
+      if (pa != null) m.phaseAngle = pa;
+      const vf = num(r, "visceral_fat");
+      if (vf != null) m.visceralFat = vf;
       return m;
     });
 

@@ -17,6 +17,11 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
+- **Live-Korrektur Coach-Export Messungen (2026-06-24).** Die Messungen im Coach-Export
+  waren zu duenn (nur Gewicht/Fett%/Muskel). Jetzt alle vorhandenen Werte je Messung:
+  Gewicht, Koerperfett (kg + %), Skelettmuskel, Koerperwasser (tbw), Phasenwinkel,
+  viszerales Fett (nur die nicht-leeren). tsc/build/297 Tests gruen (1 neuer).
+
 - **Phase 12 ABGESCHLOSSEN (2026-06-24): Voll-Restore gebaut, Voll-Export auf nur-Datei
   reduziert.** Damit ist die Daten-Sektion der Einstellungen komplett: Datenstand, Export
   (Sicherung), Wiederherstellen und Coach-Export.
