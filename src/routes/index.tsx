@@ -7,6 +7,7 @@ import { ScoreBadge } from "@/components/ui/score-badge";
 import { TwoColumn } from "@/components/ui/two-column";
 import { JourneyStrip } from "@/components/training/JourneyStrip";
 import { RecommendedWorkout } from "@/components/training/RecommendedWorkout";
+import { YogaEntryModal } from "@/components/training/YogaEntryModal";
 import { useTrainingOverview } from "@/hooks/useTrainingOverview";
 
 // Startroute = Training (wie V1). Reine Uebersichts-/Empfehlungsseite: zeigt an
@@ -20,6 +21,7 @@ function TrainingPage(): React.ReactElement {
   const { isLoading, isError, error, data } = useTrainingOverview();
   // "Session starten" ist bis Phase 11 ein Platzhalter.
   const [note, setNote] = useState<string | null>(null);
+  const [yogaOpen, setYogaOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -118,7 +120,7 @@ function TrainingPage(): React.ReactElement {
             title="Yoga-Einheit eintragen"
             subtitle={data.yogaSubtitle}
             chevron
-            onClick={placeholder}
+            onClick={() => setYogaOpen(true)}
           />
         </List>
       </Section>
@@ -139,6 +141,7 @@ function TrainingPage(): React.ReactElement {
         )}
         <TwoColumn main={mainColumn} side={sideColumn} />
       </div>
+      <YogaEntryModal open={yogaOpen} onClose={() => setYogaOpen(false)} />
     </div>
   );
 }

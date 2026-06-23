@@ -17,22 +17,22 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Naechste Sitzung (Einstieg):** Phase 6 (Skills) **abgeschlossen und freigegeben.**
-  Naechster Schritt: Phase 7 (Yoga). Erst das Konzept gemeinsam besprechen
-  (Funktionsschnitt gegen V1: Karte im Training-Tab plus Eintrag-Popup), dann bauen, dann
-  live testen. Einfach hier ansetzen. Hinweis: die Skill-Live-Session (Trainieren) bleibt
-  fuer Phase 11 vorgemerkt.
-- **Phase:** Phase 6 (Skills) **abgeschlossen.** Vierte Inhaltsseite. Verwaltung ohne
-  Trainieren (Scope-Entscheidung: Live-Session = Phase 11). Eine Liste aller Skills; jede
-  Karte mit Schalter (aktivieren/deaktivieren, Fortschritt bleibt) und aufklappbar (Phasen
-  mit Zielen, aktuelle Phase markiert, Zaehler, Equipment-Tor als Hinweis; bei aktiven
-  Skills die Aktionen Phase zurueck/Zuruecksetzen). Skill-Blau als Akzent. Engine/Schema/
-  Seed waren schon da; neu: Schreibaktionen (useSkillActions), View-Modell (useSkillsView
-  ueber skillAdvice), Accordion- und Switch-Primitive, die Skill-Karten. Standard-Equipment
-  (Baender, Klimmzugstange, Ringe, Parallettes) wird beim ersten Start idempotent angelegt -
-  speist das Tor (Weg 1). Der automatische Zaehler-Fortschritt nach einer Session kommt mit
-  Phase 11; die Engine kann ihn bereits (Reset bei "missed" getestet), hier greifen die
-  manuellen Eingriffe. Naechste Phase: 7 (Yoga).
+- **Naechste Sitzung (Einstieg):** Phase 7 (Yoga) **gebaut, noch nicht freigegeben.**
+  Naechster Schritt: live testen (Yoga-Zeile im Training-Tab antippen -> Popup; Desktop
+  zentriert, Handy als von unten hereinfahrendes Bodenblatt; Eintragen schreibt eine
+  erledigte Yoga-Einheit, die sofort im Verlauf und als "Zuletzt" oben erscheint). Nach
+  Freigabe das letzte Kaestchen in Phase 7 abhaken, dann Phase 8 (Uebungen). Hinweis: die
+  Skill-Live-Session (Trainieren) bleibt fuer Phase 11 vorgemerkt.
+- **Phase:** Phase 7 (Yoga) **gebaut.** Yoga ist bewusst KEIN eigener Tab, sondern eine
+  schnell abgehakte Einheit ueber die Zeile im Training-Tab. Neu und wichtig: das
+  **generische Overlay-Primitive** (components/ui/overlay.tsx) als Popup-Fundament fuer alle
+  kuenftigen Dialoge - Desktop zentriertes Fenster, Mobile von unten hereinfahrendes
+  Bodenblatt, Schliessen per Hintergrund/X/Escape, Portal an <body>, Scroll-Lock,
+  verzoegertes Aushaengen nach der Ausblende-Animation. Darauf das Yoga-Eintrag-Popup
+  (training/YogaEntryModal): drei Schnellwahl-Tage, Dauer-Stepper (80/5/5-180), Lila-Akzent.
+  Schreib-Hook useAddYoga legt die Einheit an und laedt Uebersicht + Verlauf neu. Schema/
+  Token/Verlaufs-Darstellung/yogaSubtitle waren schon da (Phasen 0-4). Naechste Phase: 8
+  (Uebungen).
 - **Erledigt:** Phase 0 abgeschlossen (Fundament, Schema/RLS, Engine, Zod-Schemas, UI-Fundament,
   Offline-Grundgeruest, Live-Deploy). Schlichter Login als Voraussetzung fuer alle
   Schreibzugriffe (E-Mail/Passwort ueber Supabase Auth, AuthProvider + useAuth, AuthGate vor
@@ -146,6 +146,15 @@ erfinden Abstaende/Groessen nicht neu.** Alle Werte sind aus dem V1-"Klar"-Theme
 - **Schalter (`Switch`):** barrierefreier An/Aus-Schalter (role=switch), gruene Wanne an,
   graue aus. Generisch; nutzbar fuer Skill aktivieren/deaktivieren und spaeter die
   Einstellungen (Equipment, Theme). (Phase 6 gebaut.)
+- **Popup (`Overlay`):** generisches Popup-Fundament fuer ALLE modalen Dialoge (1:1 aus
+  dem V1-Verhalten: Yoga-Eintrag, Workout-Start, Sitzungsende, Login teilen alle dieselbe
+  Mechanik). Desktop (>=960px) zentriertes Fenster (440px, Radius 22px, weicher Schatten);
+  Mobile Bodenblatt (volle Breite, oben 26px, Greif-Leiste, faehrt von unten rein/raus).
+  Schliessen per Hintergrundklick, X im Kopf oder Escape; Hintergrund-Scroll gesperrt;
+  rendert per Portal an <body>; Aushaengen aus dem DOM bis zum Ende der Ausblende-Animation
+  verzoegert. Domaenenfrei: Titel + Inhalt liefert der Aufrufer, der primaere Aktionsknopf
+  und ein mobiles "Abbrechen" gehoeren in den Inhalt. (Phase 7 gebaut; ersetzt spaeter auch
+  Loesch-Bestaetigung und Einstellungs-Dialoge.)
 
 Wenn eine neue Seite ein Muster braucht, das es noch nicht gibt (z. B. Kalender, Chart,
 Muscle-Map), wird es als neues wiederverwendbares Primitive in `src/components/ui` angelegt
@@ -260,8 +269,13 @@ fuehrt vorerst zu einem Platzhalter, bis Live steht.
 
 ## Phase 7 – Yoga
 
-- [ ] Konzept abgestimmt
-- [ ] Karte im Training-Tab + Eintrag-Popup
+- [x] Konzept abgestimmt (Karte/Zeile im Training-Tab + Eintrag-Popup, strikt V1:
+      drei Schnellwahl-Tage Heute/Gestern/Vorgestern, Dauer-Stepper Start 80, Schritt 5,
+      Grenzen 5-180, keine freie Datumswahl, kein Notizfeld. Yoga bleibt kein eigener Tab.)
+- [x] Karte im Training-Tab + Eintrag-Popup (Yoga-Zeile oeffnet das Popup; Eintragen legt
+      eine erledigte Yoga-Einheit an -> erscheint sofort im Verlauf und als "Zuletzt" oben.
+      Neu: generisches Overlay-Primitive (Desktop zentriert, Mobile Bodenblatt) als Fundament
+      fuer alle kuenftigen Popups; Schreib-Hook useAddYoga.)
 - [ ] Live getestet
 
 ## Phase 8 – Uebungen (inkl. Muscle-Map)
