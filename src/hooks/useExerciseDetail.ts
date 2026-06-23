@@ -1,6 +1,8 @@
 import { useExercises } from "./useExercises";
+import { useExerciseMuscles } from "./useExerciseMuscles";
 import { useSessionsDetailed } from "./useSessionsDetailed";
 import { useSettings } from "./useSettings";
+import { muscleValuesFromRows } from "@/lib/muscles";
 import {
   buildExerciseHistory,
   exBestSet,
@@ -34,6 +36,8 @@ export interface ExerciseDetailView {
   metricOptions: ExMetricOption[];
   defaultMetric: ExMetric;
   unit: string;
+  // Region->Intensitaet (0..1) fuer die MuscleMap; leer = nur graue Silhouette.
+  muscleValues: Record<string, number>;
 }
 
 // Beste-Satz-Zeile einer Einheit: hoechstes Gewicht, dann meiste Wiederholungen.
@@ -52,13 +56,22 @@ function bestSetLine(e: ExHistoryEntry, unit: string): string {
 
 export function useExerciseDetail(exerciseId: string): ExerciseDetailView {
   const exercisesQ = useExercises();
+  const musclesQ = useExerciseMuscles();
   const sessionsQ = useSessionsDetailed();
   const settingsQ = useSettings();
 
   const isLoading =
-    exercisesQ.isLoading || sessionsQ.isLoading || settingsQ.isLoading;
-  const isError = exercisesQ.isError || sessionsQ.isError || settingsQ.isError;
-  const error = exercisesQ.error ?? sessionsQ.error ?? settingsQ.error;
+    exercisesQ.isLoading ||
+    musclesQ.isLoading ||
+    sessionsQ.isLoading ||
+    settingsQ.isLoading;
+  const isError =
+    exercisesQ.isError ||
+    musclesQ.isError ||
+    sessionsQ.isError ||
+    settingsQ.isError;
+  const error =
+    exercisesQ.error ?? musclesQ.error ?? sessionsQ.error ?? settingsQ.error;
 
   const unit = settingsQ.data?.unit ?? "kg";
   const rmFormula = settingsQ.data?.rm_formula ?? "mean";
@@ -125,6 +138,15 @@ export function useExerciseDetail(exerciseId: string): ExerciseDetailView {
     ? exDefaultMetric(exercise.profile, exercise.metric)
     : "rm";
 
+  // Feine Beteiligung der aktuellen Uebung (region_id -> kategorie) in die
+  // Werte-Map fuer die MuscleMap uebersetzen. Leer, wenn nichts hinterlegt ist.
+  const muscleValues =
+    exercise && musclesQ.data
+      ? muscleValuesFromRows(
+          musclesQ.data.filter((r) => r.exercise_id === exercise.id),
+        )
+      : {};
+
   return {
     isLoading,
     isError,
@@ -137,5 +159,6 @@ export function useExerciseDetail(exerciseId: string): ExerciseDetailView {
     metricOptions,
     defaultMetric,
     unit,
+    muscleValues,
   };
 }

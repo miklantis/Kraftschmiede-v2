@@ -17,9 +17,19 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Naechste Sitzung (Einstieg):** Phase 7 (Yoga) **abgeschlossen und freigegeben.** Popup
-  und Yoga-Eintrag funktionieren live; das Mobile-Gleiten des Bodenblatts ist behoben (siehe
-  Log/Phase 7).
+- **Naechste Sitzung (Einstieg):** Phase 8 Schritt 4 (Generische MuscleMap) **gebaut,
+  live zu testen.** Auf der Uebungs-Detailseite steht zwischen Diagramm und Verlauf eine
+  Karte "Beanspruchte Muskeln" mit beiden Figuren (vorne+hinten). Neu: das generische
+  Primitive components/ui/muscle-map.tsx - faerbt die Master-SVG anhand einer Werte-Map;
+  kennt keine Domaene/Farbe, die Farbgebung kommt ueber colorFn herein (Standard: Rampe
+  weiss -> --accent). Genau dieses Stueck nutzt spaeter die Koerper-Seite (Phase 9) fuer
+  Muskelkater-Shading - nur andere colorFn, kein Neubau. SVG per ?raw gebuendelt
+  (offline-fest), einmal eingebettet, in einem Effekt eingefaerbt (Inline-fill ueberschreibt
+  die Illustrator-Klassenfarben, greift durch die Silhouetten-Gruppen). Beteiligung kommt
+  aus exercise_muscles ueber neuen Hook useExerciseMuscles + muscleValuesFromRows;
+  useExerciseDetail liefert die fertige Werte-Map. Leere Beteiligung -> nur graue
+  Silhouette. Doku docs/Muskel-Map.md um eine V2-Umsetzungssektion ergaenzt.
+  tsc/build/190 Tests gruen.
 - **GEKLAERT (1RM-Historie, Variante B umgesetzt):** Das je Einheit geschaetzte 1RM wird
   jetzt – wie in V1 zur Anzeigezeit – aus den sauberen Arbeitssaetzen berechnet
   (engine.best1RMFromSets + settings.rm_formula), nicht mehr aus dem beim Import leer
@@ -36,13 +46,11 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   (exMetricOptions/exDefaultMetric/exLineSeries/exVolumeSeries) in lib/exerciseHistory.ts mit
   Tests; neue Primitives ChipSwitch (components/ui) und der Balken-Helfer topRoundedBarPath
   im Chart-Fundament.
-- **Naechster Schritt: (4) Generische MuscleMap-Komponente** (Doku docs/Muskel-Map.md), beide
-  Figuren (Handy + Desktop), Beteiligung aus exercise_muscles; Master-SVG + Registry liegen
-  aus Schritt 1 bereit (assets/body-muscles.svg, lib/muscles.ts). Danach: (5) "Uebung
-  anpassen" als Popup ueber das Overlay aus Phase 7, (6) Anheften/Dashboard (auch der
-  Anheften-Knopf in der Chartkarte), plus die Skill-Uebungsverlauf-Anbindung (Skill-Saetze
-  mit exercise_id=null ueber die Skill-Definition skillId+phase+Index -> exerciseKey ->
-  Katalog-Uebung verknuepfen; eigener Schritt).
+- **Naechster Schritt: (5) "Uebung anpassen"** als Popup ueber das Overlay-Primitive aus
+  Phase 7. Danach: (6) Anheften/Dashboard (auch der Anheften-Knopf in der Chartkarte), plus
+  die Skill-Uebungsverlauf-Anbindung (Skill-Saetze mit exercise_id=null ueber die Skill-
+  Definition skillId+phase+Index -> exerciseKey -> Katalog-Uebung verknuepfen; eigener
+  Schritt).
 - **Phase 8 Schritt 3 Teil 1 (Detailseite: Statistik + Verlauf) erledigt, live testbar:**
   Die Uebungs-Detailseite (uebungen_.$exerciseId) zeigt jetzt echten Inhalt statt des
   Hinweises: Kopf (Zurueck, Name, Art-Badge, Beschreibung), eine Statistik-Reihe und den
@@ -345,7 +353,7 @@ DB-Tabelle exercise_muscles. Charts ueber ChartCanvas/D3 (Phase 5).
       Abweichung), Volumen als Wochenbalken. "Anheften" folgt mit Schritt 6.
 - [ ] Skill-Uebungsverlauf anbinden (Skill-Saetze ueber die Skill-Definition der
       Katalog-Uebung zuordnen)
-- [ ] Generische MuscleMap-Komponente (Doku: docs/Muskel-Map.md)
+- [x] Generische MuscleMap-Komponente (Doku: docs/Muskel-Map.md)
 - [ ] "Uebung anpassen" als Popup ueber das Overlay-Primitive
 - [ ] Anheften/Dashboard
 - [ ] Live getestet
@@ -407,6 +415,24 @@ getrennt: was hier liegt, gehoert nicht auf den Trainings-Screen.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-23 - Phase 8 Schritt 4 abgeschlossen (Generische MuscleMap), wartet auf Live-Test.
+  Auf der Uebungs-Detailseite steht zwischen Diagramm und Verlauf eine Karte "Beanspruchte
+  Muskeln" mit beiden Figuren (vorne+hinten, kein Umschalter - wie V1). Neu: das generische
+  Primitive components/ui/muscle-map.tsx. Reine Darstellung, kennt keine Domaene und keine
+  feste Farbe: Werte-Map herein (Region/Gruppe/Sektion -> 0..1, ueber expand aufgeloest), die
+  Farbgebung kommt ueber colorFn (Standard Rampe weiss -> --accent), dazu base/idle. Genau
+  dieses Stueck nutzt spaeter die Koerper-Seite (Phase 9) fuer Muskelkater-Shading - nur
+  andere colorFn, kein Neubau (Kernziel Wiederverwendung). SVG (src/assets/body-muscles.svg)
+  per ?raw gebuendelt (offline-fest, kein Fetch wie in V1), einmal eingebettet und in einem
+  Effekt eingefaerbt: Inline-fill auf Element + alle <path> ueberschreibt die Illustrator-
+  Klassenfarben und greift durch die Silhouetten-Gruppen auf die Koerper-Teile durch.
+  Mehrfach-Einbetten ist sicher (keine internen id-Referenzen). Beteiligung aus der Tabelle
+  exercise_muscles ueber neuen Hook useExerciseMuscles + muscleValuesFromRows (lib/muscles);
+  useExerciseDetail filtert je Uebung und liefert die fertige Werte-Map. Leere Beteiligung ->
+  nur graue Silhouette (kein Fehler). Doku docs/Muskel-Map.md um Abschnitt 9 (V2-Umsetzung)
+  ergaenzt. Reine Logik (Registry expand/muscleValuesFromRows) war aus Schritt 1 mit Tests
+  da; keine neuen Tests noetig. tsc/build/190 Tests gruen.
 
 - 2026-06-23 - Phase 8 Schritt 3 abgeschlossen (Verlaufsdiagramm), wartet auf Live-Test.
   Die Uebungs-Detailseite bekommt eine Chartkarte zwischen Statistik und Verlaufsliste, 1:1

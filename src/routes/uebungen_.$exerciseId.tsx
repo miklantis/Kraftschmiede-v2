@@ -4,14 +4,16 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
 import { List, ListRow } from "@/components/ui/list";
 import { StatRow } from "@/components/ui/stat-row";
+import { MuscleMap } from "@/components/ui/muscle-map";
 import { ExerciseChartCard } from "@/components/exercise/ExerciseChartCard";
 import { useExerciseDetail } from "@/hooks/useExerciseDetail";
 import { exerciseRowSub } from "@/lib/exercises";
 import { longDateShort } from "@/lib/format";
 
 // Uebungs-Detail. Eigenstaendige Vollseite (entschachtelt mit _), ersetzt die
-// Liste wie in V1. Schritt 3 zeigt Kopf, Statistik-Reihe und den Trainings-
-// verlauf; Verlaufsdiagramm (Schritt 4) und Muscle-Map (Schritt 5) folgen.
+// Liste wie in V1. Zeigt Kopf, Statistik-Reihe, Verlaufsdiagramm, die Muscle-Map
+// (beanspruchte Muskeln) und den Trainingsverlauf. "Uebung anpassen" und
+// Anheften folgen in den naechsten Schritten.
 export const Route = createFileRoute("/uebungen_/$exerciseId")({
   component: ExerciseDetailPage,
 });
@@ -41,6 +43,7 @@ function ExerciseDetailPage(): React.ReactElement {
     metricOptions,
     defaultMetric,
     unit,
+    muscleValues,
   } = useExerciseDetail(exerciseId);
 
   if (isLoading) {
@@ -102,6 +105,11 @@ function ExerciseDetailPage(): React.ReactElement {
           />
         </div>
       )}
+
+      <div className="mb-6 rounded-[18px] bg-card p-4 shadow-card min-[960px]:px-5 min-[960px]:py-[18px]">
+        <div className="mb-2 text-[14px] font-semibold">Beanspruchte Muskeln</div>
+        <MuscleMap values={muscleValues} className="max-w-[320px]" />
+      </div>
 
       <Section eyebrow="Verlauf">
         {verlauf.length === 0 ? (

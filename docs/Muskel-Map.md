@@ -266,3 +266,62 @@ in `MUSCLE_LOAD` (Start `1.0 / 0.55 / 0.25`).
 - Kein Umbau des Desktop-Layouts bestehender Screens.
 - Keine Links/Rechts-Trennung in Phase 1–3.
 - Keine SVG-Animationen.
+
+---
+
+## 9. V2-Umsetzung (so gebaut)
+
+Stand der React/TypeScript-Umsetzung in Kraftschmiede V2. Ersetzt die V1-Mechanik
+aus den Abschnitten 3-6 (window.KS, js/muscles.js, klar-app.css, isDeskView);
+Ziele und Datenmodell (Abschnitte 1-4, 7) gelten unveraendert.
+
+### Dateien
+
+- **Master-SVG** `src/assets/body-muscles.svg` – per `?raw` als String gebuendelt
+  (offline-fest, kein Fetch wie in V1). 14 Regionen (8 Rueckseite, 6 Vorderseite);
+  `nacken` aus der frueheren Tabelle ist nicht Teil der V2-Registry. Keine internen
+  id-Referenzen, darum mehrfach einbettbar.
+- **Registry** `src/lib/muscles.ts` – portiert aus V1 (`MUSCLES`, `MUSCLE_SECTIONS`,
+  `MUSCLE_LOAD`), reine Logik mit Unit-Tests: `expand`, `muscleValuesFromRows`,
+  `kategorieToValue`, `regionsForGroup/Section`.
+- **Komponente** `src/components/ui/muscle-map.tsx` – generisches UI-Primitive.
+- **Daten-Hook** `src/hooks/useExerciseMuscles.ts` – laedt die Tabelle
+  `exercise_muscles` (alle Zeilen des Nutzers), Filter je Uebung im View-Hook.
+
+### Komponenten-Vertrag
+
+Reine Darstellung, kennt keine Domaene und keine feste Farbe.
+
+| Prop      | Bedeutung                                                            |
+| --------- | -------------------------------------------------------------------- |
+| `values`  | Region-, Gruppen- oder Sektions-Keys -> Intensitaet 0..1 (via `expand`). |
+| `view`    | `"both"` (Standard), `"front"` oder `"back"`. Kein Umschalter.       |
+| `colorFn` | `(v) => Farbe` fuer beanspruchte Regionen. Standard: Rampe weiss -> `--accent`. |
+| `base`    | Silhouetten-Farbe (Standard hellgrau).                               |
+| `idle`    | Farbe nicht beanspruchter Regionen (Standard etwas dunkler).         |
+
+Leere Werte-Map -> nur die graue Silhouette (kein Fehler).
+
+### Abweichung von V1
+
+- **Kein Mobile-Umschalter.** V2 zeigt immer beide Figuren nebeneinander (`both`),
+  Handy wie Desktop – das entspricht dem tatsaechlichen V1-Verhalten (V1 rief die
+  Detailseite ebenfalls mit `view: "both"` auf; der Toggle aus dem Entwurf wurde nie
+  genutzt).
+- **Einbetten statt Fetch.** Die SVG kommt als gebuendelter String ins DOM
+  (`dangerouslySetInnerHTML`), die Faerbung laeuft in einem Effekt (Inline-`fill` auf
+  Element + alle `<path>`, ueberschreibt die Illustrator-Klassenfarben, greift durch
+  die Silhouetten-Gruppen auf die Koerper-Teile durch).
+
+### Einfaerb-Mechanik und Zuschnitt
+
+Wie in Abschnitt 5.2/5.3 beschrieben: Silhouette = `base`, beanspruchte Region =
+`colorFn(v)`, Rest = `idle`. Crop-viewBoxes (eng um die Figuren, aus V1):
+`back 181 108 386 1257`, `front 771 112 379 1268`, `both 165 92 1000 1304`.
+
+### Wiederverwendung Koerper-Seite (Phase 9)
+
+Dieselbe Komponente mit anderer `colorFn` (und ggf. `idle`) fuer Muskelkater-Shading;
+die Werte-Map kommt dann aus dem Erholungs-/Belastungszustand statt aus
+`exercise_muscles`. Kein Neubau noetig – das ist der Grund fuer den injizierbaren
+`colorFn`-Vertrag.

@@ -1,0 +1,23 @@
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabase";
+import { useUserId } from "./useUserId";
+import type { ExerciseMuscleRow } from "@/schemas";
+
+// Feine Muskel-Beteiligung je Uebung (Tabelle exercise_muscles). Wie der
+// Uebungskatalog laden wir alle Zeilen des Nutzers auf einmal und filtern
+// clientseitig je Uebung; RLS scope't auf den Nutzer, der Query-Key traegt die
+// user_id. Speist die MuscleMap auf der Uebungs-Detailseite (und spaeter mehr).
+export function useExerciseMuscles() {
+  const userId = useUserId();
+  return useQuery({
+    queryKey: ["exercise_muscles", userId],
+    enabled: userId !== null,
+    queryFn: async (): Promise<ExerciseMuscleRow[]> => {
+      const { data, error } = await supabase
+        .from("exercise_muscles")
+        .select("*");
+      if (error) throw new Error(error.message);
+      return (data ?? []) as ExerciseMuscleRow[];
+    },
+  });
+}
