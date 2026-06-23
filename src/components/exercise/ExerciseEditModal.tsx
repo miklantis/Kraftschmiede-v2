@@ -1,0 +1,283 @@
+import { useEffect, useState } from "react";
+import { Lock, TriangleAlert, Check } from "lucide-react";
+import { Overlay } from "@/components/ui/overlay";
+import { Stepper } from "@/components/ui/stepper";
+import { useUpdateExercise } from "@/hooks/useUpdateExercise";
+import { useActivePhaseRepBand } from "@/hooks/useActivePhaseRepBand";
+import { useSettings } from "@/hooks/useSettings";
+import { fmtScore } from "@/lib/format";
+import type { ExerciseRow } from "@/schemas";
+
+// "Uebung anpassen"-Popup (1:1 wie V1): ueber das generische Overlay. Drei Werte
+// per Stepper – Arbeitsgewicht (nur Gewichtsuebungen), Repband und Ziel-Score.
+// Kommt das Repband aus der aktiven Journey-Phase, ist es gesperrt (blaue Zeile
+// mit Schloss). Bewusst genau diese drei Felder – keine Erweiterung.
+
+const SCORE_LABELS: Record<number, string> = {
+  1: "sehr leicht",
+  2: "leicht",
+  3: "im Ziel · 2 RIR",
+  4: "schwer",
+  5: "Versagen",
+};
+
+const FEEDBACK_MS = 850;
+
+interface Draft {
+  workWeight: number;
+  repmin: number;
+  repmax: number;
+  targetScore: number;
+}
+
+// Kleiner Eyebrow-Titel ueber einem Abschnitt.
+function FieldLabel({ children }: { children: string }): React.ReactElement {
+  return (
+    <div className="mb-2 text-[12px] font-semibold tracking-[0.3px] text-muted-foreground">
+      {children}
+    </div>
+  );
+}
+
+// Hilfetext unter einem Abschnitt.
+function FieldHint({ children }: { children: string }): React.ReactElement {
+  return (
+    <p className="mx-0.5 mt-2 mb-[18px] text-[12px] leading-[1.5] text-muted-foreground">
+      {children}
+    </p>
+  );
+}
+
+export function ExerciseEditModal({
+  exercise,
+  open,
+  onClose,
+}: {
+  exercise: ExerciseRow;
+  open: boolean;
+  onClose: () => void;
+}): React.ReactElement {
+  const { update, isPending } = useUpdateExercise();
+  const settingsQ = useSettings();
+  const phaseBand = useActivePhaseRepBand();
+
+  const step = settingsQ.data?.weight_step || 2.5;
+  const isWeight = exercise.profile !== "bodyweight";
+  const repLocked = exercise.profile === "strength" && phaseBand !== null;
+  const lockBand: [number, number] = repLocked
+    ? (phaseBand as [number, number])
+    : [exercise.rep_range_min ?? 0, exercise.rep_range_max ?? 0];
+  const repUnit =
+    exercise.profile === "bodyweight" && exercise.metric === "duration"
+      ? "Sekunden"
+      : "Wdh";
+
+  const [draft, setDraft] = useState<Draft>({
+    workWeight: exercise.work_weight,
+    repmin: exercise.rep_range_min ?? 0,
+    repmax: exercise.rep_range_max ?? 0,
+    targetScore: exercise.target_score || 3,
+  });
+  const [saved, setSaved] = useState(false);
+
+  // Beim Oeffnen den Entwurf frisch aus der Uebung setzen.
+  useEffect(() => {
+    if (open) {
+      setDraft({
+        workWeight: exercise.work_weight,
+        repmin: exercise.rep_range_min ?? 0,
+        repmax: exercise.rep_range_max ?? 0,
+        targetScore: exercise.target_score || 3,
+      });
+      setSaved(false);
+    }
+  }, [open, exercise]);
+
+  // Stepper-Anpassung mit denselben Grenzen wie V1.
+  const adjWeight = (delta: number): void =>
+    setDraft((d) => ({
+      ...d,
+      workWeight: Math.max(0, Math.round((d.workWeight + delta * step) * 100) / 100),
+    }));
+  const adjScore = (delta: number): void =>
+    setDraft((d) => ({
+      ...d,
+      targetScore: Math.max(1, Math.min(5, d.targetScore + delta)),
+    }));
+  const adjRepMin = (delta: number): void =>
+    setDraft((d) => {
+      const repmin = Math.max(1, d.repmin + delta);
+      return { ...d, repmin, repmax: repmin > d.repmax ? repmin : d.repmax };
+    });
+  const adjRepMax = (delta: number): void =>
+    setDraft((d) => {
+      const repmax = Math.max(1, d.repmax + delta);
+      return { ...d, repmax, repmin: repmax < d.repmin ? repmax : d.repmin };
+    });
+
+  const save = async (): Promise<void> => {
+    await update(exercise.id, {
+      work_weight: draft.workWeight,
+      target_score: draft.targetScore,
+      ...(repLocked
+        ? {}
+        : { rep_range_min: draft.repmin, rep_range_max: draft.repmax }),
+    });
+    setSaved(true);
+    window.setTimeout(onClose, FEEDBACK_MS);
+  };
+
+  const scoreLabel = SCORE_LABELS[draft.targetScore] ?? "";
+
+  return (
+    <Overlay open={open} onClose={onClose} title="Übung anpassen">
+      <div className="-mt-4 mb-[18px] text-[13px] text-muted-foreground">
+        {exercise.name}
+      </div>
+
+      {isWeight && (
+        <>
+          <FieldLabel>Arbeitsgewicht</FieldLabel>
+          <Stepper
+            onDecrement={() => adjWeight(-1)}
+            onIncrement={() => adjWeight(1)}
+            disabled={saved}
+            className="rounded-[14px] bg-card px-3.5 py-2.5 shadow-card"
+          >
+            <span className="flex items-baseline gap-1.5">
+              <span className="font-mono text-[26px] font-bold tabular-nums text-foreground min-[960px]:text-[28px]">
+                {fmtScore(draft.workWeight)}
+              </span>
+              <span className="text-[14px] font-medium text-muted-foreground">
+                kg
+              </span>
+            </span>
+          </Stepper>
+          <FieldHint>
+            Läuft normalerweise von allein mit – nach jedem Training wird es auf
+            dein höchstes gefahrenes Arbeitsgewicht gesetzt. Hier nur ändern,
+            wenn du die Basis sofort korrigieren willst.
+          </FieldHint>
+        </>
+      )}
+
+      <FieldLabel>Repband</FieldLabel>
+      {repLocked ? (
+        <>
+          <div className="flex items-center justify-between rounded-[14px] bg-muted px-4 py-3">
+            <span className="flex items-center gap-2 text-[13px] font-semibold text-muted-foreground">
+              <Lock className="size-[14px]" />
+              aus aktiver Phase
+            </span>
+            <span className="font-mono text-[16px] font-bold tabular-nums text-skill">
+              {lockBand[0]}–{lockBand[1]} Wdh
+            </span>
+          </div>
+          <FieldHint>
+            Kommt aus der aktiven Journey-Phase und lässt sich hier nicht ändern.
+            Gewicht und Ziel-Score kannst du weiter anpassen.
+          </FieldHint>
+        </>
+      ) : (
+        <>
+          <div className="flex gap-3">
+            <Stepper
+              size="sm"
+              decLabel="Weniger Mindest-Wdh"
+              incLabel="Mehr Mindest-Wdh"
+              onDecrement={() => adjRepMin(-1)}
+              onIncrement={() => adjRepMin(1)}
+              disabled={saved}
+              className="flex-1 rounded-[14px] bg-card px-2.5 py-2 shadow-card"
+            >
+              <span className="font-mono text-[20px] font-bold tabular-nums text-foreground">
+                {draft.repmin}
+              </span>
+            </Stepper>
+            <Stepper
+              size="sm"
+              decLabel="Weniger Höchst-Wdh"
+              incLabel="Mehr Höchst-Wdh"
+              onDecrement={() => adjRepMax(-1)}
+              onIncrement={() => adjRepMax(1)}
+              disabled={saved}
+              className="flex-1 rounded-[14px] bg-card px-2.5 py-2 shadow-card"
+            >
+              <span className="font-mono text-[20px] font-bold tabular-nums text-foreground">
+                {draft.repmax}
+              </span>
+            </Stepper>
+          </div>
+          <FieldHint>
+            {"Dein Ziel-Korridor in " +
+              repUnit +
+              ". Triffst du das obere Ende in allen Sätzen sauber, schlägt der Coach mehr vor."}
+          </FieldHint>
+        </>
+      )}
+
+      <div className="mb-2 flex items-baseline justify-between">
+        <span className="text-[12px] font-semibold tracking-[0.3px] text-muted-foreground">
+          Ziel-Score
+        </span>
+        <span className="text-[12px] font-semibold text-primary">
+          {scoreLabel}
+        </span>
+      </div>
+      <Stepper
+        onDecrement={() => adjScore(-1)}
+        onIncrement={() => adjScore(1)}
+        disabled={saved}
+        className="rounded-[14px] bg-card px-3.5 py-2.5 shadow-card"
+      >
+        <span className="flex items-baseline gap-1.5">
+          <span className="font-mono text-[26px] font-bold tabular-nums text-foreground min-[960px]:text-[28px]">
+            {draft.targetScore}
+          </span>
+          <span className="text-[14px] font-medium text-muted-foreground">
+            / 5
+          </span>
+        </span>
+      </Stepper>
+      <p className="mx-0.5 mt-2 mb-4 text-[12px] leading-[1.5] text-muted-foreground">
+        Wie hart die Arbeitssätze im Schnitt sein sollen (1 sehr leicht … 3 im
+        Ziel / 2 RIR … 5 Versagen). Bleibst du leichter, wird progressiert; wird
+        es härter, hält oder senkt der Coach.
+      </p>
+
+      {/* Warnhinweis nur am Handy (Desktop hat mehr Kontext drumherum, wie V1). */}
+      <div className="mb-[18px] flex items-start gap-2.5 rounded-xl bg-warning/10 px-3.5 py-3 min-[960px]:hidden">
+        <TriangleAlert className="mt-px size-[17px] flex-none text-warning" />
+        <span className="text-[12px] font-medium leading-[1.5] text-warning-foreground">
+          Diese Werte regelt normalerweise der Coach. Änderst du sie hier,
+          greifst du bewusst in den Kern ein.
+        </span>
+      </div>
+
+      {saved ? (
+        <div className="flex w-full items-center justify-center gap-2 rounded-[13px] bg-primary py-3.5 text-[15px] font-semibold text-primary-foreground">
+          <Check className="size-[17px]" strokeWidth={2.6} />
+          Übernommen
+        </div>
+      ) : (
+        <div className="flex gap-2.5">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-none rounded-[13px] border border-border bg-card px-5 py-3.5 text-[15px] font-semibold text-foreground transition-[filter] hover:brightness-95"
+          >
+            Abbrechen
+          </button>
+          <button
+            type="button"
+            onClick={() => void save()}
+            disabled={isPending}
+            className="flex-1 rounded-[13px] bg-primary py-3.5 text-[15px] font-semibold text-primary-foreground transition-[filter] hover:brightness-105 disabled:opacity-50"
+          >
+            Übernehmen
+          </button>
+        </div>
+      )}
+    </Overlay>
+  );
+}

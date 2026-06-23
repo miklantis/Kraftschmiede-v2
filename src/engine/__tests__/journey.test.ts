@@ -6,6 +6,8 @@ import {
   journeyWeekForDate,
   phasePlacement,
   weekProgress,
+  repTargetForFocus,
+  phaseRepBand,
   type JourneySession,
 } from "../journey";
 
@@ -146,5 +148,36 @@ describe("weekProgress", () => {
     const wp = weekProgress(sessions, "j1", 3, "2026-01-05");
     expect(wp.units).toBe(1);
     expect(wp.fulfilled).toBe(false);
+  });
+});
+
+describe("repTargetForFocus", () => {
+  it("liefert die V1-Baender je Fokus", () => {
+    expect(repTargetForFocus("reentry")).toEqual([5, 8]);
+    expect(repTargetForFocus("hypertrophy")).toEqual([8, 12]);
+    expect(repTargetForFocus("strength")).toEqual([4, 6]);
+    expect(repTargetForFocus("power")).toEqual([3, 5]);
+    expect(repTargetForFocus("endurance")).toEqual([12, 18]);
+    expect(repTargetForFocus("test")).toEqual([2, 4]);
+  });
+
+  it("maintenance und Unbekanntes ergeben null", () => {
+    expect(repTargetForFocus("maintenance")).toBeNull();
+    expect(repTargetForFocus("irgendwas")).toBeNull();
+  });
+});
+
+describe("phaseRepBand", () => {
+  it("nimmt vorrangig die explizit gesetzten Grenzen", () => {
+    expect(phaseRepBand(6, 10, "strength")).toEqual([6, 10]);
+  });
+
+  it("faellt ohne Grenzen auf den Fokus zurueck", () => {
+    expect(phaseRepBand(null, null, "hypertrophy")).toEqual([8, 12]);
+    expect(phaseRepBand(8, null, "strength")).toEqual([4, 6]);
+  });
+
+  it("ohne Grenzen und ohne passenden Fokus null", () => {
+    expect(phaseRepBand(null, null, "maintenance")).toBeNull();
   });
 });

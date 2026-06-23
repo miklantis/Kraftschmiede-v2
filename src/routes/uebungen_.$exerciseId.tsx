@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { Pencil } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { BackLink } from "@/components/ui/back-link";
 import { Section } from "@/components/ui/section";
@@ -6,20 +8,22 @@ import { List, ListRow } from "@/components/ui/list";
 import { StatRow } from "@/components/ui/stat-row";
 import { MuscleMap } from "@/components/ui/muscle-map";
 import { ExerciseChartCard } from "@/components/exercise/ExerciseChartCard";
+import { ExerciseEditModal } from "@/components/exercise/ExerciseEditModal";
 import { useExerciseDetail } from "@/hooks/useExerciseDetail";
 import { exerciseRowSub } from "@/lib/exercises";
 import { longDateShort } from "@/lib/format";
 
 // Uebungs-Detail. Eigenstaendige Vollseite (entschachtelt mit _), ersetzt die
 // Liste wie in V1. Zeigt Kopf, Statistik-Reihe, Verlaufsdiagramm, die Muscle-Map
-// (beanspruchte Muskeln) und den Trainingsverlauf. "Uebung anpassen" und
-// Anheften folgen in den naechsten Schritten.
+// (beanspruchte Muskeln), den Trainingsverlauf und "Uebung anpassen" (Popup).
+// Anheften folgt im naechsten Schritt.
 export const Route = createFileRoute("/uebungen_/$exerciseId")({
   component: ExerciseDetailPage,
 });
 
 function ExerciseDetailPage(): React.ReactElement {
   const { exerciseId } = Route.useParams();
+  const [editOpen, setEditOpen] = useState(false);
   const {
     isLoading,
     isError,
@@ -147,8 +151,25 @@ function ExerciseDetailPage(): React.ReactElement {
               className="mx-auto mt-3 w-[78%] max-w-[300px]"
             />
           </Section>
+
+          {/* "Uebung anpassen": Desktop unten in der rechten Spalte, mobil ganz
+              am Ende (order-5, nach dem Verlauf) - wie V1. */}
+          <button
+            type="button"
+            onClick={() => setEditOpen(true)}
+            className="order-5 flex w-full items-center justify-center gap-2 rounded-[13px] border border-border bg-card py-3.5 text-[15px] font-semibold text-foreground shadow-card transition-[filter] hover:brightness-95 min-[960px]:order-none"
+          >
+            <Pencil className="size-4" />
+            Übung anpassen
+          </button>
         </div>
       </div>
+
+      <ExerciseEditModal
+        exercise={exercise}
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+      />
     </div>
   );
 }

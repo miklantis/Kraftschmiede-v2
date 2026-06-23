@@ -17,8 +17,26 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Naechste Sitzung (Einstieg):** Phase 8 Schritt 4 (Generische MuscleMap) **gebaut,
-  live zu testen.** Auf der Uebungs-Detailseite steht zwischen Diagramm und Verlauf eine
+- **Naechste Sitzung (Einstieg):** Phase 8 Schritt 5 ("Uebung anpassen") **gebaut, live zu
+  testen.** Auf der Uebungs-Detailseite gibt es unten den Knopf "Uebung anpassen" (Stift) -
+  Desktop unten in der rechten Spalte, mobil ganz am Ende (order-5, nach dem Verlauf), wie
+  V1. Er oeffnet ein Popup ueber das Overlay-Primitive aus Phase 7 (Desktop zentriert, mobil
+  Bodenblatt) mit drei Steppern: Arbeitsgewicht (nur Gewichtsuebungen, Schrittweite aus den
+  Einstellungen), Repband und Ziel-Score (1-5 mit Label). Kommt das Repband aus der aktiven
+  Journey-Phase, ist es gesperrt (blaue Zeile mit Schloss + Band, nicht editierbar - genau
+  wie V1; Gewicht und Score bleiben anpassbar). Mobil zusaetzlich der amber Coach-Warnhinweis.
+  "Uebernehmen" schreibt erst dann zurueck, zeigt kurz "Uebernommen" (Haekchen) und schliesst.
+  Strikt V1-Paritaet, keine Erweiterung. Neu: generisches Stepper-Primitive
+  (components/ui/stepper.tsx, domaenenfreie +/- -Reihe, spaeter auch Koerper-Seite und
+  Live-Session), ExerciseEditModal (components/exercise), Schreib-Hook useUpdateExercise
+  (genau die drei Felder, laedt den Katalog neu), Hook useActivePhaseRepBand (Repband der
+  laufenden Phase ueber journeyPlacement) und in der Engine die reinen Helfer
+  repTargetForFocus + phaseRepBand (aus V1 portiert, mit Tests). tsc/build/195 Tests gruen.
+- **Naechster Schritt: (6) Anheften/Dashboard** (auch der Anheften-Knopf in der Chartkarte),
+  plus die Skill-Uebungsverlauf-Anbindung (Skill-Saetze mit exercise_id=null ueber die Skill-
+  Definition skillId+phase+Index -> exerciseKey -> Katalog-Uebung verknuepfen; eigener Schritt).
+- **Phase 8 Schritt 4 (Generische MuscleMap) gebaut, live getestet (mit Korrekturen unten).**
+  Auf der Uebungs-Detailseite steht zwischen Diagramm und Verlauf eine
   Karte "Beanspruchte Muskeln" mit beiden Figuren (vorne+hinten). Neu: das generische
   Primitive components/ui/muscle-map.tsx - faerbt die Master-SVG anhand einer Werte-Map;
   kennt keine Domaene/Farbe, die Farbgebung kommt ueber colorFn herein (Standard: Rampe
@@ -61,11 +79,6 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
   (exMetricOptions/exDefaultMetric/exLineSeries/exVolumeSeries) in lib/exerciseHistory.ts mit
   Tests; neue Primitives ChipSwitch (components/ui) und der Balken-Helfer topRoundedBarPath
   im Chart-Fundament.
-- **Naechster Schritt: (5) "Uebung anpassen"** als Popup ueber das Overlay-Primitive aus
-  Phase 7. Danach: (6) Anheften/Dashboard (auch der Anheften-Knopf in der Chartkarte), plus
-  die Skill-Uebungsverlauf-Anbindung (Skill-Saetze mit exercise_id=null ueber die Skill-
-  Definition skillId+phase+Index -> exerciseKey -> Katalog-Uebung verknuepfen; eigener
-  Schritt).
 - **Phase 8 Schritt 3 Teil 1 (Detailseite: Statistik + Verlauf) erledigt, live testbar:**
   Die Uebungs-Detailseite (uebungen_.$exerciseId) zeigt jetzt echten Inhalt statt des
   Hinweises: Kopf (Zurueck, Name, Art-Badge, Beschreibung), eine Statistik-Reihe und den
@@ -369,7 +382,7 @@ DB-Tabelle exercise_muscles. Charts ueber ChartCanvas/D3 (Phase 5).
 - [ ] Skill-Uebungsverlauf anbinden (Skill-Saetze ueber die Skill-Definition der
       Katalog-Uebung zuordnen)
 - [x] Generische MuscleMap-Komponente (Doku: docs/Muskel-Map.md)
-- [ ] "Uebung anpassen" als Popup ueber das Overlay-Primitive
+- [x] "Uebung anpassen" als Popup ueber das Overlay-Primitive
 - [ ] Anheften/Dashboard
 - [ ] Live getestet
 
@@ -430,6 +443,26 @@ getrennt: was hier liegt, gehoert nicht auf den Trainings-Screen.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-23 - Phase 8 Schritt 5 abgeschlossen ("Uebung anpassen"), wartet auf Live-Test.
+  Die Uebungs-Detailseite bekommt unten den Knopf "Uebung anpassen" (Stift), der ein Popup
+  ueber das Overlay-Primitive aus Phase 7 oeffnet - 1:1 wie V1 (app.js buildExEditInner/
+  openExEditModal). Drei Stepper: Arbeitsgewicht (nur Gewichtsuebungen, Schrittweite =
+  settings.weight_step, Untergrenze 0), Repband und Ziel-Score (1-5 mit Label sehr leicht …
+  im Ziel · 2 RIR … Versagen). Repband-Sperre wie V1: kommt das Band aus der aktiven Journey-
+  Phase (nur Kraftuebungen, profile=strength), wird es als blaue Zeile mit Schloss
+  ("aus aktiver Phase" + Band) angezeigt und ist nicht editierbar; sonst zwei Stepper min/max,
+  die sich gegenseitig nachziehen. Mobil zusaetzlich der amber Coach-Warnhinweis (Desktop
+  ohne, wie V1). "Uebernehmen" schreibt erst dann zurueck, zeigt ~850ms "Uebernommen"
+  (Haekchen) und schliesst. Knopf-Platzierung wie V1: Desktop unten in der rechten Spalte,
+  mobil ganz am Ende (order-5, nach dem Verlauf). Strikt V1-Paritaet, keine Erweiterung.
+  Neu: generisches Stepper-Primitive (components/ui/stepper.tsx) - domaenenfreie +/- -Reihe,
+  Container-Look kommt vom Aufrufer, spaeter auch Koerper-Seite und Live-Session;
+  ExerciseEditModal (components/exercise); Schreib-Hook useUpdateExercise (genau die drei
+  Felder, invalidiert den Katalog); Hook useActivePhaseRepBand (Repband der laufenden Phase
+  ueber engine.journeyPlacement). In der Engine die reinen Helfer repTargetForFocus (Fokus ->
+  Band, aus V1) und phaseRepBand (explizite Grenzen, sonst Fokus) mit 5 neuen Tests.
+  tsc, build und 195 Tests gruen (5 neue).
 
 - 2026-06-23 - Phase 8 Schritt 4 abgeschlossen (Generische MuscleMap), wartet auf Live-Test.
   Auf der Uebungs-Detailseite steht zwischen Diagramm und Verlauf eine Karte "Beanspruchte
