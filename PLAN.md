@@ -17,11 +17,13 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
-- **Naechste Sitzung (Einstieg):** Phase 7 (Yoga) **gebaut, noch nicht freigegeben.**
-  Naechster Schritt: live testen (Yoga-Zeile im Training-Tab antippen -> Popup; Desktop
-  zentriert, Handy als von unten hereinfahrendes Bodenblatt; Eintragen schreibt eine
-  erledigte Yoga-Einheit, die sofort im Verlauf und als "Zuletzt" oben erscheint). Nach
-  Freigabe das letzte Kaestchen in Phase 7 abhaken, dann Phase 8 (Uebungen). Hinweis: die
+- **Naechste Sitzung (Einstieg) - OFFENES PROBLEM zu loesen:** Das Mobile-Popup
+  (generisches Overlay, `components/ui/overlay.tsx`) **blendet am Handy nur ein, statt von
+  unten hereinzugleiten** - und beim Schliessen ebenso kein Hinausgleiten. Erwartet: das
+  Bodenblatt faehrt von unten rein und wieder raus (wie V1). Am Desktop ist das Aussehen in
+  Ordnung. Ein Anlauf ueber einen erzwungenen Reflow (Commit 8d05fb0) hat das Verhalten
+  NICHT behoben. Das ist als Erstes in einem frischen Chat zu loesen. Erst danach Phase 7
+  live freigeben (letztes Kaestchen) und zu Phase 8 (Uebungen) weitergehen. Hinweis: die
   Skill-Live-Session (Trainieren) bleibt fuer Phase 11 vorgemerkt.
 - **Phase:** Phase 7 (Yoga) **gebaut.** Yoga ist bewusst KEIN eigener Tab, sondern eine
   schnell abgehakte Einheit ueber die Zeile im Training-Tab. Neu und wichtig: das
