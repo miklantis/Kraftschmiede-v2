@@ -55,7 +55,7 @@ nicht rund laeuft.
 - **Kein offenes Bau-Vorhaben.** Pflege/Bugfixing laufend; neue Features nach Konzept-vor-Code.
   Bei jeder Auslieferung die Versionsnummer in `public/changelog.json` fortschreiben (letzte
   Stelle pro normaler Auslieferung hoch, mittlere bei groesseren Features) und einen kurzen
-  Nutzer-Eintrag ergaenzen. Aktuelle Version 1.2.18.
+  Nutzer-Eintrag ergaenzen. Aktuelle Version 1.2.19.
 - **Konten per Einladung (Version 1.2.0) umgesetzt und im Dashboard scharfgeschaltet.** Neue
   Nutzer kommen ueber eine Supabase-Einladung dazu: Einladung im Dashboard verschicken,
   Eingeladener setzt ueber den Link aus der Mail sein Passwort und ist sofort angemeldet. Die
@@ -88,11 +88,30 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
   im Live-Look (Karten wiederverwendet), offline-festes Zurueckschreiben, Coach nur bei der
   juengsten Kraft-Einheit, Skill-Phase unberuehrt. Konzept: `docs/Konzept-Einheit-bearbeiten.md`.
 
+- Journey-Kurve – „jetzt“ automatisch mittig (Version 1.2.19). Ist die Periodisierungskurve
+  auf dem Handy seitlich scrollbar (lange Journey), gleitet sie beim Oeffnen sanft so, dass
+  die aktuelle Woche zentriert ist; am Anfang/Ende so weit wie moeglich, manuelles Scrollen
+  bleibt unangetastet. Eingebaut ins gemeinsame Chart-Fundament (`ChartCanvas`, neue Prop
+  `focusFraction`), nutzbar auch fuer den geplanten Uebungs-Verlaufschart.
+
 ---
 
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - Journey-Kurve zentriert auf „jetzt“ (Handy), Version 1.2.19: Die
+  Periodisierungskurve startete bei langen Journeys auf dem Handy ganz links bei Woche 1;
+  der „jetzt“-Punkt lag oft ausserhalb des Bilds. Das gemeinsame Chart-Fundament
+  (`src/components/ui/chart.tsx`, `ChartCanvas`) bekam eine optionale Prop `focusFraction`
+  (Anteil 0..1 der inneren Plotbreite). Ist die Grafik breiter als der Rahmen, scrollt ein
+  eigener Effekt nach dem Zeichnen sanft (`behavior: "smooth"`) so, dass dieser Punkt mittig
+  sitzt, geklemmt auf `[0, overflow]` (Rand statt Leerraum). Der Effekt haengt an Breite,
+  `minInnerWidth` und `focusFraction`, nicht am Scroll-Event – manuelles Scrollen wird also
+  nicht zurueckgesetzt; passt alles ins Bild (Desktop), passiert nichts. `PeriodizationChart`
+  meldet `focusFraction={(curG + 0.5) / N}` (Domain hat je eine halbe Woche Rand). Wiederver-
+  wendbar fuer den spaeteren Uebungs-Verlaufschart. Validiert: tsc ohne Fehler, Build durch
+  (SW erzeugt), 309 Tests gruen. Betroffen ausserdem `public/changelog.json`, `PLAN.md`.
 
 - 2026-06-24 - Deploy-Workflow gehaertet (kein Versionssprung): `1.2.17` war im Code fertig
   und der Build gruen, aber der reine Pages-Veroeffentlichungs-Schritt (`actions/deploy-pages`)

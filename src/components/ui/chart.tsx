@@ -205,6 +205,13 @@ export interface ChartCanvasProps {
   draw: (svg: ChartSvg, dims: ChartDims) => void;
   ariaLabel?: string;
   className?: string;
+  // Optionaler Fokuspunkt als Anteil der inneren Plotbreite (0 = links,
+  // 1 = rechts). Ist die Grafik breiter als der Rahmen (Handy, lange Journey),
+  // wird beim Oeffnen und beim Drehen sanft so gescrollt, dass dieser Punkt
+  // mittig sitzt (am Rand abgeschnitten, statt leeren Raum zu zeigen). Passt
+  // alles ins Bild (Desktop), gibt es nichts zu scrollen. Manuelles Scrollen
+  // danach bleibt unangetastet.
+  focusFraction?: number;
 }
 
 // Scrollbarer Rahmen plus SVG. Misst die verfuegbare Breite, bestimmt die
@@ -217,6 +224,7 @@ export function ChartCanvas({
   draw,
   ariaLabel,
   className,
+  focusFraction,
 }: ChartCanvasProps): React.ReactElement {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -244,6 +252,22 @@ export function ChartCanvas({
     if (ariaLabel) svg.attr("role", "img").attr("aria-label", ariaLabel);
     draw(svg, dims);
   }, [cw, height, t, r, b, l, minInnerWidth, draw, ariaLabel]);
+
+  // Fokuspunkt mittig scrollen, sobald die Breite steht (laeuft nach dem
+  // Zeichnen). Nur wenn die Grafik breiter ist als der Rahmen; sonst nichts zu
+  // tun. Greift bei Oeffnen, bei Breitenaenderung (Drehen) und wenn der Punkt
+  // wandert - nicht bei manuellem Scrollen, da haengt der Effekt nicht dran.
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || cw <= 0 || focusFraction == null) return;
+    const width = Math.max(cw, (minInnerWidth ?? 0) + l + r);
+    const overflow = width - cw;
+    if (overflow <= 0) return; // passt komplett ins Bild
+    const innerWidth = width - l - r;
+    const target = l + Math.max(0, Math.min(1, focusFraction)) * innerWidth;
+    const left = Math.max(0, Math.min(overflow, target - cw / 2));
+    el.scrollTo({ left, behavior: "smooth" });
+  }, [cw, minInnerWidth, focusFraction, l, r]);
 
   return (
     <div

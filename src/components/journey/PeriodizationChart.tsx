@@ -272,6 +272,10 @@ export function PeriodizationChart({
       minInnerWidth={N * PER_WEEK}
       draw={draw}
       ariaLabel="Periodisierung der Journey"
+      // "jetzt" liegt bei Anteil (curG + 0.5) / N der Plotbreite (Domain hat je
+      // eine halbe Woche Rand). Auf dem Handy scrollt das Fundament diesen Punkt
+      // damit sanft in die Mitte.
+      focusFraction={(curG + 0.5) / N}
     />
   );
 }

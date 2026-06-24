@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.19",
+      "date": "2026-06-24",
+      "changes": [
+        "Die Periodisierungskurve deiner Journey öffnet auf dem Handy jetzt direkt beim „jetzt“-Punkt: Ist die Journey so lang, dass die Kurve seitlich scrollbar wird, gleitet die Ansicht beim Öffnen sanft so weit, dass die aktuelle Woche mittig im Bild sitzt – statt ganz links bei Woche 1 zu starten. Liegt „jetzt“ am Anfang oder Ende, wird so weit wie möglich zentriert. Du kannst danach frei weiterscrollen. Auf dem Desktop, wo die ganze Kurve ins Bild passt, ändert sich nichts."
+      ]
+    },
+    {
       "version": "1.2.18",
       "date": "2026-06-24",
       "changes": [
