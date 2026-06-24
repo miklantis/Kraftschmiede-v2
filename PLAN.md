@@ -47,7 +47,8 @@ nicht rund laeuft.
 - **Naechster Schritt:** kein festgelegtes Vorhaben. Pflege/Bugfixing laufend; neue Features
   nach Konzept-vor-Code. Bei jeder Auslieferung die Versionsnummer in
   `public/changelog.json` fortschreiben (letzte Stelle pro normaler Auslieferung hoch,
-  mittlere bei groesseren Features) und einen kurzen Nutzer-Eintrag ergaenzen.
+  mittlere bei groesseren Features) und einen kurzen Nutzer-Eintrag ergaenzen. Aktuelle
+  Version 1.2.3.
 - **Konten per Einladung (Version 1.2.0) umgesetzt.** Neue Nutzer kommen ueber eine
   Supabase-Einladung dazu: Einladung im Dashboard verschicken, Eingeladener setzt ueber den
   Link aus der Mail sein Passwort und ist sofort angemeldet. Offene Selbstregistrierung
@@ -80,6 +81,15 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - Erklaertext auf der Skills-Seite, Version 1.2.3: Neue Primitive `Prose`
+  (`src/components/ui/prose.tsx`) fuer ruhigen Lauftext direkt auf dem Hintergrund (ohne
+  Karte/Rahmen) - der Stil, den die Uebungs-Beschreibung schon hatte. Auf der Skills-Seite
+  (`src/routes/skills.tsx`) oben unter dem Kopf ein kurzer Text „Was ist eine Skill?\";
+  die Uebungs-Beschreibung (`src/routes/uebungen_.$exerciseId.tsx`) auf dieselbe Primitive
+  umgestellt (Optik unveraendert). Designsystem-Inventar um eine Zeile ergaenzt. Validiert:
+  tsc ohne Fehler, Build durch, 297 Tests gruen. Betroffen ausserdem
+  `public/changelog.json`.
 
 - 2026-06-24 - Journey-Block luftiger, Version 1.2.2: Das vertikale Padding des
   `JourneyStrip` oben auf der Trainingsseite war mit `py-3` (mobil) / `py-4` (Desktop) zu

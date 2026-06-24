@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Pencil } from "lucide-react";
 import { PageHeader } from "@/components/ui/page-header";
 import { BackLink } from "@/components/ui/back-link";
+import { Prose } from "@/components/ui/prose";
 import { Section } from "@/components/ui/section";
 import { List, ListRow } from "@/components/ui/list";
 import { StatRow } from "@/components/ui/stat-row";
@@ -79,11 +80,7 @@ function ExerciseDetailPage(): React.ReactElement {
           {exerciseRowSub(exercise)}
         </span>
       </div>
-      {exercise.description && (
-        <p className="mb-5 text-[15px] leading-[1.5] text-muted-foreground">
-          {exercise.description}
-        </p>
-      )}
+      {exercise.description && <Prose>{exercise.description}</Prose>}
 
       {/* Mobil ein Stapel in fester Reihenfolge (Statistik, Diagramm, Muskeln,
           Verlauf). Ab 960px zwei unabhaengig fliessende Spalten wie V1: links

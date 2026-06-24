@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/ui/page-header";
+import { Prose } from "@/components/ui/prose";
 import { Section } from "@/components/ui/section";
 import { SkillCard } from "@/components/skills/SkillCard";
 import { useSkillsView } from "@/hooks/useSkillsView";
@@ -41,6 +42,12 @@ function SkillsPage(): React.ReactElement {
   return (
     <div>
       <PageHeader title="Skills" />
+      <Prose>
+        Eine Skill ist ein langfristiges Ziel aus mehreren aufbauenden Übungen.
+        Du arbeitest dich von Vorstufen bis zur Meisterform vor – etwa einem
+        sauberen Klimmzug oder 10×3 Pull-ups. Schritt für Schritt, bis die
+        Zielübung in fester Technik sitzt.
+      </Prose>
       <Section eyebrow="Skills">
         <div className="flex flex-col gap-2.5">
           {skills.map((s) => (
