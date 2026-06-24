@@ -11,8 +11,14 @@ import {
 } from "@/lib/offline";
 import { AuthProvider } from "@/lib/auth";
 import { AuthGate } from "@/components/AuthGate";
+import { initPwaUpdate } from "@/lib/pwaUpdate";
 import "@fontsource-variable/spline-sans-mono/wght.css";
 import "./index.css";
+
+// Service Worker beim App-Start registrieren (Offline-Huelle, Lieferung 1) und
+// das Wartesignal fuer den Update-Hinweis aktivieren (Lieferung 2). Einmalig,
+// routen-unabhaengig.
+initPwaUpdate();
 
 // Router aus dem generierten Routenbaum. basepath folgt dem Vite-base,
 // damit Routing lokal (/) und auf GitHub Pages (/Kraftschmiede-v2/) gleich funktioniert.

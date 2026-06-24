@@ -24,9 +24,10 @@ export default defineConfig({
       // Update-UI (Hinweis-Streifen + "Aktualisieren") folgt in Lieferung 2;
       // hier cacht die Huelle nur, beim ersten Install ohne Wartezustand.
       registerType: "prompt",
-      // Registrierungs-Skript wird automatisch in die index.html eingehaengt;
-      // kein manueller Registrierungs-Code in der App noetig.
-      injectRegister: "auto",
+      // Manuelle Registrierung ueber das App-eigene Update-Modul
+      // (src/lib/pwaUpdate.ts), damit das "neue Version wartet"-Signal in die UI
+      // gelangt. Kein automatisch eingehaengtes Registrierungs-Skript.
+      injectRegister: false,
       // Das bestehende public/site.webmanifest (V1-Paritaet) bleibt unberuehrt;
       // das Plugin erzeugt KEIN eigenes Manifest und ueberschreibt nichts.
       manifest: false,

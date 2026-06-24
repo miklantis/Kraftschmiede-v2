@@ -39,12 +39,20 @@ nicht rund laeuft.
   und ins Konzept eingepflegt.
 - **Lieferung 1 (Offline-Huelle) gebaut und gepusht.** `vite-plugin-pwa` (Workbox) erzeugt
   beim Build den Service Worker, der die App-Shell (HTML/JS/CSS, Icons, gebuendelte
-  Schriften) vorcacht. `registerType: 'prompt'`, also kein stilles Auto-Update; die
-  sichtbare Update-UI kommt in Lieferung 2. Supabase ist bewusst nicht im Cache (keine
-  runtimeCaching-Regel), die Datenlogik bleibt allein bei der TanStack-Schicht.
-- **Naechster Schritt:** PWA Lieferung 2 (Update-Erkennung + Hinweis-Streifen +
-  „Aktualisieren"). Vorab zu klaeren: Pruef-Intervall fuer neue Versionen (nur beim Start
-  oder zusaetzlich periodisch), siehe Konzept Abschnitt 8.
+  Schriften) vorcacht. `registerType: 'prompt'`, also kein stilles Auto-Update. Supabase ist
+  bewusst nicht im Cache (keine runtimeCaching-Regel), die Datenlogik bleibt allein bei der
+  TanStack-Schicht.
+- **Lieferung 2 (Update-Erkennung + Hinweis) gebaut und gepusht.** Beim App-Start
+  registriert die App den Service Worker und erkennt eine wartende neue Huelle. Dann
+  erscheint oben auf der Trainingsseite (ueber Journey und Empfehlung) ein dezenter
+  Hinweis-Streifen „Neue Version verfuegbar" mit Knopf „Aktualisieren"; der Knopf aktiviert
+  die neue Huelle und laedt einmal neu. Geprueft wird nur beim Start, nicht periodisch
+  (Entscheidung, Konzept Abschnitt 8). Kapselung: Registrierung + Wartesignal in
+  `src/lib/pwaUpdate.ts`, Hook `useAppUpdate`, darstellender Streifen `UpdateBanner`.
+- **Naechster Schritt:** PWA Lieferung 3 („Was ist neu"). Streifen wird antippbar und
+  oeffnet ein Popup (auf dem `Overlay`-Primitive) mit der Aenderungsliste; der
+  „Aktualisieren"-Knopf wandert dorthin. Vorab zu klaeren: Format und Ort der
+  Changelog-Datei (Ausgangsvorschlag `public/changelog.json`), siehe Konzept Abschnitt 8.
 
 ---
 
@@ -56,7 +64,7 @@ Konzept: `docs/Konzept-PWA-Offline.md`. In kleinen, einzeln testbaren Schritten.
 
 - [x] Lieferung 1: Offline-Huelle (Service Worker, Precache der App-Shell, Supabase
   ausgenommen)
-- [ ] Lieferung 2: Update-Erkennung + Hinweis („Neue Version" + „Aktualisieren")
+- [x] Lieferung 2: Update-Erkennung + Hinweis („Neue Version" + „Aktualisieren")
 - [ ] Lieferung 3: „Was ist neu" (Changelog-Datei + Anzeige im Hinweis)
 - [ ] Lieferung 4: Feinschliff (Optik, „nicht waehrend einer Einheit", Notbremse)
 
@@ -72,6 +80,22 @@ gefuehrt, sobald sie auftauchen.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - PWA Lieferung 2 (Update-Erkennung + Hinweis): Beim App-Start registriert die
+  App den Service Worker (Umstellung von `injectRegister: 'auto'` auf manuelle
+  Registrierung) und erkennt eine wartende neue Huelle. Neue Bausteine: `src/lib/pwaUpdate.ts`
+  (Registrierung + „neue Version wartet"-Signal als kleiner externer Store, DOM-frei, keine
+  periodische Pruefung), Hook `src/hooks/useAppUpdate.ts` (liefert das Signal per
+  `useSyncExternalStore` an die UI), darstellender Streifen
+  `src/components/training/UpdateBanner.tsx` (Klar-Look wie JourneyStrip, „Neue Version
+  verfuegbar" + Knopf „Aktualisieren"). Eingesetzt oben auf der Trainingsseite
+  (`src/routes/index.tsx`), ueber Journey und Empfehlung; rendert nichts, solange kein Update
+  wartet. „Aktualisieren" aktiviert die neue Huelle und laedt einmal neu. Entscheidung
+  Pruef-Intervall (nur beim Start) ins Konzept Abschnitt 8 als getroffen uebernommen. Das
+  Popup mit „Was ist neu" folgt in Lieferung 3; der Knopf wandert dann ins Popup. Validiert:
+  tsc ohne Fehler, Build durch (SW weiter erzeugt, registerSW.js nicht mehr injiziert), 297
+  Tests gruen. Betroffen: `vite.config.ts`, `src/vite-env.d.ts`, `src/main.tsx`,
+  `src/routes/index.tsx`, neue Dateien wie oben, `docs/Konzept-PWA-Offline.md`.
 
 - 2026-06-24 - PWA Lieferung 1 (Offline-Huelle): `vite-plugin-pwa` (Workbox) eingezogen und
   in `vite.config.ts` eingehaengt. Der beim Build erzeugte Service Worker vorcacht die

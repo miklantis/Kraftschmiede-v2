@@ -172,14 +172,15 @@ Getroffen:
   Liefer-Datum, im Popup-Kopf zusammen als „Version 1.0.20 · 24.06.2026". Nummernvergabe durch
   den Coach (letzte Stelle pro Auslieferung, mittlere bei groesseren Features). Details in
   Abschnitt 5.
+- **Pruef-Intervall:** nur beim Start (bei der Service-Worker-Registrierung), keine
+  periodische Pruefung im laufenden Betrieb (Einzelnutzer-App, beim naechsten Start kommt
+  ein wartendes Update ohnehin hoch).
 
 Noch offen (vor bzw. waehrend der jeweiligen Lieferung klaeren):
 - Format und Ort der Changelog-Datei konkret festzurren (`public/changelog.json` als
   Ausgangsvorschlag) – spaetestens zu Lieferung 3.
 - Ob „Was ist neu" auch **nach** dem Update kurz bestaetigt wird („Aktualisiert auf Version
   X") – Thema des Feinschliffs (Lieferung 4).
-- Pruef-Intervall fuer neue Versionen (nur beim Start, oder zusaetzlich periodisch) – Thema
-  zu Lieferung 2.
 
 ---
 

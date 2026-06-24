@@ -6,6 +6,7 @@ import { List, ListRow } from "@/components/ui/list";
 import { ScoreBadge } from "@/components/ui/score-badge";
 import { TwoColumn } from "@/components/ui/two-column";
 import { JourneyStrip } from "@/components/training/JourneyStrip";
+import { UpdateBanner } from "@/components/training/UpdateBanner";
 import { RecommendedWorkout } from "@/components/training/RecommendedWorkout";
 import { YogaEntryModal } from "@/components/training/YogaEntryModal";
 import { useTrainingOverview } from "@/hooks/useTrainingOverview";
@@ -169,6 +170,7 @@ function TrainingPage(): React.ReactElement {
     <div>
       <PageHeader title="Training" date={data.date} />
       <div className="flex flex-col gap-[18px] min-[960px]:gap-[26px]">
+        <UpdateBanner />
         {data.journey && (
           <JourneyStrip
             title={data.journey.title}
