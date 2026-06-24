@@ -32,10 +32,20 @@ export function getSnapshot(): boolean {
 
 // Uebernimmt die wartende Version: aktiviert den neuen Service Worker und laedt
 // die App einmal neu. Ohne wartende Version ein No-op.
+//
+// updateSW(true) stoesst skipWaiting an; vite-plugin-pwa laedt die Seite nach dem
+// Controllerwechsel selbst neu. Auf manchen Browsern - vor allem der installierten
+// PWA auf iOS - bleibt dieser automatische Reload aber aus: die neue Huelle ist
+// dann zwar aktiv, die Seite bleibt aber auf dem alten Stand stehen. Als Sicherung
+// laden wir daher nach kurzer Frist selbst neu. Greift der automatische Reload
+// zuerst, ist die Seite da laengst weg und die Frist verfaellt.
 export function applyUpdate(): void {
   if (updateSW !== null) {
     void updateSW(true);
   }
+  window.setTimeout(() => {
+    window.location.reload();
+  }, 1200);
 }
 
 // Einmalige Registrierung beim App-Start. registerType ist 'prompt': eine neue

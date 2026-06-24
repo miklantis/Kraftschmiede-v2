@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.11",
+      "date": "2026-06-24",
+      "changes": [
+        "„Aktualisieren\" im Was-ist-neu-Popup schliesst das Popup jetzt sofort und laedt die App zuverlaessig neu - bisher blieb es vor allem auf dem installierten iPhone manchmal offen stehen, obwohl das Update schon aktiv war."
+      ]
+    },
+    {
       "version": "1.2.10",
       "date": "2026-06-24",
       "changes": [

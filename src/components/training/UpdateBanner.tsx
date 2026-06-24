@@ -43,7 +43,12 @@ export function UpdateBanner(): React.ReactElement | null {
         open={open}
         onClose={() => setOpen(false)}
         showApply
-        onApply={applyUpdate}
+        onApply={() => {
+          // Popup sofort schliessen (sichtbare Reaktion), dann die wartende
+          // Huelle uebernehmen; applyUpdate laedt die Seite neu.
+          setOpen(false);
+          applyUpdate();
+        }}
       />
     </>
   );

@@ -49,7 +49,7 @@ nicht rund laeuft.
   Features nach Konzept-vor-Code. Bei jeder Auslieferung die Versionsnummer in
   `public/changelog.json` fortschreiben (letzte Stelle pro normaler Auslieferung hoch,
   mittlere bei groesseren Features) und einen kurzen Nutzer-Eintrag ergaenzen. Aktuelle
-  Version 1.2.10.
+  Version 1.2.11.
 - **Konten per Einladung (Version 1.2.0) umgesetzt.** Neue Nutzer kommen ueber eine
   Supabase-Einladung dazu: Einladung im Dashboard verschicken, Eingeladener setzt ueber den
   Link aus der Mail sein Passwort und ist sofort angemeldet. Offene Selbstregistrierung
@@ -97,6 +97,19 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - Bugfix Update-Uebernahme, Version 1.2.11: „Aktualisieren\" im
+  WhatsNewSheet liess das Popup gelegentlich offen stehen (vor allem installierte PWA auf
+  iOS), obwohl die neue Huelle bereits aktiv war - der automatische Reload nach dem
+  Controllerwechsel blieb dort aus. Zwei Korrekturen: (1) `applyUpdate` in
+  `src/lib/pwaUpdate.ts` laedt nach kurzer Frist (1200 ms) selbst neu, falls der
+  automatische Reload ausbleibt; greift der automatische zuerst, ist die Seite da schon
+  weg. (2) Die beiden Aufrufer (`UpdateBanner`, `AppVersionCard`) schliessen das Popup
+  beim Tippen sofort, damit die Reaktion sichtbar ist. Logik „kein Hinweis waehrend
+  laufender Einheit" und die Notbremse unberuehrt. Hinweis: greift erst ab der naechsten
+  Uebernahme - das Aktivieren von 1.2.11 selbst laeuft noch ueber den alten Stand.
+  Validiert: tsc ohne Fehler, Build durch (SW erzeugt), 298 Tests gruen. Betroffen
+  ausserdem `public/changelog.json`, `PLAN.md`.
 
 - 2026-06-24 - Verlauf: Saetze auf eigene Zeilen (Schritt-1-Nachschliff), Version 1.2.10:
   In einer langen Zeile wurden bei vielen Saetzen die Angaben zu gedraengt. Das

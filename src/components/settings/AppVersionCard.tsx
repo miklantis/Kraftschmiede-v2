@@ -56,7 +56,10 @@ export function AppVersionCard(): React.ReactElement {
         open={open}
         onClose={() => setOpen(false)}
         showApply={updateAvailable}
-        onApply={applyUpdate}
+        onApply={() => {
+          setOpen(false);
+          applyUpdate();
+        }}
       />
     </div>
   );
