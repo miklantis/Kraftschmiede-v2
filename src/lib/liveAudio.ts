@@ -71,6 +71,85 @@ export function buzz(prefs: AudioPrefs): void {
 }
 
 /**
+ * Ziel-Signal einer Skill-Dauer-Uebung: aufsteigender Dreiklang (Erfolg),
+ * bewusst voller und laenger als der Start-Piep (playBeep), damit man beim
+ * Halten am Klang allein erkennt, dass die Zieldauer erreicht ist - ohne aufs
+ * Display zu schauen.
+ */
+export function playGoal(prefs: AudioPrefs): void {
+  if (!prefs.sound) return;
+  try {
+    ensureAudio();
+    if (!audioCtx) return;
+    const t0 = audioCtx.currentTime;
+    // Aufsteigend: C6, E6, G6 - klarer "geschafft"-Klang.
+    const notes = [1046.5, 1318.5, 1568.0];
+    notes.forEach((freq, i) => {
+      const off = i * 0.13;
+      const o = audioCtx!.createOscillator();
+      const g = audioCtx!.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(freq, t0 + off);
+      g.gain.setValueAtTime(0.0001, t0 + off);
+      g.gain.exponentialRampToValueAtTime(0.32, t0 + off + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + off + 0.24);
+      o.connect(g);
+      g.connect(audioCtx!.destination);
+      o.start(t0 + off);
+      o.stop(t0 + off + 0.26);
+    });
+  } catch {
+    // ignorieren
+  }
+}
+
+/** Kraeftigeres Vibrationsmuster beim Erreichen der Zieldauer. */
+export function buzzGoal(prefs: AudioPrefs): void {
+  if (!prefs.vibrate) return;
+  try {
+    if (navigator.vibrate) navigator.vibrate([90, 50, 90, 50, 180]);
+  } catch {
+    // ignorieren
+  }
+}
+
+/**
+ * Leiser Tick fuer jede Bonus-Sekunde ueber der Zieldauer (Halten ueber das
+ * Ziel hinaus). Bewusst zurueckhaltend, damit es beim langen Halten nicht
+ * nervt; ein kurzer, gedaempfter Klang plus winzige Vibration (Android).
+ */
+export function goalTick(prefs: AudioPrefs): void {
+  if (prefs.sound) {
+    try {
+      ensureAudio();
+      if (audioCtx) {
+        const t0 = audioCtx.currentTime;
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.type = "sine";
+        o.frequency.setValueAtTime(1568.0, t0);
+        g.gain.setValueAtTime(0.0001, t0);
+        g.gain.exponentialRampToValueAtTime(0.1, t0 + 0.004);
+        g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.06);
+        o.connect(g);
+        g.connect(audioCtx.destination);
+        o.start(t0);
+        o.stop(t0 + 0.07);
+      }
+    } catch {
+      // ignorieren
+    }
+  }
+  if (prefs.vibrate) {
+    try {
+      if (navigator.vibrate) navigator.vibrate(14);
+    } catch {
+      // ignorieren
+    }
+  }
+}
+
+/**
  * Kurzer UI-Klick beim Umschalten eines Erledigt-Hakens. "An" klingt heller/
  * aufsteigend, "Aus" tiefer/abfallend; dazu eine sehr kurze Vibration (Android).
  */

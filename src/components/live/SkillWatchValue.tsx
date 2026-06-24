@@ -1,6 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { Play, Square } from "lucide-react";
-import { buzz, clickTick, ensureAudio, playBeep } from "@/lib/liveAudio";
+import {
+  buzz,
+  buzzGoal,
+  clickTick,
+  ensureAudio,
+  goalTick,
+  playBeep,
+  playGoal,
+} from "@/lib/liveAudio";
 import type { AudioPrefs } from "@/lib/liveAudio";
 
 // Ergebniszelle einer Skill-Dauer-Uebung (Phase 11, Lieferung 5): Sekunden-Wert
@@ -61,6 +69,7 @@ export function SkillWatchValue({
     const base = value ?? 0;
     valRef.current = base;
     let beeped = false;
+    let lastBonusTick = 0;
     let lastLead = -1;
     let leadActive = true;
     const startMs = Date.now();
@@ -91,10 +100,19 @@ export function SkillWatchValue({
       const elapsed = base + Math.floor((Date.now() - startMs - LEAD_SEC * 1000) / 1000);
       valRef.current = elapsed;
       setText(String(elapsed));
-      if (!beeped && target > 0 && elapsed >= target) {
-        beeped = true;
-        playBeep(audioPrefs);
-        buzz(audioPrefs);
+      if (target > 0 && elapsed >= target) {
+        if (!beeped) {
+          // Zieldauer erreicht: markanter Erfolgs-Dreiklang plus kraeftige
+          // Vibration - klar unterscheidbar vom Start-Piep am Countdown-Ende.
+          beeped = true;
+          lastBonusTick = elapsed;
+          playGoal(audioPrefs);
+          buzzGoal(audioPrefs);
+        } else if (elapsed > lastBonusTick) {
+          // Jede weitere volle Sekunde ueber dem Ziel: leiser Bonus-Tick.
+          lastBonusTick = elapsed;
+          goalTick(audioPrefs);
+        }
       }
     }, 100);
 

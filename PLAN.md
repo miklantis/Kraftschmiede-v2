@@ -48,7 +48,7 @@ nicht rund laeuft.
   nach Konzept-vor-Code. Bei jeder Auslieferung die Versionsnummer in
   `public/changelog.json` fortschreiben (letzte Stelle pro normaler Auslieferung hoch,
   mittlere bei groesseren Features) und einen kurzen Nutzer-Eintrag ergaenzen. Aktuelle
-  Version 1.2.6.
+  Version 1.2.7.
 - **Konten per Einladung (Version 1.2.0) umgesetzt.** Neue Nutzer kommen ueber eine
   Supabase-Einladung dazu: Einladung im Dashboard verschicken, Eingeladener setzt ueber den
   Link aus der Mail sein Passwort und ist sofort angemeldet. Offene Selbstregistrierung
@@ -81,6 +81,17 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - Eigenes Ziel-Signal beim Skill-Halte-Timer, Version 1.2.7: Bisher kam beim
+  Erreichen der Zieldauer derselbe Doppelpiep wie am Countdown-Start (`playBeep`), klanglich
+  nicht unterscheidbar. Im Audio-Baustein (`src/lib/liveAudio.ts`) drei Funktionen ergaenzt:
+  `playGoal` (aufsteigender Erfolgs-Dreiklang C6-E6-G6, voller/laenger als der Start-Piep),
+  `buzzGoal` (kraeftigeres Vibrationsmuster) und `goalTick` (leiser Tick je Bonus-Sekunde).
+  In `SkillWatchValue.tsx` die Ziel-Stelle darauf umgestellt: beim Erreichen einmal
+  `playGoal`+`buzzGoal`, danach pro weiterer voller Sekunde ueber dem Ziel ein `goalTick`.
+  Start-Ton am Countdown-Ende unveraendert (`playBeep`). Alles folgt den bestehenden Ton-/
+  Vibrations-Schaltern. Validiert: tsc ohne Fehler, Build durch, 297 Tests gruen. Betroffen
+  ausserdem `public/changelog.json`.
 
 - 2026-06-24 - App-Version-Block mit Eyebrow, Version 1.2.6: Der `AppVersionCard` ganz
   unten in den Einstellungen stand als einzige Karte ohne `Section`-Eyebrow da, was eine

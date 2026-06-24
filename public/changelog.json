@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.7",
+      "date": "2026-06-24",
+      "changes": [
+        "Beim Skill-Training mit Haltezeit gibt es jetzt ein eigenes Ziel-Signal: Erreichst du die Zieldauer, klingt ein aufsteigender Erfolgs-Dreiklang (klar anders als der Start-Ton) mit kraeftiger Vibration. Haeltst du laenger, kommt pro weiterer Sekunde ein leiser Tick - so weisst du beim Haengen, ohne aufs Handy zu schauen, wann das Ziel erreicht ist."
+      ]
+    },
+    {
       "version": "1.2.6",
       "date": "2026-06-24",
       "changes": [
