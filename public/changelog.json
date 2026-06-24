@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.1.5",
+      "date": "2026-06-24",
+      "changes": [
+        "Mehr Abstand am Seitenende: Wenn du ganz nach unten scrollst, klebt das letzte Element nicht mehr am unteren Menü."
+      ]
+    },
+    {
       "version": "1.1.4",
       "date": "2026-06-24",
       "changes": [

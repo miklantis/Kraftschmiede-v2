@@ -42,7 +42,7 @@ nicht rund laeuft.
   Offline-Huelle (Service Worker, Precache der App-Shell, Supabase ausgenommen),
   Update-Erkennung beim Start, „Was ist neu"-Popup aus `public/changelog.json`, Feinschliff
   (kein Hinweis waehrend einer laufenden Einheit, Notbremse „App zuruecksetzen" in den
-  Einstellungen, „Aktualisieren"-Knopf im Popup fixiert). Aktuelle Version 1.1.4. Details je
+  Einstellungen, „Aktualisieren"-Knopf im Popup fixiert). Aktuelle Version 1.1.5. Details je
   Lieferung im Log unten. Konzept: `docs/Konzept-PWA-Offline.md`.
 - **Naechster Schritt:** kein festgelegtes Vorhaben. Pflege/Bugfixing laufend; neue Features
   nach Konzept-vor-Code. Bei jeder Auslieferung die Versionsnummer in
@@ -74,6 +74,16 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - Mehr Abstand am Seitenende, Version 1.1.5: Auf Mobile klebte das letzte
+  UI-Element beim Scrollen ganz nach unten zu dicht an der fixierten Bottom-Nav - deren
+  Hoehe (Icons + Padding + Safe-Area des iPhones) frass den bisherigen Innenabstand
+  (`pb-28`) fast auf. Zentral im Seitengeruest `src/components/shell/AppShell.tsx` den
+  mobilen unteren Abstand des `main` auf `pb-40` erhoeht (Desktop `pb-[72px]` unveraendert,
+  dort gibt es keine Bottom-Nav). Wirkt auf alle Mobile-Seiten gleichzeitig; Seiten mit
+  Karten-Eigenabstand (z. B. Uebungen) bekommen dadurch nur etwas mehr Luft. changelog.json
+  um Eintrag 1.1.5 ergaenzt. Validiert: tsc ohne Fehler, Build durch, 297 Tests gruen.
+  Betroffen: `src/components/shell/AppShell.tsx`, `public/changelog.json`, `PLAN.md`.
 
 - 2026-06-24 - App-Version-Block ans Seitenende, Version 1.1.4: Reine Umsortierung in
   `src/routes/einstellungen.tsx` - der `AppVersionCard`-Block steht jetzt ganz unten (nach
