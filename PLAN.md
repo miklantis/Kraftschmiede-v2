@@ -11,12 +11,18 @@ oder als eigener kleiner Commit.
 Konvention: `- [ ]` offen, `- [x]` erledigt. Modus pro Feature: **erst Konzept gemeinsam
 besprechen, dann bauen, dann auf der Live-Seite testen.**
 
+Die Migration V1->V2 und das erste Vorhaben (PWA: Offline-Huelle + Update-Hinweis) sind
+abgeschlossen. Ab hier laufender Betrieb: regelmaessige Updates, Bugfixes und neue Features –
+jedes neue Feature und jede nennenswerte Aenderung nach Konzept-vor-Code, in kleinen, einzeln
+testbaren Schritten. Bei jeder Auslieferung die Version in `public/changelog.json`
+fortschreiben (siehe „Aktueller Stand").
+
 Inhaltliche Quellen:
 - `docs/Masterplan-V2.md` – Gesamtkonzept (Schema, Architektur).
 - `docs/Designsystem.md` – Ueberblick ueber die wiederverwendbaren UI-Bausteine und
   Design-Tokens. Bei neuen Primitives hier eine Zeile ergaenzen.
-- `docs/Konzept-PWA-Offline.md` – Konzept fuer das naechste Vorhaben (Offline-Huelle +
-  Update-Hinweis).
+- `docs/Konzept-PWA-Offline.md` – Konzept des umgesetzten Offline-/Update-Vorhabens
+  (abgeschlossen; als Referenz erhalten).
 - `docs/archive/PLAN-Migration-V1-zu-V2.md` – kompletter Migrationsverlauf V1->V2 (Historie,
   abgeschlossen). Bei Bedarf zum Nachschlagen, sonst nicht mehr aktiv gepflegt.
 
@@ -47,23 +53,21 @@ nicht rund laeuft.
 
 ## Offene Vorhaben
 
-### PWA – Offline-Huelle & Update-Hinweis
-
-Abgeschlossen (Lieferungen 1–4). Konzept: `docs/Konzept-PWA-Offline.md`. Verlauf je Lieferung
-im Log unten.
-
-- [x] Lieferung 1: Offline-Huelle (Service Worker, Precache der App-Shell, Supabase
-  ausgenommen)
-- [x] Lieferung 2: Update-Erkennung + Hinweis („Neue Version" + „Aktualisieren")
-- [x] Lieferung 3: „Was ist neu" (Changelog-Datei + Anzeige im Hinweis)
-- [x] Lieferung 4: Feinschliff (Optik, „nicht waehrend einer Einheit", Notbremse)
-
 ### Pflege / Bugfixing
 
 Laufend, ergibt sich im Betrieb. Kein geplanter Block; einzelne Punkte werden hier
 gefuehrt, sobald sie auftauchen.
 
 - (noch keine offenen Punkte)
+
+---
+
+## Abgeschlossene Vorhaben
+
+Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
+
+- PWA – Offline-Huelle & Update-Hinweis (Lieferungen 1–4, ab Version 1.1.0).
+  Konzept: `docs/Konzept-PWA-Offline.md`.
 
 ---
 
