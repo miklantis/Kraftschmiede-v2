@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.2",
+      "date": "2026-06-24",
+      "changes": [
+        "Der Journey-Block oben auf der Trainingsseite hat oben und unten jetzt etwas mehr Abstand und wirkt dadurch ruhiger."
+      ]
+    },
+    {
       "version": "1.2.1",
       "date": "2026-06-24",
       "changes": [

@@ -42,7 +42,7 @@ nicht rund laeuft.
   Offline-Huelle (Service Worker, Precache der App-Shell, Supabase ausgenommen),
   Update-Erkennung beim Start, „Was ist neu"-Popup aus `public/changelog.json`, Feinschliff
   (kein Hinweis waehrend einer laufenden Einheit, Notbremse „App zuruecksetzen" in den
-  Einstellungen, „Aktualisieren"-Knopf im Popup fixiert). Aktuelle Version 1.2.1. Details je
+  Einstellungen, „Aktualisieren"-Knopf im Popup fixiert). Aktuelle Version 1.2.2. Details je
   Lieferung im Log unten. Konzept: `docs/Konzept-PWA-Offline.md`.
 - **Naechster Schritt:** kein festgelegtes Vorhaben. Pflege/Bugfixing laufend; neue Features
   nach Konzept-vor-Code. Bei jeder Auslieferung die Versionsnummer in
@@ -80,6 +80,13 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - Journey-Block luftiger, Version 1.2.2: Das vertikale Padding des
+  `JourneyStrip` oben auf der Trainingsseite war mit `py-3` (mobil) / `py-4` (Desktop) zu
+  knapp; jetzt `py-[14px]` / `py-[18px]`. Horizontales Padding und alles andere unveraendert.
+  changelog.json um Eintrag 1.2.2 ergaenzt. Validiert: tsc ohne Fehler, Build durch,
+  297 Tests gruen. Betroffen: `src/components/training/JourneyStrip.tsx`,
+  `public/changelog.json`, `PLAN.md`.
 
 - 2026-06-24 - Update-Streifen umgestylt, Version 1.2.1: Der Hinweis „Neue Version
   verfuegbar" oben auf der Trainingsseite war eine weisse Karte mit Schatten; jetzt traegt

@@ -19,7 +19,7 @@ export function JourneyStrip({
   return (
     <Link
       to="/journey"
-      className="flex items-center gap-3 rounded-card bg-card px-4 py-3 text-foreground shadow-card min-[960px]:gap-[14px] min-[960px]:rounded-[18px] min-[960px]:px-5 min-[960px]:py-4"
+      className="flex items-center gap-3 rounded-card bg-card px-4 py-[14px] text-foreground shadow-card min-[960px]:gap-[14px] min-[960px]:rounded-[18px] min-[960px]:px-5 min-[960px]:py-[18px]"
     >
       <div className="flex size-[38px] flex-none items-center justify-center rounded-control bg-primary/12 text-primary min-[960px]:size-[42px] min-[960px]:rounded-xl">
         <Map className="size-5" />
