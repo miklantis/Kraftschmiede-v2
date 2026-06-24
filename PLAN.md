@@ -63,6 +63,9 @@ gefuehrt, sobald sie auftauchen.
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
 
+- 2026-06-24 - Einstellungen, Daten-Bereich neu gegliedert: aus dem losen Block „Daten"
+  zwei Karten im Klar-Look gemacht - „Daten · Sicherung" (Export + Wiederherstellen) und
+  „Daten · Coaching". Funktion unveraendert.
 - 2026-06-24 - Loginscreen an den „Klar"-Look angepasst: Marken-Lockup (BrandMark im
   gruenen Kaestchen plus versaler Schriftzug) ueber weisser Karte auf der Canvas.
   Registrieren-Pfad entfernt (App nutzt ein bestehendes Konto, kein „Konto anlegen").

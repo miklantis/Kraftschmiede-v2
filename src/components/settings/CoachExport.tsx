@@ -27,7 +27,7 @@ export function CoachExport(): ReactElement {
   const weeks = range === "all" ? null : Number(range);
 
   return (
-    <section className="w-full max-w-md space-y-3 text-left">
+    <section className="space-y-3">
       <h2 className="text-sm font-semibold">Für Coaching</h2>
       <p className="text-muted-foreground text-xs">
         Schlankes JSON zum Besprechen mit dem Coach: Journey und Phasen, deine

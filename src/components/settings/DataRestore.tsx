@@ -61,7 +61,7 @@ export function DataRestore(): ReactElement {
   const p = result?.preview;
 
   return (
-    <section className="w-full max-w-md space-y-3 text-left">
+    <section className="space-y-3">
       <h2 className="text-sm font-semibold">Wiederherstellen</h2>
       <p className="text-muted-foreground text-xs">
         Spielt einen eigenen V2-Export zurück. Achtung: ersetzt deinen kompletten

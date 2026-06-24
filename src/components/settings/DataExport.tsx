@@ -11,7 +11,7 @@ export function DataExport(): ReactElement {
   const { exportToFile, status, isPending, error } = useExport();
 
   return (
-    <section className="w-full max-w-md space-y-3 text-left">
+    <section className="space-y-3">
       <h2 className="text-sm font-semibold">Export (Sicherung)</h2>
       <p className="text-muted-foreground text-xs">
         Sichert deinen kompletten Bestand (Einheiten, Übungen, Vorlagen,

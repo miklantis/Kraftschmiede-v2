@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
+import { SettingsGroup } from "@/components/ui/setting-list";
 import { AccountCard } from "@/components/settings/AccountCard";
 import { EngineSettings } from "@/components/settings/EngineSettings";
 import { TimerSettings } from "@/components/settings/TimerSettings";
@@ -30,8 +31,9 @@ export const Route = createFileRoute("/einstellungen")({
 // Steuerelement rechts. Oben das Konto-/Verbindungs-Panel, darunter auf dem
 // Desktop ein zweispaltiges Raster der Bereiche (mobil ein Stapel). Reihenfolge
 // wie V1: Engine, Timer, Inventar (Stangen/Scheiben/Kettlebells/Geraete), Score,
-// dann "Daten" (Export/Wiederherstellen/Coaching). Plate-Loader bekommt
-// keine eigene UI - das Inventar fuettert den schon portierten Engine-Loader.
+// dann Daten in zwei Karten: "Sicherung" (Export/Wiederherstellen) und
+// "Coaching". Plate-Loader bekommt keine eigene UI - das Inventar fuettert
+// den schon portierten Engine-Loader.
 function EinstellungenPage(): React.ReactElement {
   const settingsQuery = useSettings();
   const settings = settingsQuery.data ?? null;
@@ -88,12 +90,23 @@ function EinstellungenPage(): React.ReactElement {
             <ScoreReference />
           </Section>
 
-          <Section eyebrow="Daten">
-            <div className="flex flex-col gap-3">
-              <DataExport />
-              <DataRestore />
-              <CoachExport />
-            </div>
+          <Section eyebrow="Daten · Sicherung">
+            <SettingsGroup>
+              <div className="p-4">
+                <DataExport />
+              </div>
+              <div className="p-4">
+                <DataRestore />
+              </div>
+            </SettingsGroup>
+          </Section>
+
+          <Section eyebrow="Daten · Coaching">
+            <SettingsGroup>
+              <div className="p-4">
+                <CoachExport />
+              </div>
+            </SettingsGroup>
           </Section>
         </div>
       </div>
