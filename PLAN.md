@@ -53,12 +53,13 @@ nicht rund laeuft.
   `public/changelog.json` fortschreiben (letzte Stelle pro normaler Auslieferung hoch,
   mittlere bei groesseren Features) und einen kurzen Nutzer-Eintrag ergaenzen. Aktuelle
   Version 1.2.11.
-- **Konten per Einladung (Version 1.2.0) umgesetzt.** Neue Nutzer kommen ueber eine
-  Supabase-Einladung dazu: Einladung im Dashboard verschicken, Eingeladener setzt ueber den
-  Link aus der Mail sein Passwort und ist sofort angemeldet. Offene Selbstregistrierung
-  bleibt aus. **Offen (Dashboard, nur durch Nutzer):** in Supabase „Allow new users to sign
-  up\" ausschalten und Redirect-URL auf die Live-Adresse mit Marker `?einladung` setzen –
-  siehe Eintrag im Log.
+- **Konten per Einladung (Version 1.2.0) umgesetzt und im Dashboard scharfgeschaltet.** Neue
+  Nutzer kommen ueber eine Supabase-Einladung dazu: Einladung im Dashboard verschicken,
+  Eingeladener setzt ueber den Link aus der Mail sein Passwort und ist sofort angemeldet. Die
+  offene Selbstregistrierung ist im Supabase-Dashboard abgeschaltet („Allow new users to sign
+  up\" aus), Site URL und Redirect-Liste sind auf die Live-Adresse mit Marker `?einladung`
+  gesetzt. Damit ist der unter 1.2.0 vermerkte offene Dashboard-Schritt erledigt – siehe Log
+  2026-06-24.
 
 ---
 
@@ -112,6 +113,18 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - Konten per Einladung im Supabase-Dashboard scharfgeschaltet (kein Code, keine
+  Auslieferung): Im Projekt kraftschmiede-v2 (eu-west-1) unter Authentication die offene
+  Selbstregistrierung abgeschaltet („Allow new users to sign up" aus); unter URL Configuration
+  die Site URL auf `https://miklantis.github.io/Kraftschmiede-v2/?einladung` und die
+  Redirect-Liste auf `https://miklantis.github.io/Kraftschmiede-v2/**` gesetzt. Damit wird der
+  Link aus der Einladungs-Mail in der App als Einladung erkannt (Marker `?einladung`) und der
+  „Passwort festlegen"-Screen erscheint. Bestehende Konten melden sich normal an, Einladen
+  ueber das Dashboard bleibt moeglich; „Confirm email" bewusst an gelassen (bei Einladungen
+  durch den Link-Klick ohnehin bestaetigt). Der unter 1.2.0 vermerkte offene Dashboard-Schritt
+  ist damit erledigt. Betroffen: nur Supabase-Dashboard-Einstellungen; `PLAN.md` (Doku).
+  changelog.json unberuehrt.
 
 - 2026-06-24 - Konzept „Einheit bearbeiten" dokumentiert (Schritt 2 des Verlauf-Vorhabens):
   neues Dokument `docs/Konzept-Einheit-bearbeiten.md` mit dem abgestimmten Vorhaben
