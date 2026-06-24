@@ -48,7 +48,7 @@ nicht rund laeuft.
   nach Konzept-vor-Code. Bei jeder Auslieferung die Versionsnummer in
   `public/changelog.json` fortschreiben (letzte Stelle pro normaler Auslieferung hoch,
   mittlere bei groesseren Features) und einen kurzen Nutzer-Eintrag ergaenzen. Aktuelle
-  Version 1.2.5.
+  Version 1.2.6.
 - **Konten per Einladung (Version 1.2.0) umgesetzt.** Neue Nutzer kommen ueber eine
   Supabase-Einladung dazu: Einladung im Dashboard verschicken, Eingeladener setzt ueber den
   Link aus der Mail sein Passwort und ist sofort angemeldet. Offene Selbstregistrierung
@@ -81,6 +81,12 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - App-Version-Block mit Eyebrow, Version 1.2.6: Der `AppVersionCard` ganz
+  unten in den Einstellungen stand als einzige Karte ohne `Section`-Eyebrow da, was eine
+  Luecke erzeugte. In `src/routes/einstellungen.tsx` in eine `Section` mit Eyebrow „App\"
+  gewickelt, analog zu allen anderen Bereichen. Reine Layout-Angleichung. Validiert: tsc
+  ohne Fehler, Build durch, 297 Tests gruen. Betroffen ausserdem `public/changelog.json`.
 
 - 2026-06-24 - Wachhalten-Erklaerzeile gekuerzt, Version 1.2.5: Untertext beim Schalter
   „Bildschirm wachhalten\" in `TimerSettings.tsx` auf „Nur im Training aktiv.\" gekuerzt.

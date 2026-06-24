@@ -116,7 +116,9 @@ function EinstellungenPage(): React.ReactElement {
           </Section>
         </div>
 
-        <AppVersionCard />
+        <Section eyebrow="App">
+          <AppVersionCard />
+        </Section>
       </div>
     </div>
   );

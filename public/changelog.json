@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.6",
+      "date": "2026-06-24",
+      "changes": [
+        "Der App-Version-Block ganz unten in den Einstellungen hat jetzt – wie die anderen Bereiche – eine kleine Ueberschrift („App\"). Die Luecke darueber ist weg."
+      ]
+    },
+    {
       "version": "1.2.5",
       "date": "2026-06-24",
       "changes": [
