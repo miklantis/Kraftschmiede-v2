@@ -16,12 +16,14 @@ import { SetCheck } from "./SetCheck";
 // schreiben sofort. Der aktive (naechste) Satz ist gruen hervorgehoben.
 
 const ROW = "grid grid-cols-[34px_1fr_1fr_minmax(46px,58px)_30px] items-center gap-2";
+// Bearbeiten-Modus: ohne Haken-Spalte (kein Abhaken), sonst gleiche Spalten.
+const ROW_EDIT = "grid grid-cols-[34px_1fr_1fr_minmax(46px,58px)] items-center gap-2";
 const RIR_VALUES = [1, 2, 3, 4, 5];
 
 // Zeilenstil wie V1: 2px-Rahmen (transparent als Basis, damit aktiv kein Sprung),
 // aktiver Satz weisser Grund + gruener Rahmen, erledigter Satz leicht gruen.
-function rowCls(active: boolean, done: boolean, warm: boolean): string {
-  const base = ROW + " my-0.5 rounded-[11px] border-2 px-1.5 py-2 text-[14px]";
+function rowCls(grid: string, active: boolean, done: boolean, warm: boolean): string {
+  const base = grid + " my-0.5 rounded-[11px] border-2 px-1.5 py-2 text-[14px]";
   const tone = warm ? " text-muted-foreground" : "";
   if (done) return base + tone + " border-transparent bg-primary/[0.07]";
   if (active) return base + tone + " border-primary bg-card";
@@ -44,6 +46,7 @@ export function ExerciseLiveCard({
   onDelSet,
   onChangeBar,
   onCyclePlate,
+  editMode = false,
 }: {
   entry: LiveEntry;
   ei: number;
@@ -60,9 +63,13 @@ export function ExerciseLiveCard({
   onDelSet: () => void;
   onChangeBar: (bar: LiveBarChoice) => void;
   onCyclePlate: () => void;
+  /** Bearbeiten-Modus (Verlauf): Stange/Scheiben/Haken/Aufwaermsaetze aus,
+   *  Werte + RIR + „+/- Satz“ bleiben. Default false = unveraenderter Live-Look. */
+  editMode?: boolean;
 }): React.ReactElement {
   const isBar = entry.category === "barbell" && entry.barWeight != null;
   const hasPlates = isBar && plates.length > 0;
+  const grid = editMode ? ROW_EDIT : ROW;
 
   function chips(weight: number, warm: boolean, idx: number, done: boolean): React.ReactElement | null {
     if (!hasPlates || plateMode === 0 || done) return null;
@@ -89,7 +96,7 @@ export function ExerciseLiveCard({
             <div className="mt-0.5 text-[12px] text-muted-foreground">{entry.tag}</div>
           )}
         </div>
-        {isBar && bars.length > 0 && (
+        {!editMode && isBar && bars.length > 0 && (
           <select
             aria-label="Stange wählen"
             className="h-[34px] max-w-[150px] flex-none rounded-[8px] border border-border bg-background px-2.5 text-[12px] text-foreground outline-none focus:border-primary"
@@ -106,7 +113,7 @@ export function ExerciseLiveCard({
             ))}
           </select>
         )}
-        {isBar && (
+        {!editMode && isBar && (
           <button
             type="button"
             aria-label="Scheiben anzeigen"
@@ -127,21 +134,21 @@ export function ExerciseLiveCard({
       <div className="px-4 pb-4 pt-2">
         <div
           className={
-            ROW + " border-b border-border px-1.5 pb-1.5 pt-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground [&>span]:text-center"
+            grid + " border-b border-border px-1.5 pb-1.5 pt-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground [&>span]:text-center"
           }
         >
           <span>Satz</span>
           <span>Wdh</span>
           <span>kg</span>
           <span>RIR</span>
-          <span />
+          {!editMode && <span />}
         </div>
 
-        {entry.warmupSets.map((ws, wi) => {
+        {!editMode && entry.warmupSets.map((ws, wi) => {
           const act = isActive(active, ei, wi, true) && !ws.done;
           return (
             <div key={"w" + wi}>
-              <div className={rowCls(act, ws.done, true)}>
+              <div className={rowCls(grid, act, ws.done, true)}>
                 <span className="text-center text-muted-foreground">A{wi + 1}</span>
                 <LiveNumberInput
                   value={ws.reps}
@@ -172,7 +179,7 @@ export function ExerciseLiveCard({
           const act = isActive(active, ei, si, false) && !st.done;
           return (
             <div key={"s" + si}>
-              <div className={rowCls(act, st.done, false)}>
+              <div className={rowCls(grid, act, st.done, false)}>
                 <span className="text-center text-muted-foreground">S{si + 1}</span>
                 <LiveNumberInput
                   value={st.reps}
@@ -202,12 +209,14 @@ export function ExerciseLiveCard({
                     );
                   })}
                 </select>
-                <SetCheck
-                  done={st.done}
-                  active={act}
-                  onToggle={() => onToggleSet(si)}
-                  ariaLabel={"Satz " + (si + 1) + " abhaken"}
-                />
+                {!editMode && (
+                  <SetCheck
+                    done={st.done}
+                    active={act}
+                    onToggle={() => onToggleSet(si)}
+                    ariaLabel={"Satz " + (si + 1) + " abhaken"}
+                  />
+                )}
               </div>
               {chips(st.weight, false, si, st.done)}
             </div>

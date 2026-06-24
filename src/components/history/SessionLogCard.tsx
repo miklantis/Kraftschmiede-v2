@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Pencil, Trash2 } from "lucide-react";
 import type { HistorySession, HistoryKind } from "@/lib/history";
 
 // Aufklappbare Karte einer Einheit (Optik 1:1 aus V1 ks-log-card). Zugeklappt:
@@ -19,10 +19,12 @@ const DOT: Record<HistoryKind, string> = {
 export function SessionLogCard({
   session,
   onDelete,
+  onEdit,
   deleting = false,
 }: {
   session: HistorySession;
   onDelete: (id: string) => void;
+  onEdit?: (id: string) => void;
   deleting?: boolean;
 }): React.ReactElement {
   const [open, setOpen] = useState(false);
@@ -106,7 +108,17 @@ export function SessionLogCard({
               </div>
             </div>
           ) : (
-            <div className="pt-2.5">
+            <div className="flex items-center gap-4 pt-2.5">
+              {onEdit && (session.kind === "kraft" || session.kind === "dev") && (
+                <button
+                  type="button"
+                  onClick={() => onEdit(session.id)}
+                  className="flex items-center gap-1.5 text-[13px] font-medium text-primary hover:opacity-80"
+                >
+                  <Pencil className="size-[13px]" />
+                  Bearbeiten
+                </button>
+              )}
               <button
                 type="button"
                 onClick={() => setConfirm(true)}

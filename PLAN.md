@@ -46,13 +46,15 @@ nicht rund laeuft.
   (kein Hinweis waehrend einer laufenden Einheit, Notbremse „App zuruecksetzen" in den
   Einstellungen, „Aktualisieren"-Knopf im Popup fixiert). Details je
   Lieferung im Log unten. Konzept: `docs/Konzept-PWA-Offline.md`.
-- **Naechster Schritt:** Verlauf Schritt 2 (Einheit bearbeiten) ist konzipiert und abgestimmt
-  (Konzept: `docs/Konzept-Einheit-bearbeiten.md`); als Naechstes Bauschritt 2a (Kraft) nach
-  Freigabe – siehe „Offene Vorhaben". Pflege/Bugfixing laufend; neue
+- **Naechster Schritt:** Verlauf Schritt 2 (Einheit bearbeiten) laeuft. Bauschritt 2a (Kraft)
+  ist ausgeliefert (1.2.12): Krafteinheiten lassen sich im Verlauf nachtraeglich korrigieren
+  (Bearbeiten-Panel im Live-Look). Als Naechstes 2b (Skill) und 2c (Yoga + Dauer-Feinschliff)
+  nach Freigabe – siehe „Offene Vorhaben". Offener Klaerpunkt fuer 2b: ob skill_progress
+  rueckwirkend nachzieht. Pflege/Bugfixing laufend; neue
   Features nach Konzept-vor-Code. Bei jeder Auslieferung die Versionsnummer in
   `public/changelog.json` fortschreiben (letzte Stelle pro normaler Auslieferung hoch,
   mittlere bei groesseren Features) und einen kurzen Nutzer-Eintrag ergaenzen. Aktuelle
-  Version 1.2.11.
+  Version 1.2.12.
 - **Konten per Einladung (Version 1.2.0) umgesetzt und im Dashboard scharfgeschaltet.** Neue
   Nutzer kommen ueber eine Supabase-Einladung dazu: Einladung im Dashboard verschicken,
   Eingeladener setzt ueber den Link aus der Mail sein Passwort und ist sofort angemeldet. Die
@@ -77,15 +79,16 @@ Freigabe.
   angehaengt („· S3"). Ab 1.2.9; ab 1.2.10 jeder Satz auf eigener Zeile (Bullet) unter dem
   Uebungsnamen statt in einer langen Zeile.
 - [ ] Schritt 2 – Einheit bearbeiten (alle Typen). Konzept abgestimmt, siehe
-  `docs/Konzept-Einheit-bearbeiten.md`. Kurz: „Bearbeiten"-Knopf in der aufgeklappten
-  Verlaufs-Karte (neben Loeschen) oeffnet ein Panel im Live-Look ohne Ablauf (kein Timer/
+  `docs/Konzept-Einheit-bearbeiten.md`. Bauschritt 2a (Kraft) ist ausgeliefert (1.2.12);
+  offen bleiben 2b (Skill) und 2c (Yoga + Dauer-Feinschliff). Kurz: „Bearbeiten"-Knopf in
+  der aufgeklappten Verlaufs-Karte (neben Loeschen) oeffnet ein Panel im Live-Look ohne Ablauf (kein Timer/
   Abhaken/aktiver Satz). Die Live-Karten werden WIEDERVERWENDET (Bearbeiten-Modus an
   `ExerciseLiveCard`/`SkillLiveCard`: Stange gelockt, Scheiben aus, Haken weg, Aufwaermsaetze
   ausgeblendet; Tippfelder/„+ Satz" bleiben). Zurueckschreiben offline-fest nach dem Muster
   des Live-Speicherns. Coach-Nachziehen NUR bei der juengsten Einheit einer Uebung (sonst nur
   Eintrag korrigieren). Bauschritte:
-  - [ ] 2a – Kraft: Bearbeiten-Modus `ExerciseLiveCard`, Panel-Rahmen, Dauer-Feld,
-    Zurueckschreiben inkl. Coach-Nachziehen (nur juengste).
+  - [x] 2a – Kraft: Bearbeiten-Modus `ExerciseLiveCard`, Panel-Rahmen, Dauer-Feld,
+    Zurueckschreiben inkl. Coach-Nachziehen (nur juengste). Ausgeliefert ab 1.2.12.
   - [ ] 2b – Skill: Bearbeiten-Modus `SkillLiveCard` (Sekunden-/Wdh-Feld statt Stoppuhr),
     Skill-Einheiten zurueckschreiben. Offen: ob skill_progress rueckwirkend nachzieht (vorher
     klaeren).
@@ -113,6 +116,29 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - Verlauf: Einheit bearbeiten, Bauschritt 2a (Kraft), Version 1.2.12: Eine
+  abgeschlossene Krafteinheit laesst sich im Verlauf nachtraeglich korrigieren. In der
+  aufgeklappten Verlaufs-Karte (`SessionLogCard`) steht neben „Eintrag loeschen" jetzt ein
+  „Bearbeiten"-Knopf (nur fuer Kraft/Abweichung). Er oeffnet das neue `SessionEditPanel`
+  (`src/components/history/`) auf dem bestehenden `Overlay` (Desktop zentriert, Mobile
+  Bodenblatt). Kernpunkt Wiederverwendung: die Live-Karte `ExerciseLiveCard` bekam einen
+  `editMode` (Default false, Live-Look unveraendert), der Stange/Scheiben/Haken-Spalte/
+  Aufwaermsaetze abschaltet und die Haken-Spalte aus dem Grid nimmt – Wdh/kg/RIR ueber das
+  fokus-erhaltende `LiveNumberInput` sowie „+/- Satz" bleiben. Neuer Satz uebernimmt die
+  Werte des letzten Satzes (wie live). Zurueckschreiben offline-fest nach dem Muster des
+  Live-Speicherns: reine Builder-Logik `src/lib/editSession.ts` (verdichtet Dauer + korrigierte
+  Arbeitssaetze, berechnet tested_1rm und – nur bei der juengsten Einheit der Uebung – das
+  Coach-Update), registrierte Mutation `src/lib/editMutation.ts` (work-Saetze je Uebung
+  ersetzen, Aufwaermsaetze unberuehrt; in `queryClient.ts` registriert, ueberlebt Neustart),
+  Hook `src/hooks/useEditSession.ts` (ermittelt „nur juengste" und 1RM-Tracking). Coach zieht
+  still nach (kein extra Hinweis); Aufwaermsaetze und das Datum bleiben unberuehrt, anpassbar
+  ist nur die Dauer. `useSessionsDetailed` holt jetzt zusaetzlich `session_exercises.id`
+  (fuer das Neuschreiben); `history.ts` traegt das optionale `sessionExerciseId`. Skill (2b)
+  und Yoga (2c) folgen. Validiert: tsc ohne Fehler, Build durch (SW erzeugt, changelog.json
+  nicht precached), 303 Tests gruen (neuer Test `src/lib/__tests__/editSession.test.ts`).
+  Betroffen ausserdem `src/components/history/SessionLogCard.tsx`, `src/routes/verlauf.tsx`,
+  `public/changelog.json`, `PLAN.md`.
 
 - 2026-06-24 - Konten per Einladung im Supabase-Dashboard scharfgeschaltet (kein Code, keine
   Auslieferung): Im Projekt kraftschmiede-v2 (eu-west-1) unter Authentication die offene

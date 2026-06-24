@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.12",
+      "date": "2026-06-24",
+      "changes": [
+        "Eine abgeschlossene Krafteinheit lässt sich im Verlauf jetzt nachträglich korrigieren. Klapp eine Einheit auf und tipp auf „Bearbeiten“: Es öffnet sich ein Panel wie beim Training, nur ohne Ablauf (kein Timer, kein Abhaken). Dort kannst du Wiederholungen, Gewicht und Anstrengung je Satz ändern, Sätze ergänzen oder entfernen und die Dauer anpassen. Korrigierst du die jüngste Einheit einer Übung, zieht der Coach das nächste Arbeitsgewicht sauber nach; bei älteren Einheiten bleibt deine aktuelle Empfehlung stehen. Skill- und Yoga-Einheiten folgen in einem späteren Schritt. Änderungen ohne Netz werden nachgereicht, sobald du wieder online bist."
+      ]
+    },
+    {
       "version": "1.2.11",
       "date": "2026-06-24",
       "changes": [

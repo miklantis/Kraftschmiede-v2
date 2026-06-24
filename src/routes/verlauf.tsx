@@ -10,6 +10,7 @@ import {
   type CalendarMonth,
 } from "@/components/ui/calendar";
 import { SessionLogCard } from "@/components/history/SessionLogCard";
+import { SessionEditPanel } from "@/components/history/SessionEditPanel";
 import { useHistory } from "@/hooks/useHistory";
 import { useDeleteSession } from "@/hooks/useDeleteSession";
 import type { HistoryKind } from "@/lib/history";
@@ -38,6 +39,7 @@ function VerlaufPage(): React.ReactElement {
   const del = useDeleteSession();
   const [month, setMonth] = useState<CalendarMonth>(currentMonth);
   const [view, setView] = useState<"list" | "calendar">("list");
+  const [editId, setEditId] = useState<string | null>(null);
 
   if (isLoading) {
     return (
@@ -97,6 +99,7 @@ function VerlaufPage(): React.ReactElement {
             session={s}
             deleting={del.isPending}
             onDelete={(id) => void del.delete(id)}
+            onEdit={(id) => setEditId(id)}
           />
         ))}
       </div>
@@ -130,6 +133,12 @@ function VerlaufPage(): React.ReactElement {
           <Section eyebrow="Letzte Einheiten">{list}</Section>
         </div>
       </div>
+
+      <SessionEditPanel
+        sessionId={editId}
+        open={editId !== null}
+        onClose={() => setEditId(null)}
+      />
     </div>
   );
 }

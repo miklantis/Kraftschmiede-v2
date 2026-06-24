@@ -30,6 +30,9 @@ export interface HistorySet {
 
 export interface HistoryExercise {
   exerciseId: string | null;
+  /** ID der Zeile in session_exercises – fuer das nachtraegliche Bearbeiten.
+   *  Optional, weil reine Anzeige sie nicht braucht. */
+  sessionExerciseId?: string;
   name: string | null;
   metric: "reps" | "duration" | null;
   position: number;
