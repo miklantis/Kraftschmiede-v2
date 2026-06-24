@@ -34,8 +34,9 @@ export const Route = createFileRoute("/einstellungen")({
 // Desktop ein zweispaltiges Raster der Bereiche (mobil ein Stapel). Reihenfolge
 // wie V1: Engine, Timer, Inventar (Stangen/Scheiben/Kettlebells/Geraete), Score,
 // dann Daten in zwei Karten: "Sicherung" (Export/Wiederherstellen) und
-// "Coaching". Plate-Loader bekommt keine eigene UI - das Inventar fuettert
-// den schon portierten Engine-Loader.
+// "Coaching". Ganz unten der App-Version-Block (wie ueblich am Seitenende).
+// Plate-Loader bekommt keine eigene UI - das Inventar fuettert den schon
+// portierten Engine-Loader.
 function EinstellungenPage(): React.ReactElement {
   const settingsQuery = useSettings();
   const settings = settingsQuery.data ?? null;
@@ -60,8 +61,6 @@ function EinstellungenPage(): React.ReactElement {
 
       <div className="flex flex-col gap-7">
         <AccountCard />
-
-        <AppVersionCard />
 
         <div className="columns-1 gap-x-[26px] [&>*]:mb-7 [&>*]:break-inside-avoid min-[960px]:columns-2">
           <Section eyebrow="Engine & Einheiten">
@@ -116,6 +115,8 @@ function EinstellungenPage(): React.ReactElement {
             </SettingsGroup>
           </Section>
         </div>
+
+        <AppVersionCard />
       </div>
     </div>
   );
