@@ -63,6 +63,9 @@ gefuehrt, sobald sie auftauchen.
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
 
+- 2026-06-24 - Loginscreen an den „Klar"-Look angepasst: Marken-Lockup (BrandMark im
+  gruenen Kaestchen plus versaler Schriftzug) ueber weisser Karte auf der Canvas.
+  Registrieren-Pfad entfernt (App nutzt ein bestehendes Konto, kein „Konto anlegen").
 - 2026-06-24 - Neues Projekt „Betrieb & Weiterentwicklung" aufgesetzt. Migrationsverlauf
   nach `docs/archive/PLAN-Migration-V1-zu-V2.md` ausgelagert, schlanke neue PLAN.md
   gestartet. Migration V1->V2 gilt als abgeschlossen; aktueller Fokus ist die PWA.
