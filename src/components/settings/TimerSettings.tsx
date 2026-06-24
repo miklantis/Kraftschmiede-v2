@@ -71,7 +71,7 @@ export function TimerSettings({
 
       <SettingRow
         label="Bildschirm wachhalten"
-        description="Bildschirm bleibt nur während einer laufenden Einheit an."
+        description="Nur im Training aktiv."
       >
         <Switch
           label="Bildschirm wachhalten"
