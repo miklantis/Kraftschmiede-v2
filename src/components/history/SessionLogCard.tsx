@@ -55,11 +55,14 @@ export function SessionLogCard({
       {open && (
         <div className="border-t border-border px-4 pt-1 pb-3.5">
           {session.durationLabel && (
-            <div className="flex items-center justify-between border-b border-[#f6f6f8] py-[9px]">
-              <span className="text-[13px] text-muted-foreground">Dauer</span>
-              <span className="font-mono text-[13px] font-semibold text-foreground">
-                {session.durationLabel}
-              </span>
+            <div className="border-b border-[#f6f6f8] py-[9px]">
+              <div className="text-[14px] font-semibold text-foreground">Dauer</div>
+              <ul className="mt-1 flex flex-col gap-0.5">
+                <li className="flex items-baseline gap-2 font-mono text-[13px] text-muted-foreground">
+                  <span className="flex-none text-primary/40">•</span>
+                  <span>{session.durationLabel}</span>
+                </li>
+              </ul>
             </div>
           )}
           {session.detail.map((row, i) => (

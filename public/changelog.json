@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.17",
+      "date": "2026-06-24",
+      "changes": [
+        "In der aufgeklappten Einheit im Verlauf steht die Dauer jetzt im selben Block-Stil wie die Sätze – Überschrift „Dauer“ und der Wert als Punkt darunter, links ausgerichtet. Sieht aufgeräumter aus."
+      ]
+    },
+    {
       "version": "1.2.16",
       "date": "2026-06-24",
       "changes": [

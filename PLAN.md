@@ -55,7 +55,7 @@ nicht rund laeuft.
 - **Kein offenes Bau-Vorhaben.** Pflege/Bugfixing laufend; neue Features nach Konzept-vor-Code.
   Bei jeder Auslieferung die Versionsnummer in `public/changelog.json` fortschreiben (letzte
   Stelle pro normaler Auslieferung hoch, mittlere bei groesseren Features) und einen kurzen
-  Nutzer-Eintrag ergaenzen. Aktuelle Version 1.2.16.
+  Nutzer-Eintrag ergaenzen. Aktuelle Version 1.2.17.
 - **Konten per Einladung (Version 1.2.0) umgesetzt und im Dashboard scharfgeschaltet.** Neue
   Nutzer kommen ueber eine Supabase-Einladung dazu: Einladung im Dashboard verschicken,
   Eingeladener setzt ueber den Link aus der Mail sein Passwort und ist sofort angemeldet. Die
@@ -93,6 +93,13 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - Verlauf-Feinschliff Dauer-Zeile, Version 1.2.17: In der aufgeklappten Einheit
+  (`SessionLogCard`) stand die Dauer als links/rechts gespreizte Zeile (Label links, Wert
+  rechtsbuendig), waehrend die Uebungen als linksbuendiger Block (fette Ueberschrift + Bullets)
+  stehen. Die Dauer nutzt jetzt dasselbe Block-Layout: Ueberschrift „Dauer" und der Wert als
+  Bullet darunter - ruhiger und konsistent. Reine Layout-Aenderung. Validiert: tsc ohne Fehler,
+  Build durch, 309 Tests gruen. Betroffen ausserdem `public/changelog.json`, `PLAN.md`.
 
 - 2026-06-24 - Verlauf: Einheit bearbeiten, Bauschritt 2c (Yoga) + Abschluss, Version 1.2.16:
   Auch Yoga-Einheiten lassen sich jetzt im Verlauf bearbeiten - das Panel zeigt fuer Yoga kein
