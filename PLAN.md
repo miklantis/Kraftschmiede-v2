@@ -33,10 +33,13 @@ nicht rund laeuft.
   auf der normalisierten Datenbank und ist installierbar (Manifest/Icons/Vollbild). V2 ist
   die aktive App. Verlauf siehe `docs/archive/PLAN-Migration-V1-zu-V2.md`.
 - **Aktueller Fokus: PWA (Offline-Huelle + Update-Hinweis).** Konzept steht in
-  `docs/Konzept-PWA-Offline.md`, Bau noch nicht begonnen.
-- **Naechster Schritt:** vor Lieferung 1 die offenen Konzept-Entscheidungen mit Kadir
-  klaeren (Optik/Platzierung des Hinweises, Changelog-Format und -Ort, Pruef-Intervall),
-  dann PWA Lieferung 1 (Offline-Huelle).
+  `docs/Konzept-PWA-Offline.md`. Die Optik/Platzierung des Hinweises (Streifen oben auf der
+  Trainingsseite, Popup auf dem `Overlay`-Primitive, scrollbare „Was ist neu"-Liste,
+  „Aktualisieren" unten) und die Versionskennung (`1.0.20`-Schema plus Datum) sind geklaert
+  und ins Konzept eingepflegt. Bau noch nicht begonnen.
+- **Naechster Schritt:** PWA Lieferung 1 (Offline-Huelle). Verbliebene Detailfragen
+  (Changelog-Datei-Ort, Pruef-Intervall, Nach-Update-Bestaetigung) werden zur jeweiligen
+  spaeteren Lieferung geklaert, siehe Konzept Abschnitt 8.
 
 ---
 
@@ -64,6 +67,14 @@ gefuehrt, sobald sie auftauchen.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - PWA-Konzept-Entscheidungen geklaert und in `docs/Konzept-PWA-Offline.md`
+  eingepflegt: Update-Hinweis als Streifen oben auf der Trainingsseite, der ein Popup auf dem
+  bestehenden `Overlay`-Primitive oeffnet (Desktop zentriert, Mobile Bodenblatt) mit
+  scrollbarer „Was ist neu"-Liste und „Aktualisieren"-Knopf unten; Schliessen ueber
+  X/Wegtippen, kein „Spaeter"-Knopf. Versionskennung im Schema `1.0.20` plus Datum, Vergabe
+  durch den Coach. Abschnitt 8 von „offen" auf „getroffen + Restoffenes" umgestellt. Reine
+  Doku, kein Code geaendert.
 
 - 2026-06-24 - Designsystem-Dokument angelegt (`docs/Designsystem.md`): menschenlesbarer
   Ueberblick ueber die 25 UI-Primitives (wofuer/wann nehmen), Design-Tokens (Farben,

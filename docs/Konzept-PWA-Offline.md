@@ -72,8 +72,17 @@ Schritt.** Der Ablauf:
 1. **Erkennen.** Im Hintergrund prueft die App (beim Start und gelegentlich), ob auf dem
    Server eine neue Version liegt. Wenn ja, ist die neue Huelle bereits geladen, aber noch
    **nicht aktiv** – sie wartet.
-2. **Anzeigen.** Ein dezenter Hinweis erscheint: „Neue Version verfuegbar". Dazu lesbar
-   **„Was ist neu"** – die Aenderungen dieser Version als kurze, verstaendliche Liste.
+2. **Anzeigen.** Ein dezenter Hinweis-Streifen erscheint **oben auf der Trainingsseite**
+   (der Startseite), nah am Trainingseinstieg, ueber Journey und Empfehlung: „Neue Version
+   verfuegbar". Der Streifen ist antippbar und oeffnet ein Popup mit **„Was ist neu"** – den
+   Aenderungen dieser Version als kurze, verstaendliche Liste. Ist die Liste lang, scrollt
+   sie innerhalb des Popups. Das Popup nutzt das bestehende `Overlay`-Primitive
+   (`src/components/ui/overlay.tsx`): Desktop zentriertes Fenster, Mobile Bodenblatt von
+   unten – einheitlich mit den uebrigen Dialogen (Workout-Start, Sitzungsende). Aufbau im
+   Popup: Titel „Was ist neu" mit Versionskennung im Kopf, darunter die scrollbare
+   Stichpunktliste, unten der „Aktualisieren"-Knopf. Schliessen ohne Uebernehmen ueber das X
+   im Kopf, Tippen neben das Blatt oder Escape (vom Primitive bereitgestellt); ein eigener
+   „Spaeter"-Knopf entfaellt. Der Hinweis-Streifen bleibt stehen, bis der Nutzer uebernimmt.
 3. **Uebernehmen.** Der Nutzer tippt „Aktualisieren". Die neue Huelle wird aktiv, die App
    laedt einmal neu, ist auf der neuen Version.
 4. **Nicht stoeren.** Waehrend einer laufenden Einheit kommt der Hinweis nicht hoch bzw.
@@ -102,6 +111,12 @@ verstaendliche Stichpunktliste auf Deutsch.
 - Das Pflegen dieser Datei wird Teil des Coach-Arbeitsablaufs: bei jeder Auslieferung ein
   Eintrag, in der gleichen verstaendlichen Sprache wie die Commit-/Plan-Notizen, aber fuer
   den Nutzer formuliert (kein Code-Detail).
+
+**Versionskennung (entschieden):** je Eintrag eine Nummer im Schema
+Hauptversion.Funktion.Korrektur (z. B. `1.0.20`) plus das Liefer-Datum. Im Popup-Kopf
+zusammen angezeigt, etwa „Version 1.0.20 · 24.06.2026". Vergabe der Nummer durch den Coach:
+pro normaler Auslieferung zaehlt die letzte Stelle hoch, bei groesseren Features springt die
+mittlere Stelle; bei unklarem Sprung fragt der Coach kurz nach. Das Datum kommt vom Liefertag.
 
 ---
 
@@ -146,14 +161,25 @@ Diese Punkte sind fuer den spaeteren Bau gedacht, nicht zum Mitlesen noetig:
 
 ---
 
-## 8. Offene Entscheidungen (vor dem Bau zu klaeren)
+## 8. Entscheidungen (Stand 2026-06-24) und Restoffenes
 
-- Format und Ort der Versions-/Changelog-Datei (`changelog.json` vs. `version.json`); wie die
-  Versionskennung gesetzt wird (z. B. aus dem Build/Datum).
-- Optik und Platzierung des Hinweises (dezenter Streifen unten? kleines Overlay? wo „Was ist
-  neu" steht).
-- Ob „Was ist neu" auch **nach** dem Update kurz bestaetigt wird („Aktualisiert auf Version X").
-- Pruef-Intervall fuer neue Versionen (nur beim Start, oder zusaetzlich periodisch).
+Getroffen:
+- **Optik/Platzierung des Hinweises:** dezenter Streifen oben auf der Trainingsseite, ueber
+  Journey und Empfehlung; antippbar; oeffnet ein Popup auf dem `Overlay`-Primitive mit
+  scrollbarer „Was ist neu"-Liste und „Aktualisieren"-Knopf unten. Schliessen ohne
+  Uebernehmen ueber X/Wegtippen/Escape; kein eigener „Spaeter"-Knopf. Details in Abschnitt 4.
+- **Versionskennung:** Schema Hauptversion.Funktion.Korrektur (z. B. `1.0.20`) plus
+  Liefer-Datum, im Popup-Kopf zusammen als „Version 1.0.20 · 24.06.2026". Nummernvergabe durch
+  den Coach (letzte Stelle pro Auslieferung, mittlere bei groesseren Features). Details in
+  Abschnitt 5.
+
+Noch offen (vor bzw. waehrend der jeweiligen Lieferung klaeren):
+- Format und Ort der Changelog-Datei konkret festzurren (`public/changelog.json` als
+  Ausgangsvorschlag) – spaetestens zu Lieferung 3.
+- Ob „Was ist neu" auch **nach** dem Update kurz bestaetigt wird („Aktualisiert auf Version
+  X") – Thema des Feinschliffs (Lieferung 4).
+- Pruef-Intervall fuer neue Versionen (nur beim Start, oder zusaetzlich periodisch) – Thema
+  zu Lieferung 2.
 
 ---
 
