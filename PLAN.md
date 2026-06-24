@@ -13,6 +13,8 @@ besprechen, dann bauen, dann auf der Live-Seite testen.**
 
 Inhaltliche Quellen:
 - `docs/Masterplan-V2.md` – Gesamtkonzept (Schema, Architektur).
+- `docs/Designsystem.md` – Ueberblick ueber die wiederverwendbaren UI-Bausteine und
+  Design-Tokens. Bei neuen Primitives hier eine Zeile ergaenzen.
 - `docs/Konzept-PWA-Offline.md` – Konzept fuer das naechste Vorhaben (Offline-Huelle +
   Update-Hinweis).
 - `docs/archive/PLAN-Migration-V1-zu-V2.md` – kompletter Migrationsverlauf V1->V2 (Historie,
@@ -63,6 +65,10 @@ gefuehrt, sobald sie auftauchen.
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
 
+- 2026-06-24 - Designsystem-Dokument angelegt (`docs/Designsystem.md`): menschenlesbarer
+  Ueberblick ueber die 25 UI-Primitives (wofuer/wann nehmen), Design-Tokens (Farben,
+  Radien, Schatten) und die Feature-Ordner. Verweis im README und in den Quellen oben
+  ergaenzt. Reine Doku, kein Code geaendert. Pflegeregel: bei neuen Primitives eine Zeile.
 - 2026-06-24 - Einstellungen, Daten-Bereich neu gegliedert: aus dem losen Block „Daten"
   zwei Karten im Klar-Look gemacht - „Daten · Sicherung" (Export + Wiederherstellen) und
   „Daten · Coaching". Funktion unveraendert.

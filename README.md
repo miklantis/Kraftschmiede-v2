@@ -12,6 +12,7 @@ Referenz fuer Engine-/Coach-Logik erhalten.
 
 - **[PLAN.md](./PLAN.md)** – Schritt-Checkliste und aktueller Projektstand
 - **[docs/Masterplan-V2.md](./docs/Masterplan-V2.md)** – Gesamtkonzept, Schema, Architektur
+- **[docs/Designsystem.md](./docs/Designsystem.md)** – Überblick über die wiederverwendbaren UI-Bausteine und Design-Tokens
 - **[docs/Konzept-PWA-Offline.md](./docs/Konzept-PWA-Offline.md)** – Konzept Offline-Huelle + Update-Hinweis
 - **[docs/Muskel-Map.md](./docs/Muskel-Map.md)** – Konzept der generischen Muscle-Map-Komponente
 - **[docs/archive/PLAN-Migration-V1-zu-V2.md](./docs/archive/PLAN-Migration-V1-zu-V2.md)** – Migrationsverlauf (Historie, abgeschlossen)
