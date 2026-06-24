@@ -61,7 +61,9 @@ export type HistoryKind = "kraft" | "skill" | "yoga" | "dev";
 
 export interface DetailRow {
   label: string;
-  info: string;
+  // Eine Angabe je Arbeitssatz (Kraft/Skill); bei der Yoga-Notiz eine einzelne
+  // Zeile. So kann die Karte jeden Satz untereinander zeigen.
+  lines: string[];
 }
 
 // Anzeigefertige Einheit fuer die Liste.
@@ -141,11 +143,10 @@ function scoreTag(s: HistorySet): string {
   return s.score != null ? " · S" + s.score : "";
 }
 
-// Kraft-Zeile: jeder Arbeitssatz einzeln als "<Wdh> × <kg> kg · S<score>",
-// Saetze per Komma getrennt (Aufwaermsaetze ausgenommen). Ohne Gewicht
-// (Eigengewichts-Uebung) nur "<Wdh> Wdh".
-function strengthInfo(ex: HistoryExercise): string {
-  const parts = workSets(ex)
+// Kraft: je Arbeitssatz eine Angabe "<Wdh> × <kg> kg · S<score>" (Aufwaermsaetze
+// ausgenommen). Ohne Gewicht (Eigengewichts-Uebung) nur "<Wdh> Wdh".
+function strengthLines(ex: HistoryExercise): string[] {
+  const lines = workSets(ex)
     .filter((s) => s.reps != null || s.weight != null)
     .map((s) => {
       const reps = s.reps ?? 0;
@@ -153,24 +154,23 @@ function strengthInfo(ex: HistoryExercise): string {
       const base = w > 0 ? reps + " × " + fmtKg(w) + " kg" : reps + " Wdh";
       return base + scoreTag(s);
     });
-  return parts.length ? parts.join(", ") : "–";
+  return lines.length ? lines : ["–"];
 }
 
-// Skill-Zeile: jeder Arbeitssatz einzeln, je nach Metrik Haltezeit ("12 s")
-// oder Wiederholungen ("8 Wdh"), Score angehaengt wenn vorhanden, Saetze per
-// Komma getrennt.
-function skillInfo(ex: HistoryExercise): string {
+// Skill: je Arbeitssatz eine Angabe, je nach Metrik Haltezeit ("12 s") oder
+// Wiederholungen ("8 Wdh"), Score angehaengt wenn vorhanden.
+function skillLines(ex: HistoryExercise): string[] {
   const ws = workSets(ex);
   if (ex.metric === "duration") {
-    const parts = ws
+    const lines = ws
       .filter((s) => s.durationSec != null)
       .map((s) => s.durationSec + " s" + scoreTag(s));
-    return parts.length ? parts.join(", ") : "–";
+    return lines.length ? lines : ["–"];
   }
-  const parts = ws
+  const lines = ws
     .filter((s) => s.reps != null)
     .map((s) => s.reps + " Wdh" + scoreTag(s));
-  return parts.length ? parts.join(", ") : "–";
+  return lines.length ? lines : ["–"];
 }
 
 function durationLabel(s: HistorySessionInput): string {
@@ -180,13 +180,13 @@ function durationLabel(s: HistorySessionInput): string {
 
 function detailRows(s: HistorySessionInput, lk: HistoryLookups): DetailRow[] {
   if (s.type === "yoga") {
-    return s.notes ? [{ label: "Notiz", info: s.notes }] : [];
+    return s.notes ? [{ label: "Notiz", lines: [s.notes] }] : [];
   }
   const sorted = s.exercises.slice().sort((a, b) => a.position - b.position);
   if (s.type === "skill") {
     return sorted.map((ex) => ({
       label: ex.name || "Skill",
-      info: skillInfo(ex),
+      lines: skillLines(ex),
     }));
   }
   return sorted.map((ex) => ({
@@ -195,7 +195,7 @@ function detailRows(s: HistorySessionInput, lk: HistoryLookups): DetailRow[] {
       ex.name ||
       ex.exerciseId ||
       "Übung",
-    info: strengthInfo(ex),
+    lines: strengthLines(ex),
   }));
 }
 

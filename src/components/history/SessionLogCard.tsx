@@ -4,9 +4,10 @@ import type { HistorySession, HistoryKind } from "@/lib/history";
 
 // Aufklappbare Karte einer Einheit (Optik 1:1 aus V1 ks-log-card). Zugeklappt:
 // Farbpunkt nach Typ, Titel, Typ-Pille, Datum, Chevron. Aufgeklappt: die
-// Session-Zusammenfassung (Dauer + eine Zeile je Uebung) und das Loeschen mit
-// Rueckfrage. Offen-/Loesch-Zustand haelt die Karte selbst; das eigentliche
-// Loeschen reicht sie ueber onDelete nach oben.
+// Session-Zusammenfassung (Dauer, dann je Uebung ein Kopf mit den Saetzen
+// einzeln darunter als Bullet-Zeilen) und das Loeschen mit Rueckfrage.
+// Offen-/Loesch-Zustand haelt die Karte selbst; das eigentliche Loeschen reicht
+// sie ueber onDelete nach oben.
 
 const DOT: Record<HistoryKind, string> = {
   kraft: "bg-primary",
@@ -62,14 +63,22 @@ export function SessionLogCard({
           {session.detail.map((row, i) => (
             <div
               key={i}
-              className="flex items-baseline justify-between gap-3 border-b border-[#f6f6f8] py-[9px]"
+              className="border-b border-[#f6f6f8] py-[9px]"
             >
-              <span className="flex-none text-[14px] font-semibold text-foreground">
+              <div className="text-[14px] font-semibold text-foreground">
                 {row.label}
-              </span>
-              <span className="text-right font-mono text-[13px] text-muted-foreground">
-                {row.info}
-              </span>
+              </div>
+              <ul className="mt-1 flex flex-col gap-0.5">
+                {row.lines.map((line, j) => (
+                  <li
+                    key={j}
+                    className="flex items-baseline gap-2 font-mono text-[13px] text-muted-foreground"
+                  >
+                    <span className="flex-none text-primary/40">•</span>
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           ))}
 

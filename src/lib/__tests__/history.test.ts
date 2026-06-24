@@ -87,7 +87,7 @@ describe("Detail-Aufbereitung", () => {
     const hs = buildHistorySession(strength(), lk);
     expect(hs.durationLabel).toBe("45 min");
     expect(hs.detail).toEqual([
-      { label: "Kniebeuge", info: "5 × 100 kg, 5 × 100 kg" },
+      { label: "Kniebeuge", lines: ["5 × 100 kg", "5 × 100 kg"] },
     ]);
   });
 
@@ -97,7 +97,7 @@ describe("Detail-Aufbereitung", () => {
     s.exercises[0].sets[2].score = 4;
     const hs = buildHistorySession(s, lk);
     expect(hs.detail).toEqual([
-      { label: "Kniebeuge", info: "5 × 100 kg · S3, 5 × 100 kg · S4" },
+      { label: "Kniebeuge", lines: ["5 × 100 kg · S3", "5 × 100 kg · S4"] },
     ]);
   });
 
@@ -122,7 +122,7 @@ describe("Detail-Aufbereitung", () => {
     });
     const hs = buildHistorySession(s, lk);
     expect(hs.durationLabel).toBe("10 min");
-    expect(hs.detail).toEqual([{ label: "Hang", info: "12 s, 10 s" }]);
+    expect(hs.detail).toEqual([{ label: "Hang", lines: ["12 s", "10 s"] }]);
   });
 
   it("Yoga: Minuten als Dauer, Notiz als Zeile", () => {
@@ -136,7 +136,7 @@ describe("Detail-Aufbereitung", () => {
     });
     const hs = buildHistorySession(s, lk);
     expect(hs.durationLabel).toBe("30 min");
-    expect(hs.detail).toEqual([{ label: "Notiz", info: "Rücken locker" }]);
+    expect(hs.detail).toEqual([{ label: "Notiz", lines: ["Rücken locker"] }]);
   });
 });
 

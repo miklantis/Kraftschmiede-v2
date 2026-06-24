@@ -49,7 +49,7 @@ nicht rund laeuft.
   Features nach Konzept-vor-Code. Bei jeder Auslieferung die Versionsnummer in
   `public/changelog.json` fortschreiben (letzte Stelle pro normaler Auslieferung hoch,
   mittlere bei groesseren Features) und einen kurzen Nutzer-Eintrag ergaenzen. Aktuelle
-  Version 1.2.9.
+  Version 1.2.10.
 - **Konten per Einladung (Version 1.2.0) umgesetzt.** Neue Nutzer kommen ueber eine
   Supabase-Einladung dazu: Einladung im Dashboard verschicken, Eingeladener setzt ueber den
   Link aus der Mail sein Passwort und ist sofort angemeldet. Offene Selbstregistrierung
@@ -68,7 +68,8 @@ Zwei Schritte, Konzept besprochen. Schritt 1 (reine Anzeige) ausgeliefert; Schri
 
 - [x] Schritt 1 – Listenansicht satzweise: aufgeklappte Einheit zeigt jeden Arbeitssatz
   einzeln (Kraft „Wdh × Gewicht kg", Skill Haltezeit/Wdh), Anstrengungs-Score je Satz
-  angehaengt („· S3"). Version 1.2.9.
+  angehaengt („· S3"). Ab 1.2.9; ab 1.2.10 jeder Satz auf eigener Zeile (Bullet) unter dem
+  Uebungsnamen statt in einer langen Zeile.
 - [ ] Schritt 2 – Einheit bearbeiten: Tipp auf eine Einheit oeffnet ein Panel im
   Live-Look, aber als Bearbeiten-Modus ohne Timer. Editierbar Wdh/Gewicht/Score je Satz,
   Saetze ergaenzen/loeschen, Dauer der Einheit. Speichern schreibt in
@@ -96,6 +97,16 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - Verlauf: Saetze auf eigene Zeilen (Schritt-1-Nachschliff), Version 1.2.10:
+  In einer langen Zeile wurden bei vielen Saetzen die Angaben zu gedraengt. Das
+  Detail-Modell in `src/lib/history.ts` von `info: string` auf `lines: string[]`
+  umgestellt (Helfer `strengthLines`/`skillLines` liefern je Arbeitssatz einen Eintrag);
+  `SessionLogCard.tsx` rendert je Uebung einen fetten Kopf (Name) und darunter die Saetze
+  als Bullet-Liste (dezenter gruener Punkt, Mono-Werte). Yoga-Notiz bleibt eine Zeile.
+  Reine Anzeige/Layout, Datenmodell und Hooks unberuehrt. `history.test.ts` auf das
+  Array-Modell umgestellt. Validiert: tsc ohne Fehler, Build durch, 298 Tests gruen.
+  Betroffen ausserdem `public/changelog.json`, `PLAN.md`.
 
 - 2026-06-24 - Verlauf satzweise (Schritt 1), Version 1.2.9: Die aufgeklappte Einheit
   zeigt nicht mehr „schwerstes Gewicht + gemischte Wdh-Liste", sondern jeden Arbeitssatz

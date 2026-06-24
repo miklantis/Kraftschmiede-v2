@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.10",
+      "date": "2026-06-24",
+      "changes": [
+        "Im Verlauf steht jetzt jeder Satz auf einer eigenen Zeile unter dem Uebungsnamen, statt alle Saetze in eine lange Zeile zu quetschen. Bei vielen Saetzen bleibt es so uebersichtlich."
+      ]
+    },
+    {
       "version": "1.2.9",
       "date": "2026-06-24",
       "changes": [
