@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
+import { VitePWA } from "vite-plugin-pwa";
 import { fileURLToPath, URL } from "node:url";
 
 // base ist auf den Repo-Namen gesetzt, weil die App unter
@@ -13,6 +14,42 @@ export default defineConfig({
     tanstackRouter({ target: "react", autoCodeSplitting: true }),
     react(),
     tailwindcss(),
+    // Offline-Huelle (PWA). Der Service Worker cacht beim ersten Laden die
+    // App-Shell (HTML/JS/CSS, Icons, gebuendelte Schriften); danach startet und
+    // laeuft die App ohne Netz. Die Daten bleiben Sache der bestehenden
+    // TanStack-Schicht (IndexedDB + pausierte Mutationen) - der SW fasst
+    // Supabase-Aufrufe nicht an.
+    VitePWA({
+      // 'prompt': Updates werden nicht still uebernommen. Die sichtbare
+      // Update-UI (Hinweis-Streifen + "Aktualisieren") folgt in Lieferung 2;
+      // hier cacht die Huelle nur, beim ersten Install ohne Wartezustand.
+      registerType: "prompt",
+      // Registrierungs-Skript wird automatisch in die index.html eingehaengt;
+      // kein manueller Registrierungs-Code in der App noetig.
+      injectRegister: "auto",
+      // Das bestehende public/site.webmanifest (V1-Paritaet) bleibt unberuehrt;
+      // das Plugin erzeugt KEIN eigenes Manifest und ueberschreibt nichts.
+      manifest: false,
+      workbox: {
+        // App-Shell: alle Build-Dateien plus Icons und gebuendelte Schriften.
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff,woff2}"],
+        // Grosse JS-Buendel nicht aus dem Precache fallen lassen, sonst startet
+        // die App offline nicht vollstaendig.
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+        // Deep-Links offline: Navigationsanfragen liefern die gecachte App-Huelle
+        // unter der base aus. Koexistiert mit dem dist/404.html-Fallback der
+        // GitHub-Pages-Auslieferung (greift nur online).
+        navigateFallback: "/Kraftschmiede-v2/index.html",
+        // Veraltete Precaches beim Aktivieren einer neuen Huelle aufraeumen.
+        cleanupOutdatedCaches: true,
+        // Bewusst KEINE runtimeCaching-Regel: Supabase-Aufrufe (Daten) gehen
+        // unveraendert ins Netz. Offline kommen die Daten aus der bestehenden
+        // TanStack-Persistenz, damit sich die zwei Offline-Mechanismen nicht in
+        // die Quere kommen.
+      },
+      // Service Worker nur im Build, nicht im Dev-Server.
+      devOptions: { enabled: false },
+    }),
   ],
   resolve: {
     alias: {

@@ -36,10 +36,15 @@ nicht rund laeuft.
   `docs/Konzept-PWA-Offline.md`. Die Optik/Platzierung des Hinweises (Streifen oben auf der
   Trainingsseite, Popup auf dem `Overlay`-Primitive, scrollbare „Was ist neu"-Liste,
   „Aktualisieren" unten) und die Versionskennung (`1.0.20`-Schema plus Datum) sind geklaert
-  und ins Konzept eingepflegt. Bau noch nicht begonnen.
-- **Naechster Schritt:** PWA Lieferung 1 (Offline-Huelle). Verbliebene Detailfragen
-  (Changelog-Datei-Ort, Pruef-Intervall, Nach-Update-Bestaetigung) werden zur jeweiligen
-  spaeteren Lieferung geklaert, siehe Konzept Abschnitt 8.
+  und ins Konzept eingepflegt.
+- **Lieferung 1 (Offline-Huelle) gebaut und gepusht.** `vite-plugin-pwa` (Workbox) erzeugt
+  beim Build den Service Worker, der die App-Shell (HTML/JS/CSS, Icons, gebuendelte
+  Schriften) vorcacht. `registerType: 'prompt'`, also kein stilles Auto-Update; die
+  sichtbare Update-UI kommt in Lieferung 2. Supabase ist bewusst nicht im Cache (keine
+  runtimeCaching-Regel), die Datenlogik bleibt allein bei der TanStack-Schicht.
+- **Naechster Schritt:** PWA Lieferung 2 (Update-Erkennung + Hinweis-Streifen +
+  „Aktualisieren"). Vorab zu klaeren: Pruef-Intervall fuer neue Versionen (nur beim Start
+  oder zusaetzlich periodisch), siehe Konzept Abschnitt 8.
 
 ---
 
@@ -49,7 +54,7 @@ nicht rund laeuft.
 
 Konzept: `docs/Konzept-PWA-Offline.md`. In kleinen, einzeln testbaren Schritten.
 
-- [ ] Lieferung 1: Offline-Huelle (Service Worker, Precache der App-Shell, Supabase
+- [x] Lieferung 1: Offline-Huelle (Service Worker, Precache der App-Shell, Supabase
   ausgenommen)
 - [ ] Lieferung 2: Update-Erkennung + Hinweis („Neue Version" + „Aktualisieren")
 - [ ] Lieferung 3: „Was ist neu" (Changelog-Datei + Anzeige im Hinweis)
@@ -67,6 +72,18 @@ gefuehrt, sobald sie auftauchen.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - PWA Lieferung 1 (Offline-Huelle): `vite-plugin-pwa` (Workbox) eingezogen und
+  in `vite.config.ts` eingehaengt. Der beim Build erzeugte Service Worker vorcacht die
+  App-Shell (index.html, JS-/CSS-Buendel, Icons, gebuendelte Schriften; 41 Eintraege,
+  ~1 MB). `registerType: 'prompt'` (kein stilles Auto-Update, Update-UI folgt in Lieferung
+  2), `injectRegister: 'auto'` (Registrierung automatisch in index.html), `manifest: false`
+  (bestehendes `site.webmanifest` unberuehrt), `navigateFallback` auf die index.html unter
+  der base fuer Deep-Links offline (koexistiert mit dem `dist/404.html`-Fallback des
+  Deploys). Bewusst KEINE runtimeCaching-Regel: Supabase bleibt network-only, die
+  Datenlogik allein bei der TanStack-Schicht. Validiert: tsc ohne Fehler, Build durch (SW
+  erzeugt), 297 Tests gruen. Betroffen: `vite.config.ts`, `package.json`,
+  `package-lock.json`. Deploy-Workflow unveraendert.
 
 - 2026-06-24 - PWA-Konzept-Entscheidungen geklaert und in `docs/Konzept-PWA-Offline.md`
   eingepflegt: Update-Hinweis als Streifen oben auf der Trainingsseite, der ein Popup auf dem
