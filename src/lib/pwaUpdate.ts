@@ -30,22 +30,38 @@ export function getSnapshot(): boolean {
   return updateAvailable;
 }
 
+let applying = false;
+
 // Uebernimmt die wartende Version: aktiviert den neuen Service Worker und laedt
-// die App einmal neu. Ohne wartende Version ein No-op.
-//
-// updateSW(true) stoesst skipWaiting an; vite-plugin-pwa laedt die Seite nach dem
-// Controllerwechsel selbst neu. Auf manchen Browsern - vor allem der installierten
-// PWA auf iOS - bleibt dieser automatische Reload aber aus: die neue Huelle ist
-// dann zwar aktiv, die Seite bleibt aber auf dem alten Stand stehen. Als Sicherung
-// laden wir daher nach kurzer Frist selbst neu. Greift der automatische Reload
-// zuerst, ist die Seite da laengst weg und die Frist verfaellt.
+// die App neu - sobald die neue Huelle wirklich die Kontrolle uebernommen hat
+// (`controllerchange`), nicht nach fester Frist. Der fruehere feste Reload nach
+// 1,2 s konnte auf der installierten PWA (vor allem iOS) ZU FRUEH zuschlagen:
+// die Seite lud dann neu, bevor der neue Worker aktiv war, der alte Stand kam
+// zurueck und der Hinweis erschien erneut. Jetzt ist `controllerchange` das
+// Signal; eine grosszuegige Frist (5 s) dient nur als allerletzte Notreserve,
+// falls das Signal ganz ausbleibt. Ohne wartende Version ein No-op.
 export function applyUpdate(): void {
-  if (updateSW !== null) {
-    void updateSW(true);
-  }
-  window.setTimeout(() => {
+  if (updateSW === null) return;
+  if (applying) return;
+  applying = true;
+
+  const reloadOnce = (): void => {
     window.location.reload();
-  }, 1200);
+  };
+
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.addEventListener("controllerchange", reloadOnce, {
+      once: true,
+    });
+  }
+
+  // Stoesst skipWaiting an; vite-plugin-pwa loest bei Kontrollwechsel selbst aus,
+  // unser Listener oben ist die zusaetzliche Absicherung (mehrfaches reload faengt
+  // der Browser ab, da die Seite nach dem ersten ohnehin weg ist).
+  void updateSW(true);
+
+  // Allerletzte Notreserve, falls controllerchange nie kommt.
+  window.setTimeout(reloadOnce, 5000);
 }
 
 // Einmalige Registrierung beim App-Start. registerType ist 'prompt': eine neue

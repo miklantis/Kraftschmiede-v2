@@ -55,7 +55,7 @@ nicht rund laeuft.
 - **Kein offenes Bau-Vorhaben.** Pflege/Bugfixing laufend; neue Features nach Konzept-vor-Code.
   Bei jeder Auslieferung die Versionsnummer in `public/changelog.json` fortschreiben (letzte
   Stelle pro normaler Auslieferung hoch, mittlere bei groesseren Features) und einen kurzen
-  Nutzer-Eintrag ergaenzen. Aktuelle Version 1.2.17.
+  Nutzer-Eintrag ergaenzen. Aktuelle Version 1.2.18.
 - **Konten per Einladung (Version 1.2.0) umgesetzt und im Dashboard scharfgeschaltet.** Neue
   Nutzer kommen ueber eine Supabase-Einladung dazu: Einladung im Dashboard verschicken,
   Eingeladener setzt ueber den Link aus der Mail sein Passwort und ist sofort angemeldet. Die
@@ -93,6 +93,19 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - Bugfix Update-Uebernahme (robuster), Version 1.2.18: Der bei 1.2.11
+  eingefuehrte feste Reload nach 1,2 s in `applyUpdate` (`src/lib/pwaUpdate.ts`) konnte auf der
+  installierten PWA (vor allem iOS) ZU FRUEH zuschlagen - die Seite lud neu, bevor der neue
+  Service Worker aktiv war, der alte Stand kam zurueck und der Update-Hinweis erschien erneut
+  (Symptom: Hinweis bleibt). `applyUpdate` laedt jetzt bei `controllerchange` neu (zuverlaessiges
+  Signal, dass die neue Huelle die Kontrolle hat); eine grosszuegige 5-s-Frist dient nur noch
+  als allerletzte Notreserve, falls das Signal ganz ausbleibt. Mehrfach-Reload ist durch ein
+  `applying`-Flag und `{ once: true }` abgesichert. Notbremse „App zuruecksetzen" (Einstellungen
+  -> Daten · Sicherung) bleibt der Ausweg fuer einen echten Haenger. Hinweis: greift erst ab der
+  naechsten Uebernahme. Reine Update-Mechanik, keine Datenlogik beruehrt. Validiert: tsc ohne
+  Fehler, Build durch (SW erzeugt), 309 Tests gruen. Betroffen ausserdem `public/changelog.json`,
+  `PLAN.md`.
 
 - 2026-06-24 - Verlauf-Feinschliff Dauer-Zeile, Version 1.2.17: In der aufgeklappten Einheit
   (`SessionLogCard`) stand die Dauer als links/rechts gespreizte Zeile (Label links, Wert

@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.18",
+      "date": "2026-06-24",
+      "changes": [
+        "Update-Übernahme robuster gemacht: Beim Tippen auf „Aktualisieren“ lädt die App jetzt neu, sobald die neue Version wirklich übernommen hat, statt nach fester Frist. Bisher konnte der Reload – vor allem auf dem installierten iPhone – zu früh kommen, der alte Stand lud zurück und der Update-Hinweis erschien wieder. Falls ein Hinweis doch mal hängt, hilft „App zurücksetzen“ in den Einstellungen unter Daten · Sicherung (deine Daten bleiben erhalten)."
+      ]
+    },
+    {
       "version": "1.2.17",
       "date": "2026-06-24",
       "changes": [
