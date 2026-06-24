@@ -48,7 +48,7 @@ nicht rund laeuft.
   nach Konzept-vor-Code. Bei jeder Auslieferung die Versionsnummer in
   `public/changelog.json` fortschreiben (letzte Stelle pro normaler Auslieferung hoch,
   mittlere bei groesseren Features) und einen kurzen Nutzer-Eintrag ergaenzen. Aktuelle
-  Version 1.2.7.
+  Version 1.2.8.
 - **Konten per Einladung (Version 1.2.0) umgesetzt.** Neue Nutzer kommen ueber eine
   Supabase-Einladung dazu: Einladung im Dashboard verschicken, Eingeladener setzt ueber den
   Link aus der Mail sein Passwort und ist sofort angemeldet. Offene Selbstregistrierung
@@ -81,6 +81,13 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - Hochformat bevorzugen, Version 1.2.8: `"orientation": "portrait"` ins
+  `public/site.webmanifest` ergaenzt. Greift bei installierten PWAs auf Android; iOS/Safari
+  ignoriert die Manifest-Orientierung bekanntlich, dort bleibt die iOS-Hochformatsperre der
+  zuverlaessige Weg (so auch im Changelog vermerkt). Reine Manifest-Angabe, kein Code, kein
+  Layout geaendert. Validiert: JSON gueltig, tsc ohne Fehler, Build durch (Manifest im
+  dist), 297 Tests gruen. Betroffen ausserdem `public/changelog.json`.
 
 - 2026-06-24 - Eigenes Ziel-Signal beim Skill-Halte-Timer, Version 1.2.7: Bisher kam beim
   Erreichen der Zieldauer derselbe Doppelpiep wie am Countdown-Start (`playBeep`), klanglich
