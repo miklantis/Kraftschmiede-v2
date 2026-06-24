@@ -45,14 +45,18 @@ nicht rund laeuft.
 - **Lieferung 2 (Update-Erkennung + Hinweis) gebaut und gepusht.** Beim App-Start
   registriert die App den Service Worker und erkennt eine wartende neue Huelle. Dann
   erscheint oben auf der Trainingsseite (ueber Journey und Empfehlung) ein dezenter
-  Hinweis-Streifen „Neue Version verfuegbar" mit Knopf „Aktualisieren"; der Knopf aktiviert
-  die neue Huelle und laedt einmal neu. Geprueft wird nur beim Start, nicht periodisch
-  (Entscheidung, Konzept Abschnitt 8). Kapselung: Registrierung + Wartesignal in
-  `src/lib/pwaUpdate.ts`, Hook `useAppUpdate`, darstellender Streifen `UpdateBanner`.
-- **Naechster Schritt:** PWA Lieferung 3 („Was ist neu"). Streifen wird antippbar und
-  oeffnet ein Popup (auf dem `Overlay`-Primitive) mit der Aenderungsliste; der
-  „Aktualisieren"-Knopf wandert dorthin. Vorab zu klaeren: Format und Ort der
-  Changelog-Datei (Ausgangsvorschlag `public/changelog.json`), siehe Konzept Abschnitt 8.
+  Hinweis-Streifen „Neue Version verfuegbar". Geprueft wird nur beim Start, nicht periodisch.
+- **Lieferung 3 („Was ist neu") gebaut und gepusht.** Der Streifen ist jetzt antippbar und
+  oeffnet ein Popup (auf dem `Overlay`-Primitive): Versionskennung im Kopf, Aenderungsliste,
+  „Aktualisieren" unten. Die Liste kommt aus `public/changelog.json` (mit jedem Deploy
+  ausgeliefert, beim Oeffnen frisch aus dem Netz geholt, nicht im Precache). Versionsschema
+  startet bei `1.1.0` (Offline- + Update-System als Feature). Kuenftig: letzte Stelle pro
+  normaler Auslieferung hoch, mittlere bei groesseren Features.
+- **Naechster Schritt:** PWA Lieferung 4 (Feinschliff): „nicht waehrend einer laufenden
+  Einheit", Notbremse zum Deregistrieren/Cache leeren, Optik-Feinschliff (z. B.
+  „Aktualisieren" beim langen Changelog unten fixieren statt mitscrollen), evtl.
+  Nach-Update-Bestaetigung. Letzteres ist die einzige noch offene Konzept-Entscheidung
+  (Abschnitt 8).
 
 ---
 
@@ -65,7 +69,7 @@ Konzept: `docs/Konzept-PWA-Offline.md`. In kleinen, einzeln testbaren Schritten.
 - [x] Lieferung 1: Offline-Huelle (Service Worker, Precache der App-Shell, Supabase
   ausgenommen)
 - [x] Lieferung 2: Update-Erkennung + Hinweis („Neue Version" + „Aktualisieren")
-- [ ] Lieferung 3: „Was ist neu" (Changelog-Datei + Anzeige im Hinweis)
+- [x] Lieferung 3: „Was ist neu" (Changelog-Datei + Anzeige im Hinweis)
 - [ ] Lieferung 4: Feinschliff (Optik, „nicht waehrend einer Einheit", Notbremse)
 
 ### Pflege / Bugfixing
@@ -80,6 +84,20 @@ gefuehrt, sobald sie auftauchen.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - PWA Lieferung 3 („Was ist neu"): Der Hinweis-Streifen ist jetzt antippbar und
+  oeffnet ein Popup auf dem `Overlay`-Primitive - Versionskennung im Kopf (z. B. „Version
+  1.1.0 · 24. Juni 2026"), Aenderungsliste als Stichpunkte, „Aktualisieren" unten; der Knopf
+  ist damit vom Streifen ins Popup gewandert. Neue Bausteine: `public/changelog.json`
+  (Seed-Eintrag 1.1.0), Zod-Schema `src/schemas/changelog.ts` (im Barrel ergaenzt),
+  Fetch-Helfer `src/lib/changelog.ts` (frisch aus dem Netz, cache no-store), Hook
+  `src/hooks/useChangelog.ts` (laedt erst beim Oeffnen, gcTime 0 = nicht im Offline-Cache).
+  `UpdateBanner` entsprechend umgebaut. Datei ist bewusst nicht im Precache (kein json-Glob),
+  Build verifiziert (0 Treffer in sw.js). Versionsschema startet bei 1.1.0. Konzept Abschnitt
+  8: Changelog-Format als getroffen gefuehrt; offen bleibt nur die Nach-Update-Bestaetigung
+  (Lieferung 4). Validiert: tsc ohne Fehler, Build durch (SW erzeugt, changelog.json nicht
+  precached), 297 Tests gruen. Betroffen: neue Dateien wie oben, `src/schemas/index.ts`,
+  `src/components/training/UpdateBanner.tsx`, `docs/Konzept-PWA-Offline.md`.
 
 - 2026-06-24 - PWA Lieferung 2 (Update-Erkennung + Hinweis): Beim App-Start registriert die
   App den Service Worker (Umstellung von `injectRegister: 'auto'` auf manuelle

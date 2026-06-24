@@ -175,10 +175,13 @@ Getroffen:
 - **Pruef-Intervall:** nur beim Start (bei der Service-Worker-Registrierung), keine
   periodische Pruefung im laufenden Betrieb (Einzelnutzer-App, beim naechsten Start kommt
   ein wartendes Update ohnehin hoch).
+- **Changelog-Datei:** `public/changelog.json`, mit jedem Deploy ausgeliefert (bewusst nicht
+  im Precache; wird beim Oeffnen des Popups frisch aus dem Netz geholt). Form: Liste von
+  Versionen newest-first, je Eintrag `version`, `date` (ISO) und `changes` (kurze deutsche
+  Stichpunkte). Das Popup zeigt den neuesten Eintrag (die wartende Version). Datum im
+  app-ueblichen langen Format (z. B. „24. Juni 2026") statt rein numerisch.
 
 Noch offen (vor bzw. waehrend der jeweiligen Lieferung klaeren):
-- Format und Ort der Changelog-Datei konkret festzurren (`public/changelog.json` als
-  Ausgangsvorschlag) – spaetestens zu Lieferung 3.
 - Ob „Was ist neu" auch **nach** dem Update kurz bestaetigt wird („Aktualisiert auf Version
   X") – Thema des Feinschliffs (Lieferung 4).
 

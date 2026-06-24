@@ -16,3 +16,4 @@ export * from "./sessions";
 export * from "./skillProgress";
 export * from "./body";
 export * from "./settings";
+export * from "./changelog";

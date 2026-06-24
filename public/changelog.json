@@ -1,0 +1,13 @@
+{
+  "versions": [
+    {
+      "version": "1.1.0",
+      "date": "2026-06-24",
+      "changes": [
+        "Die App funktioniert jetzt auch ohne Internet: Sobald sie einmal geladen wurde, startet und läuft sie im Flugmodus weiter. Eingetragene Einheiten werden bei wieder bestehender Verbindung nachgereicht.",
+        "Neue Versionen werden nicht mehr unbemerkt eingespielt. Liegt eine neue Version bereit, erscheint oben auf der Trainingsseite ein Hinweis, den du bewusst übernehmen kannst.",
+        "Vor dem Übernehmen siehst du künftig hier, was sich geändert hat."
+      ]
+    }
+  ]
+}
