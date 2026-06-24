@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "1.2.14",
+      "date": "2026-06-24",
+      "changes": [
+        "Der Kopf des Bearbeiten-Panels zeigt jetzt den Namen der Einheit und das Datum, damit klar ist, welche Einheit du gerade bearbeitest.",
+        "Im Verlauf sind „Bearbeiten“ und „Löschen“ in der aufgeklappten Einheit jetzt rechtsbündige Icon-Knöpfe – kompakter und besser sichtbar.",
+        "Auf dem Desktop steht der Verlauf jetzt mit der Liste links und dem Kalender rechts."
+      ]
+    },
+    {
       "version": "1.2.13",
       "date": "2026-06-24",
       "changes": [

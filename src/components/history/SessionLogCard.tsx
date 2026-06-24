@@ -108,24 +108,26 @@ export function SessionLogCard({
               </div>
             </div>
           ) : (
-            <div className="flex items-center gap-4 pt-2.5">
+            <div className="flex items-center justify-end gap-2 pt-2.5">
               {onEdit && (session.kind === "kraft" || session.kind === "dev") && (
                 <button
                   type="button"
+                  aria-label="Einheit bearbeiten"
+                  title="Bearbeiten"
                   onClick={() => onEdit(session.id)}
-                  className="flex items-center gap-1.5 text-[13px] font-medium text-primary hover:opacity-80"
+                  className="flex size-9 items-center justify-center rounded-control bg-primary/10 text-primary transition-colors hover:bg-primary/20"
                 >
-                  <Pencil className="size-[13px]" />
-                  Bearbeiten
+                  <Pencil className="size-[17px]" />
                 </button>
               )}
               <button
                 type="button"
+                aria-label="Eintrag löschen"
+                title="Löschen"
                 onClick={() => setConfirm(true)}
-                className="flex items-center gap-1.5 text-[13px] font-medium text-danger hover:opacity-80"
+                className="flex size-9 items-center justify-center rounded-control bg-danger/10 text-danger transition-colors hover:bg-danger/20"
               >
-                <Trash2 className="size-[13px]" />
-                Eintrag löschen
+                <Trash2 className="size-[17px]" />
               </button>
             </div>
           )}

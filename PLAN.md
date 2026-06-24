@@ -54,7 +54,7 @@ nicht rund laeuft.
   Features nach Konzept-vor-Code. Bei jeder Auslieferung die Versionsnummer in
   `public/changelog.json` fortschreiben (letzte Stelle pro normaler Auslieferung hoch,
   mittlere bei groesseren Features) und einen kurzen Nutzer-Eintrag ergaenzen. Aktuelle
-  Version 1.2.13.
+  Version 1.2.14.
 - **Konten per Einladung (Version 1.2.0) umgesetzt und im Dashboard scharfgeschaltet.** Neue
   Nutzer kommen ueber eine Supabase-Einladung dazu: Einladung im Dashboard verschicken,
   Eingeladener setzt ueber den Link aus der Mail sein Passwort und ist sofort angemeldet. Die
@@ -116,6 +116,18 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - Verlauf-Feinschliff, Version 1.2.14: Drei Anpassungen aus dem Live-Test.
+  (1) Bearbeiten-Panel zeigt im Kopf jetzt den Namen der Einheit (Overlay-`title`) und das
+  Datum (`headerTrailing`), dazu eine kleine Eyebrow „Einheit bearbeiten" – `verlauf.tsx`
+  reicht Titel/Datum aus dem bereits gebauten `HistorySession` ans `SessionEditPanel` durch.
+  (2) In der aufgeklappten Verlaufs-Karte (`SessionLogCard`) sind Bearbeiten/Loeschen von
+  Text-Links auf rechtsbuendige Icon-Knoepfe umgestellt (Stift in `bg-primary/10`, Papierkorb
+  in `bg-danger/10`, je 36px, mit aria-label/title). (3) Desktop-Layout der Verlaufsseite
+  getauscht: Liste links, Kalender rechts (Grid `1fr_1.35fr` statt `1.35fr_1fr`, Reihenfolge
+  der beiden Spalten vertauscht); Mobile-Umschalter unveraendert. Reine UI/Layout-Aenderungen,
+  kein Datenfluss/Schema beruehrt. Validiert: tsc ohne Fehler, Build durch, 303 Tests gruen.
+  Betroffen ausserdem `public/changelog.json`, `PLAN.md`.
 
 - 2026-06-24 - Bugfix Bearbeiten-Panel Erstoeffnung, Version 1.2.13: Beim ersten Oeffnen von
   „Bearbeiten" griff das Panel kurz auf den im Gerät zwischengespeicherten Verlauf zu, der aus

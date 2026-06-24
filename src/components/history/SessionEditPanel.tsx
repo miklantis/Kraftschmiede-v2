@@ -104,10 +104,16 @@ function toLiveEntry(ex: PanelExercise): LiveEntry {
 
 export function SessionEditPanel({
   sessionId,
+  title,
+  dateLabel,
   open,
   onClose,
 }: {
   sessionId: string | null;
+  /** Anzeigename der Einheit (z. B. „Workout Oberkoerper“) fuer den Kopf. */
+  title?: string;
+  /** Datum der Einheit (z. B. „Mo., 22. Juni“) fuer den Kopf. */
+  dateLabel?: string;
   open: boolean;
   onClose: () => void;
 }): React.ReactElement {
@@ -227,7 +233,18 @@ export function SessionEditPanel({
   }
 
   return (
-    <Overlay open={open} onClose={onClose} title="Einheit bearbeiten">
+    <Overlay
+      open={open}
+      onClose={onClose}
+      title={title ?? "Einheit bearbeiten"}
+      headerTrailing={
+        dateLabel ? (
+          <span className="flex-none text-[12px] whitespace-nowrap text-muted-foreground">
+            {dateLabel}
+          </span>
+        ) : undefined
+      }
+    >
       {!draft || (draft.exercises.length === 0 && detailedQ.isFetching) ? (
         <p className="py-4 text-[14px] text-muted-foreground">Wird geladen …</p>
       ) : draft.exercises.length === 0 ? (
@@ -236,6 +253,9 @@ export function SessionEditPanel({
         </p>
       ) : (
         <div className="flex flex-col gap-4">
+          <div className="-mt-1 text-[11px] font-semibold uppercase tracking-[0.6px] text-muted-foreground">
+            Einheit bearbeiten
+          </div>
           {/* Dauer (Minuten) */}
           <div className="flex items-center justify-between rounded-control bg-muted px-4 py-2.5">
             <span className="text-[13px] font-semibold text-muted-foreground">

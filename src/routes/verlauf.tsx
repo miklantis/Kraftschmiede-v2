@@ -121,21 +121,25 @@ function VerlaufPage(): React.ReactElement {
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-6 min-[960px]:grid-cols-[1.35fr_1fr] min-[960px]:items-start min-[960px]:gap-[26px]">
-        {/* Kalender: am Handy nur in der Kalender-Ansicht, am Desktop immer. */}
+      <div className="grid grid-cols-1 gap-6 min-[960px]:grid-cols-[1fr_1.35fr] min-[960px]:items-start min-[960px]:gap-[26px]">
+        {/* Letzte Einheiten: am Handy nur in der Listen-Ansicht, am Desktop links. */}
+        <div className={(view === "list" ? "block" : "hidden") + " min-[960px]:block"}>
+          <Section eyebrow="Letzte Einheiten">{list}</Section>
+        </div>
+
+        {/* Kalender: am Handy nur in der Kalender-Ansicht, am Desktop rechts. */}
         <div className={(view === "calendar" ? "block" : "hidden") + " min-[960px]:block"}>
           <div className={EYEBROW + " hidden min-[960px]:block"}>Kalender</div>
           {calendar}
-        </div>
-
-        {/* Letzte Einheiten: am Handy nur in der Listen-Ansicht, am Desktop immer. */}
-        <div className={(view === "list" ? "block" : "hidden") + " min-[960px]:block"}>
-          <Section eyebrow="Letzte Einheiten">{list}</Section>
         </div>
       </div>
 
       <SessionEditPanel
         sessionId={editId}
+        title={editId ? data.sessions.find((s) => s.id === editId)?.title : undefined}
+        dateLabel={
+          editId ? data.sessions.find((s) => s.id === editId)?.dateLabel : undefined
+        }
         open={editId !== null}
         onClose={() => setEditId(null)}
       />
