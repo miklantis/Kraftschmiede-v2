@@ -8,7 +8,8 @@ import { WhatsNewSheet } from "@/components/training/WhatsNewSheet";
 // Huelle wartet - und NICHT waehrend einer laufenden Einheit, damit ein Update
 // nie mitten ins Training draengt. Antippen oeffnet das "Was ist neu"-Popup
 // (WhatsNewSheet) mit "Aktualisieren"-Knopf, der die neue Huelle uebernimmt.
-// Optik im Klar-Look wie die JourneyStrip.
+// Optik im Klar-Look: hellgruene Flaeche mit gruenem Rahmen wie das
+// "Bereit fuers Training"-Banner auf der Koerper-Seite, Icon und Pfeil bleiben.
 export function UpdateBanner(): React.ReactElement | null {
   const { updateAvailable, applyUpdate } = useAppUpdate();
   const { session } = useLiveSession();
@@ -22,13 +23,13 @@ export function UpdateBanner(): React.ReactElement | null {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex w-full items-center gap-3 rounded-card bg-card px-4 py-3 text-left text-foreground shadow-card transition-[filter] hover:brightness-[0.99] min-[960px]:gap-[14px] min-[960px]:rounded-[18px] min-[960px]:px-5 min-[960px]:py-4"
+        className="flex w-full items-center gap-3 rounded-[16px] border border-primary/25 bg-primary/10 px-4 py-3 text-left text-foreground transition-[filter] hover:brightness-[0.99] min-[960px]:gap-[14px] min-[960px]:px-5 min-[960px]:py-4"
       >
         <div className="flex size-[38px] flex-none items-center justify-center rounded-control bg-primary/12 text-primary min-[960px]:size-[42px] min-[960px]:rounded-xl">
           <RefreshCw className="size-5" />
         </div>
         <div className="min-w-0 flex-1">
-          <div className="text-[15px] font-semibold text-foreground min-[960px]:text-[16px]">
+          <div className="text-[15px] font-semibold text-primary min-[960px]:text-[16px]">
             Neue Version verfügbar
           </div>
           <div className="truncate text-[13px] text-muted-foreground">

@@ -42,7 +42,7 @@ nicht rund laeuft.
   Offline-Huelle (Service Worker, Precache der App-Shell, Supabase ausgenommen),
   Update-Erkennung beim Start, „Was ist neu"-Popup aus `public/changelog.json`, Feinschliff
   (kein Hinweis waehrend einer laufenden Einheit, Notbremse „App zuruecksetzen" in den
-  Einstellungen, „Aktualisieren"-Knopf im Popup fixiert). Aktuelle Version 1.1.5. Details je
+  Einstellungen, „Aktualisieren"-Knopf im Popup fixiert). Aktuelle Version 1.2.1. Details je
   Lieferung im Log unten. Konzept: `docs/Konzept-PWA-Offline.md`.
 - **Naechster Schritt:** kein festgelegtes Vorhaben. Pflege/Bugfixing laufend; neue Features
   nach Konzept-vor-Code. Bei jeder Auslieferung die Versionsnummer in
@@ -80,6 +80,17 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - Update-Streifen umgestylt, Version 1.2.1: Der Hinweis „Neue Version
+  verfuegbar" oben auf der Trainingsseite war eine weisse Karte mit Schatten; jetzt traegt
+  er den Klar-Look des „Bereit fuers Training"-Banners auf der Koerper-Seite – hellgruene
+  Flaeche (`bg-primary/10`), gruener Rahmen (`border-primary/25`), gruener Titel. Icon
+  (Kreispfeil im gruenen Kaestchen) und Pfeil rechts als Tipp-Hinweis bleiben auf Wunsch
+  erhalten; Groessen und Abstaende unveraendert. Nur die Optik der `UpdateBanner`-Karte
+  geaendert, Logik (kein Hinweis waehrend laufender Einheit, „Was ist neu"-Popup) unberuehrt.
+  changelog.json um Eintrag 1.2.1 ergaenzt. Validiert: tsc ohne Fehler, Build durch,
+  297 Tests gruen. Betroffen: `src/components/training/UpdateBanner.tsx`,
+  `public/changelog.json`, `PLAN.md`.
 
 - 2026-06-24 - Konten per Einladung, Version 1.2.0: Neue Nutzer koennen jetzt per
   Supabase-Einladung dazukommen, ohne dass die offene Selbstregistrierung aufgeht. Ablauf:

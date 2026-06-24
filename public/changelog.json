@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.1",
+      "date": "2026-06-24",
+      "changes": [
+        "Der Hinweis auf eine neue Version sieht jetzt freundlicher aus: hellgruene Flaeche mit gruenem Rahmen, passend zur \"Bereit fuers Training\"-Karte auf der Koerper-Seite."
+      ]
+    },
+    {
       "version": "1.2.0",
       "date": "2026-06-24",
       "changes": [
