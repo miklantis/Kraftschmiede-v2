@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.16",
+      "date": "2026-06-24",
+      "changes": [
+        "Jetzt lassen sich auch Yoga-Einheiten im Verlauf bearbeiten: über „Bearbeiten“ kannst du die Dauer in Minuten anpassen und eine Notiz hinterlegen (z. B. Schwerpunkt oder Stimmung). Damit ist das nachträgliche Korrigieren für alle Einheit-Typen verfügbar – Kraft, Skill und Yoga."
+      ]
+    },
+    {
       "version": "1.2.15",
       "date": "2026-06-24",
       "changes": [

@@ -12,13 +12,19 @@ import type { EditPayload } from "./editSession";
 export const EDIT_MUTATION_KEY = ["editSession"] as const;
 
 async function writeEdit(payload: EditPayload): Promise<void> {
-  const { sessionId, durationSec, exercises, exercisePatches } = payload;
+  const { sessionId, durationSec, minutes, notes, exercises, exercisePatches } =
+    payload;
 
-  // Dauer der Einheit aktualisieren (nur wenn gesetzt).
-  if (durationSec != null) {
+  // Einheit-Felder aktualisieren: Dauer (Kraft/Skill) bzw. Minuten + Notiz
+  // (Yoga). Nur gesetzte Felder anfassen.
+  const sessionPatch: Record<string, unknown> = {};
+  if (durationSec != null) sessionPatch.duration_sec = durationSec;
+  if (minutes !== undefined) sessionPatch.minutes = minutes;
+  if (notes !== undefined) sessionPatch.notes = notes;
+  if (Object.keys(sessionPatch).length > 0) {
     const s = await supabase
       .from("sessions")
-      .update({ duration_sec: durationSec })
+      .update(sessionPatch)
       .eq("id", sessionId);
     if (s.error) throw new Error(s.error.message);
   }

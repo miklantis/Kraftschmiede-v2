@@ -112,7 +112,8 @@ export function SessionLogCard({
               {onEdit &&
                 (session.kind === "kraft" ||
                   session.kind === "dev" ||
-                  session.kind === "skill") && (
+                  session.kind === "skill" ||
+                  session.kind === "yoga") && (
                 <button
                   type="button"
                   aria-label="Einheit bearbeiten"

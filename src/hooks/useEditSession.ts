@@ -4,6 +4,7 @@ import type { RmFormula } from "@/engine/types";
 import {
   buildEditPayload,
   buildSkillEditPayload,
+  buildYogaEditPayload,
   type EditDraftExercise,
   type SkillEditDraftExercise,
   type EditPayload,
@@ -37,6 +38,8 @@ export interface UseEditSession {
   save: (input: EditSaveInput) => void;
   /** Skill-Bearbeitung zurueckschreiben (Phasen-Fortschritt bleibt unberuehrt). */
   saveSkill: (input: SkillEditSaveInput) => void;
+  /** Yoga-Bearbeitung zurueckschreiben (Minuten + Notiz). */
+  saveYoga: (input: YogaEditSaveInput) => void;
   isSaving: boolean;
 }
 
@@ -45,6 +48,13 @@ export interface SkillEditSaveInput {
   sessionId: string;
   durationSec: number | null;
   exercises: SkillEditDraftExercise[];
+}
+
+/** Eingabe fuer das Speichern einer Yoga-Bearbeitung. */
+export interface YogaEditSaveInput {
+  sessionId: string;
+  minutes: number;
+  notes: string;
 }
 
 export function useEditSession(): UseEditSession {
@@ -119,5 +129,18 @@ export function useEditSession(): UseEditSession {
     [userId, mutation],
   );
 
-  return { save, saveSkill, isSaving: mutation.isPending };
+  const saveYoga = useCallback(
+    (input: YogaEditSaveInput): void => {
+      if (!userId) return;
+      const payload = buildYogaEditPayload({
+        sessionId: input.sessionId,
+        minutes: input.minutes,
+        notes: input.notes,
+      });
+      mutation.mutate(payload);
+    },
+    [userId, mutation],
+  );
+
+  return { save, saveSkill, saveYoga, isSaving: mutation.isPending };
 }

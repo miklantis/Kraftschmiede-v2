@@ -46,16 +46,16 @@ nicht rund laeuft.
   (kein Hinweis waehrend einer laufenden Einheit, Notbremse „App zuruecksetzen" in den
   Einstellungen, „Aktualisieren"-Knopf im Popup fixiert). Details je
   Lieferung im Log unten. Konzept: `docs/Konzept-PWA-Offline.md`.
-- **Naechster Schritt:** Verlauf Schritt 2 (Einheit bearbeiten) laeuft. Bauschritte 2a (Kraft,
-  1.2.12) und 2b (Skill, 1.2.15) sind ausgeliefert: Kraft- und Skill-Einheiten lassen sich im
-  Verlauf nachtraeglich korrigieren (Bearbeiten-Panel im Live-Look). Beim Skill bleibt der
-  Phasen-Fortschritt bewusst unberuehrt (nur Eintrag korrigieren – so entschieden). Offen ist
-  nur noch 2c (Yoga-Koerper: Minuten + Notiz; Dauer-Feld vereinheitlicht) nach Freigabe.
-  Pflege/Bugfixing laufend; neue
-  Features nach Konzept-vor-Code. Bei jeder Auslieferung die Versionsnummer in
-  `public/changelog.json` fortschreiben (letzte Stelle pro normaler Auslieferung hoch,
-  mittlere bei groesseren Features) und einen kurzen Nutzer-Eintrag ergaenzen. Aktuelle
-  Version 1.2.15.
+- **Vorhaben „Einheit bearbeiten" abgeschlossen (Schritt 2 komplett).** Kraft- (1.2.12),
+  Skill- (1.2.15) und Yoga-Einheiten (1.2.16) lassen sich im Verlauf nachtraeglich korrigieren
+  ueber ein Bearbeiten-Panel im Live-Look (Live-Karten wiederverwendet), offline-fest
+  zurueckgeschrieben. Coach zieht nur bei der juengsten Kraft-Einheit nach; Skill-Phase bleibt
+  unberuehrt; Yoga bearbeitet Minuten + Notiz. Damit ist das Vorhaben „Verlauf: Satz-Darstellung
+  & Bearbeiten" insgesamt fertig (siehe Abgeschlossene Vorhaben).
+- **Kein offenes Bau-Vorhaben.** Pflege/Bugfixing laufend; neue Features nach Konzept-vor-Code.
+  Bei jeder Auslieferung die Versionsnummer in `public/changelog.json` fortschreiben (letzte
+  Stelle pro normaler Auslieferung hoch, mittlere bei groesseren Features) und einen kurzen
+  Nutzer-Eintrag ergaenzen. Aktuelle Version 1.2.16.
 - **Konten per Einladung (Version 1.2.0) umgesetzt und im Dashboard scharfgeschaltet.** Neue
   Nutzer kommen ueber eine Supabase-Einladung dazu: Einladung im Dashboard verschicken,
   Eingeladener setzt ueber den Link aus der Mail sein Passwort und ist sofort angemeldet. Die
@@ -67,34 +67,6 @@ nicht rund laeuft.
 ---
 
 ## Offene Vorhaben
-
-### Verlauf: Satz-Darstellung & Bearbeiten
-
-Zwei Schritte. Schritt 1 (reine Anzeige) ausgeliefert und live getestet. Schritt 2
-(Bearbeiten-Panel) ist konzipiert und abgestimmt – Konzept:
-`docs/Konzept-Einheit-bearbeiten.md`. Gebaut wird in den kleinen Bauschritten 2a/2b/2c nach
-Freigabe.
-
-- [x] Schritt 1 – Listenansicht satzweise: aufgeklappte Einheit zeigt jeden Arbeitssatz
-  einzeln (Kraft „Wdh × Gewicht kg", Skill Haltezeit/Wdh), Anstrengungs-Score je Satz
-  angehaengt („· S3"). Ab 1.2.9; ab 1.2.10 jeder Satz auf eigener Zeile (Bullet) unter dem
-  Uebungsnamen statt in einer langen Zeile.
-- [ ] Schritt 2 – Einheit bearbeiten (alle Typen). Konzept abgestimmt, siehe
-  `docs/Konzept-Einheit-bearbeiten.md`. Bauschritte 2a (Kraft, 1.2.12) und 2b (Skill, 1.2.15)
-  sind ausgeliefert; offen bleibt nur 2c (Yoga + Dauer-Feinschliff). Kurz: „Bearbeiten"-Knopf in
-  der aufgeklappten Verlaufs-Karte (neben Loeschen) oeffnet ein Panel im Live-Look ohne Ablauf (kein Timer/
-  Abhaken/aktiver Satz). Die Live-Karten werden WIEDERVERWENDET (Bearbeiten-Modus an
-  `ExerciseLiveCard`/`SkillLiveCard`: Stange gelockt, Scheiben aus, Haken weg, Aufwaermsaetze
-  ausgeblendet; Tippfelder/„+ Satz" bleiben). Zurueckschreiben offline-fest nach dem Muster
-  des Live-Speicherns. Coach-Nachziehen NUR bei der juengsten Einheit einer Uebung (sonst nur
-  Eintrag korrigieren). Bauschritte:
-  - [x] 2a – Kraft: Bearbeiten-Modus `ExerciseLiveCard`, Panel-Rahmen, Dauer-Feld,
-    Zurueckschreiben inkl. Coach-Nachziehen (nur juengste). Ausgeliefert ab 1.2.12.
-  - [x] 2b – Skill: Bearbeiten-Modus `SkillLiveCard` (Sekunden-/Wdh-Feld statt Stoppuhr),
-    Skill-Einheiten zurueckschreiben. Ausgeliefert ab 1.2.15. Entschieden: skill_progress
-    wird NICHT rueckwirkend nachgezogen – Korrektur berichtigt nur den Eintrag, Phase bleibt.
-  - [ ] 2c – Yoga + Dauer-Feinschliff: Yoga-Koerper (Minuten + Notiz), Dauer-Feld ueber alle
-    Typen vereinheitlicht.
 
 ### Pflege / Bugfixing
 
@@ -111,12 +83,30 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 
 - PWA – Offline-Huelle & Update-Hinweis (Lieferungen 1–4, ab Version 1.1.0).
   Konzept: `docs/Konzept-PWA-Offline.md`.
+- Verlauf – Satz-Darstellung & Einheit bearbeiten. Schritt 1 (satzweise Anzeige, ab 1.2.9)
+  und Schritt 2 (Einheit bearbeiten: Kraft 1.2.12, Skill 1.2.15, Yoga 1.2.16). Bearbeiten-Panel
+  im Live-Look (Karten wiederverwendet), offline-festes Zurueckschreiben, Coach nur bei der
+  juengsten Kraft-Einheit, Skill-Phase unberuehrt. Konzept: `docs/Konzept-Einheit-bearbeiten.md`.
 
 ---
 
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - Verlauf: Einheit bearbeiten, Bauschritt 2c (Yoga) + Abschluss, Version 1.2.16:
+  Auch Yoga-Einheiten lassen sich jetzt im Verlauf bearbeiten - das Panel zeigt fuer Yoga kein
+  Satz-Block, sondern das Dauer-Feld (Minuten) und ein Notizfeld (sessions.notes; die Notiz war
+  in der App bisher nirgends eingebbar). Neuer reiner Builder `buildYogaEditPayload`
+  (in `editSession.ts`); die Edit-Mutation `editMutation.ts` schreibt das Einheit-Update jetzt
+  generisch (duration_sec ODER minutes + notes, je nach gesetzten Feldern). `useEditSession` um
+  `saveYoga` erweitert. `SessionEditPanel` um die Yoga-Variante des typdiskriminierten Entwurfs
+  ergaenzt (Notiz-Textarea statt Karten); editierbar-Pruefung yoga-tauglich (Yoga immer
+  bearbeitbar). `SessionLogCard`: Bearbeiten-Knopf nun auch fuer Yoga. Damit ist Schritt 2
+  (Einheit bearbeiten) ueber alle Typen abgeschlossen und das Vorhaben nach Abgeschlossene
+  Vorhaben verschoben. Validiert: tsc ohne Fehler, Build durch (SW erzeugt, changelog.json
+  nicht precached), 309 Tests gruen (2 neue in `editSession.test.ts`). Betroffen ausserdem
+  `src/components/history/SessionLogCard.tsx`, `public/changelog.json`, `PLAN.md`.
 
 - 2026-06-24 - Verlauf: Einheit bearbeiten, Bauschritt 2b (Skill), Version 1.2.15: Auch
   Skill-Einheiten lassen sich jetzt im Verlauf korrigieren. Der „Bearbeiten"-Knopf erscheint

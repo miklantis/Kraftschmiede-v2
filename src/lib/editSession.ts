@@ -71,6 +71,10 @@ export interface EditExerciseWrite {
 export interface EditPayload {
   sessionId: string;
   durationSec: number | null;
+  /** Yoga: Minuten der Einheit (sessions.minutes). undefined = nicht anfassen. */
+  minutes?: number | null;
+  /** Yoga: Notiz (sessions.notes). undefined = nicht anfassen. */
+  notes?: string;
   exercises: EditExerciseWrite[];
   exercisePatches: ExercisePatch[];
 }
@@ -206,5 +210,26 @@ export function buildSkillEditPayload(ctx: SkillEditContext): EditPayload {
     durationSec: ctx.durationSec,
     exercises,
     exercisePatches: [], // kein Coach/Katalog bei Skill
+  };
+}
+
+// ---- Yoga-Bearbeiten (Bauschritt 2c) ---------------------------------------
+// Yoga hat keinen Satz-Block: nur die Minuten der Einheit (sessions.minutes) und
+// eine Notiz (sessions.notes). Kein Coach/Katalog, keine Saetze.
+
+export interface YogaEditContext {
+  sessionId: string;
+  minutes: number;
+  notes: string;
+}
+
+export function buildYogaEditPayload(ctx: YogaEditContext): EditPayload {
+  return {
+    sessionId: ctx.sessionId,
+    durationSec: null, // Yoga nutzt minutes, nicht duration_sec
+    minutes: ctx.minutes,
+    notes: ctx.notes,
+    exercises: [],
+    exercisePatches: [],
   };
 }

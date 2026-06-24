@@ -48,7 +48,8 @@ interface SkillPanelExercise {
 
 type PanelDraft =
   | { type: "strength"; date: string; minutes: number; exercises: PanelExercise[] }
-  | { type: "skill"; date: string; minutes: number; exercises: SkillPanelExercise[] };
+  | { type: "skill"; date: string; minutes: number; exercises: SkillPanelExercise[] }
+  | { type: "yoga"; date: string; minutes: number; notes: string };
 
 function minutesOf(input: HistorySessionInput): number {
   return input.durationSec ? Math.round(input.durationSec / 60) : 0;
@@ -130,9 +131,15 @@ function buildDraft(
   skills: SkillDefAssembled[],
 ): PanelDraft {
   if (input.type === "skill") return buildSkillDraft(input, skills);
-  if (input.type === "strength") return buildStrengthDraft(input, exName);
-  // Yoga (2c) ist hier noch nicht bearbeitbar.
-  return { type: "strength", date: input.date, minutes: minutesOf(input), exercises: [] };
+  if (input.type === "yoga") {
+    return {
+      type: "yoga",
+      date: input.date,
+      minutes: input.minutes ?? 0,
+      notes: input.notes ?? "",
+    };
+  }
+  return buildStrengthDraft(input, exName);
 }
 
 // ---- Karten-Adapter ---------------------------------------------------------
@@ -226,6 +233,11 @@ export function SessionEditPanel({
     setDraft((d) => (d ? { ...d, minutes: Math.max(0, value) } : d));
   }
 
+  function setNotes(value: string): void {
+    touch();
+    setDraft((d) => (d && d.type === "yoga" ? { ...d, notes: value } : d));
+  }
+
   // --- Kraft-Mutationen ---
   function setKraftExercises(
     fn: (exs: PanelExercise[]) => PanelExercise[],
@@ -308,7 +320,9 @@ export function SessionEditPanel({
   function save(): void {
     if (!draft || !sessionId) return;
     const durationSec = draft.minutes > 0 ? draft.minutes * 60 : null;
-    if (draft.type === "skill") {
+    if (draft.type === "yoga") {
+      edit.saveYoga({ sessionId, minutes: draft.minutes, notes: draft.notes });
+    } else if (draft.type === "skill") {
       edit.saveSkill({
         sessionId,
         durationSec,
@@ -335,6 +349,9 @@ export function SessionEditPanel({
   }
 
   const loadingOrFetching = detailedQ.isFetching || skillsQ.isFetching;
+  // Yoga ist immer bearbeitbar (Minuten + Notiz); Kraft/Skill brauchen Saetze.
+  const editable =
+    draft != null && (draft.type === "yoga" || draft.exercises.length > 0);
 
   return (
     <Overlay
@@ -349,9 +366,9 @@ export function SessionEditPanel({
         ) : undefined
       }
     >
-      {!draft || (draft.exercises.length === 0 && loadingOrFetching) ? (
+      {!draft || (!editable && loadingOrFetching) ? (
         <p className="py-4 text-[14px] text-muted-foreground">Wird geladen …</p>
-      ) : draft.exercises.length === 0 ? (
+      ) : !editable ? (
         <p className="py-4 text-[14px] text-muted-foreground">
           Diese Einheit lässt sich hier nicht bearbeiten.
         </p>
@@ -380,7 +397,7 @@ export function SessionEditPanel({
             </span>
           </div>
 
-          {/* Uebungen als Live-Karten im Bearbeiten-Modus */}
+          {/* Uebungen als Live-Karten im Bearbeiten-Modus; Yoga: Notiz */}
           {draft.type === "strength"
             ? draft.exercises.map((ex, ei) => (
                 <ExerciseLiveCard
@@ -403,7 +420,8 @@ export function SessionEditPanel({
                   onCyclePlate={() => {}}
                 />
               ))
-            : draft.exercises.map((ex, ei) => (
+            : draft.type === "skill"
+            ? draft.exercises.map((ex, ei) => (
                 <SkillLiveCard
                   key={ex.sessionExerciseId}
                   exercise={toSkillExercise(ex)}
@@ -416,7 +434,22 @@ export function SessionEditPanel({
                   onAddSet={() => addSkillSet(ei)}
                   onDelSet={() => delSkillSet(ei)}
                 />
-              ))}
+              ))
+            : (
+                <div className="flex flex-col gap-2">
+                  <span className="text-[13px] font-semibold text-muted-foreground">
+                    Notiz
+                  </span>
+                  <textarea
+                    aria-label="Notiz"
+                    rows={4}
+                    placeholder="z. B. Schwerpunkt, Stimmung, Besonderheiten …"
+                    className="w-full resize-none rounded-control border border-border bg-card px-3 py-2.5 text-[14px] text-foreground outline-none focus:border-primary"
+                    value={draft.notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                  />
+                </div>
+              )}
 
           <div className="flex flex-col gap-2 pt-1">
             <button

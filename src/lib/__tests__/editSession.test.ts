@@ -119,3 +119,22 @@ describe("buildSkillEditPayload", () => {
     expect(buildSkillEditPayload(skillCtx({ durationSec: null })).durationSec).toBeNull();
   });
 });
+
+import { buildYogaEditPayload } from "../editSession";
+
+describe("buildYogaEditPayload", () => {
+  it("schreibt Minuten und Notiz, ohne Saetze/Coach", () => {
+    const p = buildYogaEditPayload({ sessionId: "y1", minutes: 75, notes: "ruhig" });
+    expect(p.sessionId).toBe("y1");
+    expect(p.minutes).toBe(75);
+    expect(p.notes).toBe("ruhig");
+    expect(p.durationSec).toBeNull(); // Yoga nutzt minutes, nicht duration_sec
+    expect(p.exercises).toHaveLength(0);
+    expect(p.exercisePatches).toHaveLength(0);
+  });
+
+  it("erlaubt eine leere Notiz", () => {
+    const p = buildYogaEditPayload({ sessionId: "y1", minutes: 60, notes: "" });
+    expect(p.notes).toBe("");
+  });
+});
