@@ -20,8 +20,16 @@ export type AuthResult =
 interface AuthContextValue {
   session: Session | null;
   loading: boolean;
+  // Wahr, solange die App ueber einen Einladungslink geoeffnet wurde und der
+  // Eingeladene noch kein Passwort gesetzt hat. Steuert den Einladungs-Screen.
+  invitePending: boolean;
+  // E-Mail des Eingeladenen (kommt aus der Einladung), nur zur Anzeige.
+  inviteEmail: string | null;
   signIn: (email: string, password: string) => Promise<AuthResult>;
   signUp: (email: string, password: string) => Promise<AuthResult>;
+  // Passwort fuer ein eingeladenes Konto setzen; danach ist der Nutzer
+  // angemeldet und der Einladungs-Screen verschwindet.
+  setPassword: (password: string) => Promise<AuthResult>;
   signOut: () => Promise<void>;
 }
 
@@ -49,6 +57,25 @@ function uebersetzeFehler(message: string): string {
   return message;
 }
 
+// Erkennt, ob die App gerade ueber einen Einladungs-Link von Supabase geoeffnet
+// wurde. Supabase haengt die Sitzungsinfos je nach Flow an den URL-Hash
+// (#access_token=...&type=invite) oder als Query (?type=invite oder ?code=...).
+// Wir pruefen beide Stellen tolerant.
+function istEinladungInUrl(): boolean {
+  if (typeof window === "undefined") return false;
+  const hash = window.location.hash.toLowerCase();
+  const search = window.location.search.toLowerCase();
+  if (hash.includes("type=invite") || search.includes("type=invite")) {
+    return true;
+  }
+  // Der neuere PKCE-Flow liefert nur ?code=...; dann ist die Einladung am
+  // gesonderten Marker zu erkennen, den wir im Redirect-Ziel mitgeben.
+  if (search.includes("einladung") || hash.includes("einladung")) {
+    return true;
+  }
+  return false;
+}
+
 export function AuthProvider({
   children,
 }: {
@@ -56,6 +83,12 @@ export function AuthProvider({
 }): ReactElement {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  // Einladungs-Modus: wird gesetzt, wenn Supabase die App ueber einen
+  // Einladungslink oeffnet. Dann liegt zwar schon eine Sitzung vor, aber der
+  // Nutzer hat noch kein Passwort vergeben – also zeigen wir den Einladungs-
+  // Screen statt der App, bis das Passwort gesetzt ist.
+  const [invitePending, setInvitePending] = useState<boolean>(false);
+  const [inviteEmail, setInviteEmail] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -64,8 +97,18 @@ export function AuthProvider({
       setSession(data.session);
       setLoading(false);
     });
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, next) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, next) => {
       setSession(next);
+      // Supabase meldet bei Klick auf einen Einladungs-/Wiederherstellungs-
+      // Link ein gesondertes Ereignis. Dann in den Einladungs-Modus gehen und
+      // die E-Mail aus der Sitzung uebernehmen.
+      if (event === "PASSWORD_RECOVERY" || event === "USER_UPDATED") {
+        return;
+      }
+      if (event === "SIGNED_IN" && istEinladungInUrl()) {
+        setInvitePending(true);
+        setInviteEmail(next?.user.email ?? null);
+      }
     });
     return () => {
       active = false;
@@ -77,6 +120,8 @@ export function AuthProvider({
     () => ({
       session,
       loading,
+      invitePending,
+      inviteEmail,
       signIn: async (email, password) => {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -93,11 +138,25 @@ export function AuthProvider({
         if (error) return { ok: false, message: uebersetzeFehler(error.message) };
         return { ok: true, needsConfirmation: data.session === null };
       },
+      setPassword: async (password) => {
+        const { error } = await supabase.auth.updateUser({ password });
+        if (error) return { ok: false, message: uebersetzeFehler(error.message) };
+        // Passwort gesetzt: Einladungs-Modus verlassen, URL-Marker entfernen,
+        // damit ein Reload nicht erneut in den Einladungs-Screen faellt.
+        setInvitePending(false);
+        setInviteEmail(null);
+        if (typeof window !== "undefined") {
+          window.history.replaceState(null, "", window.location.pathname);
+        }
+        return { ok: true };
+      },
       signOut: async () => {
+        setInvitePending(false);
+        setInviteEmail(null);
         await supabase.auth.signOut();
       },
     }),
-    [session, loading],
+    [session, loading, invitePending, inviteEmail],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

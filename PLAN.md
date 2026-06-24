@@ -48,6 +48,12 @@ nicht rund laeuft.
   nach Konzept-vor-Code. Bei jeder Auslieferung die Versionsnummer in
   `public/changelog.json` fortschreiben (letzte Stelle pro normaler Auslieferung hoch,
   mittlere bei groesseren Features) und einen kurzen Nutzer-Eintrag ergaenzen.
+- **Konten per Einladung (Version 1.2.0) umgesetzt.** Neue Nutzer kommen ueber eine
+  Supabase-Einladung dazu: Einladung im Dashboard verschicken, Eingeladener setzt ueber den
+  Link aus der Mail sein Passwort und ist sofort angemeldet. Offene Selbstregistrierung
+  bleibt aus. **Offen (Dashboard, nur durch Nutzer):** in Supabase „Allow new users to sign
+  up\" ausschalten und Redirect-URL auf die Live-Adresse mit Marker `?einladung` setzen –
+  siehe Eintrag im Log.
 
 ---
 
@@ -74,6 +80,25 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - Konten per Einladung, Version 1.2.0: Neue Nutzer koennen jetzt per
+  Supabase-Einladung dazukommen, ohne dass die offene Selbstregistrierung aufgeht. Ablauf:
+  Einlader verschickt die Einladung im Supabase-Dashboard (Authentication -> Users ->
+  Invite user); der Eingeladene oeffnet den Link aus der Mail, landet auf dem neuen
+  Einladungs-Screen „Passwort festlegen\" (E-Mail steht fest, nur Anzeige = E-Mail-Check),
+  vergibt sein Passwort zweimal und ist sofort angemeldet. Erkennung im AuthGate statt als
+  Router-Route, weil der AuthGate vor dem Router sitzt und die Einladungs-Sitzung sonst nie
+  ankaeme. Komponentenschnitt: gemeinsamer Karten-Rahmen `src/components/auth/AuthCard.tsx`
+  (Lockup + weisse Karte), den `LoginScreen` und der neue `InviteScreen` teilen; Layout nur
+  an einer Stelle. `src/lib/auth.tsx` um `invitePending`/`inviteEmail`, Einladungs-Erkennung
+  im URL (`?einladung` bzw. `type=invite` in Hash/Query) und `setPassword` (via
+  `updateUser`) erweitert. Validiert: tsc ohne Fehler, Build durch, 297 Tests gruen.
+  Betroffen: neue Dateien `src/components/auth/AuthCard.tsx`,
+  `src/components/InviteScreen.tsx`, dazu `src/lib/auth.tsx`,
+  `src/components/LoginScreen.tsx`, `src/components/AuthGate.tsx`, `public/changelog.json`,
+  `docs/Designsystem.md`, `PLAN.md`. OFFEN (nur im Supabase-Dashboard durch den Nutzer):
+  „Allow new users to sign up\" ausschalten; Site-/Redirect-URL auf die Live-Adresse mit
+  Marker `?einladung` setzen, damit der Einladungslink in der App als Einladung erkannt wird.
 
 - 2026-06-24 - Mehr Abstand am Seitenende, Version 1.1.5: Auf Mobile klebte das letzte
   UI-Element beim Scrollen ganz nach unten zu dicht an der fixierten Bottom-Nav - deren

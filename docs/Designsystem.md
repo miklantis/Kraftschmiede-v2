@@ -114,6 +114,7 @@ Karten tragen einen sehr weichen Schatten statt eines harten Rahmens. Erhöhte E
 Die konkreten App-Bausteine liegen nach Bereich getrennt und setzen auf den Primitives
 oben auf:
 
+- `auth` – Anmelde-/Einladungs-Screens; `AuthCard` ist der gemeinsame Karten-Rahmen (Lockup + weiße Karte), den Login- und Einladungs-Screen teilen
 - `shell` – Rahmen der App (Navigation, Sidebar, Seitengerüst)
 - `training` – Trainingsübersicht und Empfehlung
 - `live` – Live-Session (Kraft und Skill) während des Trainings

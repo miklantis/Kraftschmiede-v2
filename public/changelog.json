@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.0",
+      "date": "2026-06-24",
+      "changes": [
+        "Neue Nutzer koennen jetzt per Einladung dazukommen: Nach der Einladung legen sie ueber den Link aus der E-Mail selbst ihr Passwort fest und sind sofort dabei. Ohne Einladung ist keine Anmeldung moeglich."
+      ]
+    },
+    {
       "version": "1.1.5",
       "date": "2026-06-24",
       "changes": [
