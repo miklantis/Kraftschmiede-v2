@@ -70,11 +70,13 @@ Zwei Schritte, Konzept besprochen. Schritt 1 (reine Anzeige) ausgeliefert; Schri
   einzeln (Kraft „Wdh × Gewicht kg", Skill Haltezeit/Wdh), Anstrengungs-Score je Satz
   angehaengt („· S3"). Ab 1.2.9; ab 1.2.10 jeder Satz auf eigener Zeile (Bullet) unter dem
   Uebungsnamen statt in einer langen Zeile.
-- [ ] Schritt 2 – Einheit bearbeiten: Tipp auf eine Einheit oeffnet ein Panel im
-  Live-Look, aber als Bearbeiten-Modus ohne Timer. Editierbar Wdh/Gewicht/Score je Satz,
-  Saetze ergaenzen/loeschen, Dauer der Einheit. Speichern schreibt in
-  sessions/session_exercises/sets zurueck. Komponentenschnitt: ruhige Schwester der
-  Live-Karte (gleiche Optik/Tippfelder, ohne Ablauf-Logik). Konzept noch ausarbeiten.
+- [ ] Schritt 2 – Einheit bearbeiten (alle Typen): Tipp auf eine Einheit im Verlauf
+  oeffnet ein Panel im Live-Look, aber als Bearbeiten-Modus ohne Timer. Kraft/Skill:
+  Wdh/Gewicht/Score je Satz editierbar, Saetze ergaenzen/loeschen. Yoga: Minuten und Notiz
+  editierbar. Fuer alle Typen die Dauer der Einheit anpassbar (fuer Nachtraege). Speichern
+  schreibt in sessions/session_exercises/sets zurueck, Abbrechen verwirft. Komponentenschnitt:
+  ruhige Schwester der Live-Karte (gleiche Optik/Tippfelder, ohne Ablauf-Logik). Konzept im
+  frischen Chat ausarbeiten, dann in kleinen Schritten bauen.
 
 ### Pflege / Bugfixing
 
