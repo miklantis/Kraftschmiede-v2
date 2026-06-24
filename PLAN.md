@@ -55,7 +55,7 @@ nicht rund laeuft.
 - **Kein offenes Bau-Vorhaben.** Pflege/Bugfixing laufend; neue Features nach Konzept-vor-Code.
   Bei jeder Auslieferung die Versionsnummer in `public/changelog.json` fortschreiben (letzte
   Stelle pro normaler Auslieferung hoch, mittlere bei groesseren Features) und einen kurzen
-  Nutzer-Eintrag ergaenzen. Aktuelle Version 1.2.19.
+  Nutzer-Eintrag ergaenzen. Aktuelle Version 1.2.20.
 - **Konten per Einladung (Version 1.2.0) umgesetzt und im Dashboard scharfgeschaltet.** Neue
   Nutzer kommen ueber eine Supabase-Einladung dazu: Einladung im Dashboard verschicken,
   Eingeladener setzt ueber den Link aus der Mail sein Passwort und ist sofort angemeldet. Die
@@ -99,6 +99,18 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - Skill-Akzent von Blau auf Gruen, Version 1.2.20: Die Skill-Seite war ueber
+  das Token `--skill` (`#5b9bd6` Blau) durchgaengig blau eingefaerbt (Switch-Ton „skill“,
+  SkillPhaseList „Du bist hier“/aktuelle und erledigte Phase, SkillCard-Pille „Gemeistert“,
+  LivePanel/StartModal-Rand, SessionLogCard-Punkt, verlauf.tsx, ExerciseEditModal). Das brach
+  den Akzent-Look. Beide Skill-Tokens in `src/index.css` auf Gruen gesetzt: `--skill` ->
+  `#0c9d77` (= Akzent/`--primary`), `--skill-foreground` -> `#0a7d5e` (dunkleres Gruen, lesbar
+  auf den hellen `bg-skill/10..20`-Toenungen). Eine zentrale Stelle, alle Skill-Elemente in
+  einem Zug; Token bleibt als Schalter erhalten fuer eine spaetere bewusste Skill/Yoga/Kraft-
+  Abgrenzung. Bewusst unberuehrt: `--intensity` (Journey-Chart-Teal) und `--yoga` (Lila).
+  Validiert: tsc ohne Fehler, Build durch (SW erzeugt), 309 Tests gruen. Betroffen ausserdem
+  `public/changelog.json`, `PLAN.md`.
 
 - 2026-06-24 - Journey-Kurve zentriert auf „jetzt“ (Handy), Version 1.2.19: Die
   Periodisierungskurve startete bei langen Journeys auf dem Handy ganz links bei Woche 1;

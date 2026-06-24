@@ -62,8 +62,8 @@
   --danger-foreground: #ffffff;
   --intensity: #37a9c4; /* Teal = Intensitaet im Journey-Chart */
   --intensity-foreground: #1f6f82;
-  --skill: #5b9bd6; /* Skill-Blau */
-  --skill-foreground: #2f6aa0;
+  --skill: #0c9d77; /* Skill nutzt den Akzent (Gruen); frueher Blau #5b9bd6 */
+  --skill-foreground: #0a7d5e;
   --yoga: #8478c9; /* Yoga-Lila */
   --yoga-foreground: #544a9b;
 }

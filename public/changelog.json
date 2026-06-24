@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.20",
+      "date": "2026-06-24",
+      "changes": [
+        "Die Skill-Seite ist jetzt im gewohnten Akzent-Grün gehalten statt in Blau. Schalter, Phasenliste (inklusive „Du bist hier“), die Pille „Gemeistert“ und die übrigen Skill-Akzente passen damit wieder zum restlichen App-Design. Yoga (Lila) und die Journey-Kurve bleiben unverändert."
+      ]
+    },
+    {
       "version": "1.2.19",
       "date": "2026-06-24",
       "changes": [
