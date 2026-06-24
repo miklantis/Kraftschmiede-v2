@@ -17,6 +17,22 @@ Referenz-App (nur lesen, niemals aendern): https://github.com/miklantis/Kraftsch
 
 ## Aktueller Stand
 
+- **Installierbarkeit (PWA-Basis) gebaut (2026-06-24), live testbar.** V2 hatte bisher kein
+  Manifest und keine Icons; V1 hatte beides. Jetzt 1:1 von V1 uebernommen: favicon.ico, Icons
+  (16/32/48/apple-touch-180/192/512), site.webmanifest (display standalone, start_url/scope
+  „./"), Apple-Meta (apple-mobile-web-app-capable/-title/-status-bar-style) und theme-color
+  #edeef1 in index.html. Alle Pfade ueber %BASE_URL%, damit sie unter /Kraftschmiede-v2/ und
+  auf jeder Route stimmen. Dateien in public/, landen unveraendert im dist. Damit laesst sich
+  V2 auf den Homescreen legen, hat das Kraftschmiede-Icon und startet im Vollbild als eigene
+  App – Paritaet zu V1. Bewusst KEIN Service Worker (das ist keine Offline-Huelle; die hatte
+  V1 auch nicht). tsc/build/297 Tests gruen.
+- **Phase 13 neu geschnitten (2026-06-24, Entscheidung mit Kadir).** Paritaetsdurchlauf gilt
+  als erledigt (lief beim Bauen jeder Phase mit, einzeln abgenommen). Bugfixing/iOS-Fixes sind
+  kein geplanter Block, sondern ergeben sich im Betrieb. Die echte Offline-Huelle (Service
+  Worker) und ein Update-Hinweis im UI sind Neufunktionalitaet ueber V1 hinaus und werden
+  nicht hier, sondern als eigenes Konzept/Projekt nach der Migration umgesetzt. **Damit ist
+  die Migration V1->V2 inhaltlich abgeschlossen.**
+
 - **Datenstand-Anzeige entfernt (2026-06-24).** Die „Datenstand"-Karte in der Daten-Sektion
   der Einstellungen ist raus (auf Kadirs Wunsch), Komponente src/components/Datenstand.tsx
   geloescht. Wichtig: an Datenstand haing der EINZIGE Erststart-Seed-Anstoss
@@ -854,16 +870,35 @@ spaetere Option moeglich, vorerst nicht gebaut.
 
 ## Phase 13 – Politur
 
-- [ ] PWA
-- [ ] iOS-Safari-Fixes
-- [ ] Bugfixing
-- [ ] Paritaetsdurchlauf gegen V1
+- [x] Paritaetsdurchlauf gegen V1 – lief beim Bauen jeder Phase laufend mit (jede Seite
+  gegen V1 angeglichen, einzeln live abgenommen); ein separater Durchlauf am Stueck ist
+  nicht noetig (Entscheidung Kadir, 2026-06-24).
+- [x] Installierbarkeit (PWA-Basis, Paritaet zu V1) – Manifest, Icons, Apple-Meta und
+  Theme-Farbe von V1 uebernommen. V2 laesst sich auf den Homescreen legen und startet im
+  Vollbild als eigenstaendige App.
+- [ ] iOS-Safari-Fixes / Bugfixing – kein geplanter Block; ergibt sich im Betrieb und wird
+  dann gezielt gefixt (Entscheidung Kadir, 2026-06-24).
+
+**Bewusst NICHT in diesem Projekt** (= ueber V1 hinaus, echte Neufunktionalitaet, V1 hatte
+beides nie):
+- Offline-Huelle (Service Worker): App startet und laeuft komplett ohne Netz.
+- Update-Hinweis im UI: „neue Version – was ist neu" + Installieren.
+Beides wird als eigenes Konzept/Projekt nach abgeschlossener Migration umgesetzt
+(Entscheidung Kadir, 2026-06-24). Damit ist die Migration V1->V2 inhaltlich abgeschlossen.
 
 ---
 
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu, sobald sie fertig sind.
+
+- 2026-06-24 - Installierbarkeit (PWA-Basis) GEBAUT + Phase 13 neu geschnitten. Manifest,
+  Icons, Apple-Meta und theme-color von V1 uebernommen (public/, Pfade ueber %BASE_URL%);
+  V2 ist jetzt installierbar/standalone wie V1 (Paritaet). Paritaetsdurchlauf als erledigt
+  markiert (lief beim Bauen jeder Phase mit), Bugfixing/iOS = im Betrieb statt geplanter
+  Block. Offline-Huelle (Service Worker) + Update-Hinweis bewusst ausgeklammert -> echte
+  Neufunktionalitaet ueber V1 hinaus, eigenes Projekt nach der Migration. Migration V1->V2
+  damit inhaltlich abgeschlossen. tsc/build/297 Tests gruen.
 
 - 2026-06-24 - Phase 12 (Import/Export) ABGESCHLOSSEN. Voll-Restore gebaut: eigenen
   V2-Export laden (Datei/Einfuegen) -> Vorschau im Overlay -> nach Rueckfrage kompletten
