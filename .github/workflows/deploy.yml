@@ -11,10 +11,14 @@ permissions:
   pages: write
   id-token: write
 
-# Nur ein Deploy gleichzeitig; laufende werden nicht abgebrochen
+# Nur ein Deploy gleichzeitig; ein neuer Push bricht einen noch laufenden,
+# bereits ueberholten Deploy ab, statt sich dahinter zu stauen. Verhindert die
+# Pile-up-Fehler beim Pages-Veroeffentlichen, wenn mehrere Commits dicht
+# hintereinander gepusht werden (sonst kann ein ueberholter Deploy beim
+# Veroeffentlichen scheitern und ein alter Stand bleibt live).
 concurrency:
   group: pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:

@@ -94,6 +94,17 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
 
+- 2026-06-24 - Deploy-Workflow gehaertet (kein Versionssprung): `1.2.17` war im Code fertig
+  und der Build gruen, aber der reine Pages-Veroeffentlichungs-Schritt (`actions/deploy-pages`)
+  scheiterte transient, weil viele Deploys dicht hintereinander liefen und sich stauten
+  (`concurrency: cancel-in-progress: false`). Folge: Live blieb 1.2.16 stehen, obwohl der Code
+  weiter war. Behoben: `cancel-in-progress: true` in `.github/workflows/deploy.yml` - ein neuer
+  Push bricht einen ueberholten, noch laufenden Deploy ab, statt ihn zu stapeln. 1.2.18 (Run
+  145) ist erfolgreich deployed und enthaelt die 1.2.17-Aenderungen mit; der fehlgeschlagene
+  1.2.17-Deploy ist damit geheilt. Reine CI-Aenderung, kein App-Code, keine neue Version
+  (Redeploy von identischem dist -> kein neuer Service Worker, kein Update-Hinweis). Betroffen:
+  `.github/workflows/deploy.yml`, `PLAN.md`.
+
 - 2026-06-24 - Bugfix Update-Uebernahme (robuster), Version 1.2.18: Der bei 1.2.11
   eingefuehrte feste Reload nach 1,2 s in `applyUpdate` (`src/lib/pwaUpdate.ts`) konnte auf der
   installierten PWA (vor allem iOS) ZU FRUEH zuschlagen - die Seite lud neu, bevor der neue
