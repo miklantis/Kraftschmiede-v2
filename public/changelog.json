@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.21",
+      "date": "2026-06-24",
+      "changes": [
+        "Auch die Yoga-Elemente sind jetzt im Akzent-Grün statt in Lila: das Yoga-Eingabe-Pop-up (Auswahlfelder, Speichern-Knopf), der Yoga-Schalter und der Yoga-Punkt in der Verlaufsliste. Damit ziehen Kraft, Skill und Yoga vorerst alle am selben grünen Akzent. Eine spätere bewusste Unterscheidung der drei Trainingsarten (z. B. eigene Symbole) heben wir uns auf."
+      ]
+    },
+    {
       "version": "1.2.20",
       "date": "2026-06-24",
       "changes": [

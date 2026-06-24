@@ -64,8 +64,8 @@
   --intensity-foreground: #1f6f82;
   --skill: #0c9d77; /* Skill nutzt den Akzent (Gruen); frueher Blau #5b9bd6 */
   --skill-foreground: #0a7d5e;
-  --yoga: #8478c9; /* Yoga-Lila */
-  --yoga-foreground: #544a9b;
+  --yoga: #0c9d77; /* Yoga nutzt den Akzent (Gruen); frueher Lila #8478c9 */
+  --yoga-foreground: #0a7d5e;
 }
 
 @theme inline {
