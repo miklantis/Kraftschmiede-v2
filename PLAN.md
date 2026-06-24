@@ -54,7 +54,7 @@ nicht rund laeuft.
   Features nach Konzept-vor-Code. Bei jeder Auslieferung die Versionsnummer in
   `public/changelog.json` fortschreiben (letzte Stelle pro normaler Auslieferung hoch,
   mittlere bei groesseren Features) und einen kurzen Nutzer-Eintrag ergaenzen. Aktuelle
-  Version 1.2.12.
+  Version 1.2.13.
 - **Konten per Einladung (Version 1.2.0) umgesetzt und im Dashboard scharfgeschaltet.** Neue
   Nutzer kommen ueber eine Supabase-Einladung dazu: Einladung im Dashboard verschicken,
   Eingeladener setzt ueber den Link aus der Mail sein Passwort und ist sofort angemeldet. Die
@@ -116,6 +116,19 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - Bugfix Bearbeiten-Panel Erstoeffnung, Version 1.2.13: Beim ersten Oeffnen von
+  „Bearbeiten" griff das Panel kurz auf den im Gerät zwischengespeicherten Verlauf zu, der aus
+  der Zeit vor 1.2.12 noch ohne die session_exercises-Kennung (`sessionExerciseId`) vorlag -
+  dadurch baute der Entwurf 0 Uebungen und zeigte „lässt sich nicht bearbeiten", bis der
+  Verlauf frisch nachgeladen war. In `SessionEditPanel.tsx` die Entwurfslogik umgestellt:
+  statt einmalig (`loadedFor`) wird der Entwurf nun bei jeder frischen Datenlieferung neu
+  aufgebaut, SOLANGE der Nutzer nichts geaendert hat (neues `dirty`-Flag; jede Aenderung setzt
+  es). So aktualisiert sich das Panel von selbst, sobald die frischen Daten da sind, ohne
+  laufende Eingaben zu ueberschreiben. Zusaetzlich zeigt es waehrend des Nachladens (`isFetching`)
+  den Ladehinweis statt vorschnell „nicht bearbeitbar". Reine Lade-/Zustandskorrektur, kein
+  Datenfluss/Schema veraendert. Validiert: tsc ohne Fehler, Build durch, 303 Tests gruen.
+  Betroffen ausserdem `public/changelog.json`, `PLAN.md`.
 
 - 2026-06-24 - Verlauf: Einheit bearbeiten, Bauschritt 2a (Kraft), Version 1.2.12: Eine
   abgeschlossene Krafteinheit laesst sich im Verlauf nachtraeglich korrigieren. In der

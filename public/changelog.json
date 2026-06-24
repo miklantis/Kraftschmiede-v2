@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.13",
+      "date": "2026-06-24",
+      "changes": [
+        "Beim ersten Öffnen von „Bearbeiten“ im Verlauf konnte kurz „Diese Einheit lässt sich hier nicht bearbeiten“ erscheinen, bis der Verlauf frisch nachgeladen war. Das Panel wartet jetzt auf die frischen Daten und füllt sich von selbst, sobald sie da sind."
+      ]
+    },
+    {
       "version": "1.2.12",
       "date": "2026-06-24",
       "changes": [

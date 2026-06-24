@@ -116,33 +116,42 @@ export function SessionEditPanel({
   const edit = useEditSession();
 
   const [draft, setDraft] = useState<PanelDraft | null>(null);
-  const [loadedFor, setLoadedFor] = useState<string | null>(null);
+  // Sobald der Nutzer etwas aendert, gilt der Entwurf als „angefasst“ und wird
+  // nicht mehr aus den (ggf. nachladenden) Daten ueberschrieben.
+  const [dirty, setDirty] = useState(false);
 
   const input =
     sessionId != null
       ? (detailedQ.data ?? []).find((s) => s.id === sessionId) ?? null
       : null;
 
-  // Entwurf beim Oeffnen aus den gespeicherten Werten aufbauen (einmal je
-  // Sitzung). Schliessen setzt zurueck.
+  // Entwurf aus den gespeicherten Werten aufbauen. Solange der Nutzer nichts
+  // geaendert hat (!dirty), wird er bei jeder frischen Datenlieferung neu
+  // aufgebaut – so verschwindet das „nicht bearbeitbar“ von selbst, sobald der
+  // (anfangs evtl. veraltete) Verlauf frisch nachgeladen ist. Schliessen setzt
+  // alles zurueck.
   useEffect(() => {
     if (!open) {
       setDraft(null);
-      setLoadedFor(null);
+      setDirty(false);
       return;
     }
-    if (input && loadedFor !== input.id) {
+    if (input && !dirty) {
       const exName = new Map(
         (exercisesQ.data ?? []).map((e) => [e.id, e.name]),
       );
       setDraft(buildDraft(input, (id) => exName.get(id)));
-      setLoadedFor(input.id);
     }
-  }, [open, input, loadedFor, exercisesQ.data]);
+  }, [open, input, dirty, exercisesQ.data]);
+
+  function touch(): void {
+    setDirty(true);
+  }
 
   function setExercises(
     fn: (exs: PanelExercise[]) => PanelExercise[],
   ): void {
+    touch();
     setDraft((d) => (d ? { ...d, exercises: fn(d.exercises) } : d));
   }
 
@@ -198,6 +207,7 @@ export function SessionEditPanel({
   }
 
   function setMinutes(value: number): void {
+    touch();
     setDraft((d) => (d ? { ...d, minutes: Math.max(0, value) } : d));
   }
 
@@ -218,7 +228,7 @@ export function SessionEditPanel({
 
   return (
     <Overlay open={open} onClose={onClose} title="Einheit bearbeiten">
-      {!draft ? (
+      {!draft || (draft.exercises.length === 0 && detailedQ.isFetching) ? (
         <p className="py-4 text-[14px] text-muted-foreground">Wird geladen …</p>
       ) : draft.exercises.length === 0 ? (
         <p className="py-4 text-[14px] text-muted-foreground">
