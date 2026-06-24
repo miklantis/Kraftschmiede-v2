@@ -135,35 +135,42 @@ function workSets(ex: HistoryExercise): HistorySet[] {
   return ex.sets.filter((set) => set.kind !== "warmup");
 }
 
-// Kraft-Zeile: "<max kg> kg · <Wdh-Liste> Wdh" (Aufwaermsaetze ausgenommen).
-function strengthInfo(ex: HistoryExercise): string {
-  const ws = workSets(ex);
-  const reps = ws
-    .map((s) => s.reps)
-    .filter((r): r is number => r != null && r !== 0);
-  if (!reps.length) return "–";
-  let w = 0;
-  ws.forEach((s) => {
-    if ((s.weight ?? 0) > w) w = s.weight ?? 0;
-  });
-  const r = reps.join(", ") + " Wdh";
-  return w > 0 ? fmtKg(w) + " kg · " + r : r;
+// Score-Anhang einer Satz-Angabe, z. B. " · S3" (nur wenn ein Score vorliegt;
+// Skill-/Yoga-Saetze haben keinen, dort entfaellt er).
+function scoreTag(s: HistorySet): string {
+  return s.score != null ? " · S" + s.score : "";
 }
 
-// Skill-Zeile: Haltezeiten ("12 s, 10 s") oder Wiederholungen ("8, 6 Wdh"),
-// je nach Metrik der Uebung.
+// Kraft-Zeile: jeder Arbeitssatz einzeln als "<Wdh> × <kg> kg · S<score>",
+// Saetze per Komma getrennt (Aufwaermsaetze ausgenommen). Ohne Gewicht
+// (Eigengewichts-Uebung) nur "<Wdh> Wdh".
+function strengthInfo(ex: HistoryExercise): string {
+  const parts = workSets(ex)
+    .filter((s) => s.reps != null || s.weight != null)
+    .map((s) => {
+      const reps = s.reps ?? 0;
+      const w = s.weight ?? 0;
+      const base = w > 0 ? reps + " × " + fmtKg(w) + " kg" : reps + " Wdh";
+      return base + scoreTag(s);
+    });
+  return parts.length ? parts.join(", ") : "–";
+}
+
+// Skill-Zeile: jeder Arbeitssatz einzeln, je nach Metrik Haltezeit ("12 s")
+// oder Wiederholungen ("8 Wdh"), Score angehaengt wenn vorhanden, Saetze per
+// Komma getrennt.
 function skillInfo(ex: HistoryExercise): string {
   const ws = workSets(ex);
   if (ex.metric === "duration") {
-    const vals = ws
-      .map((s) => s.durationSec)
-      .filter((v): v is number => v != null);
-    if (!vals.length) return "–";
-    return vals.map((v) => v + " s").join(", ");
+    const parts = ws
+      .filter((s) => s.durationSec != null)
+      .map((s) => s.durationSec + " s" + scoreTag(s));
+    return parts.length ? parts.join(", ") : "–";
   }
-  const vals = ws.map((s) => s.reps).filter((v): v is number => v != null);
-  if (!vals.length) return "–";
-  return vals.join(", ") + " Wdh";
+  const parts = ws
+    .filter((s) => s.reps != null)
+    .map((s) => s.reps + " Wdh" + scoreTag(s));
+  return parts.length ? parts.join(", ") : "–";
 }
 
 function durationLabel(s: HistorySessionInput): string {

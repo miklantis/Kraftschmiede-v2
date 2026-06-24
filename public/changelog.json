@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.9",
+      "date": "2026-06-24",
+      "changes": [
+        "Im Verlauf siehst du eine aufgeklappte Einheit jetzt Satz fuer Satz: bei Kraft jeder Satz als Wiederholungen mal Gewicht (z. B. „5 × 100 kg\"), bei Skills als Haltezeit oder Wiederholungen. Wo ein Anstrengungs-Score erfasst ist, steht er direkt dahinter (z. B. „· S3\"). So erkennst du auf einen Blick, wie jeder einzelne Satz gelaufen ist, statt nur das schwerste Gewicht und eine gemischte Wiederholungsliste zu sehen."
+      ]
+    },
+    {
       "version": "1.2.8",
       "date": "2026-06-24",
       "changes": [

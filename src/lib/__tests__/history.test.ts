@@ -83,10 +83,22 @@ describe("Titel und Kalender-Label", () => {
 });
 
 describe("Detail-Aufbereitung", () => {
-  it("Kraft: Maxgewicht + Wiederholungen der Arbeitssaetze (ohne Aufwaermen)", () => {
+  it("Kraft: jeder Arbeitssatz als Wdh × Gewicht (ohne Aufwaermen)", () => {
     const hs = buildHistorySession(strength(), lk);
     expect(hs.durationLabel).toBe("45 min");
-    expect(hs.detail).toEqual([{ label: "Kniebeuge", info: "100 kg · 5, 5 Wdh" }]);
+    expect(hs.detail).toEqual([
+      { label: "Kniebeuge", info: "5 × 100 kg, 5 × 100 kg" },
+    ]);
+  });
+
+  it("Kraft: Score je Satz wird angehaengt", () => {
+    const s = strength();
+    s.exercises[0].sets[1].score = 3;
+    s.exercises[0].sets[2].score = 4;
+    const hs = buildHistorySession(s, lk);
+    expect(hs.detail).toEqual([
+      { label: "Kniebeuge", info: "5 × 100 kg · S3, 5 × 100 kg · S4" },
+    ]);
   });
 
   it("Skill mit Haltezeit: Sekunden", () => {

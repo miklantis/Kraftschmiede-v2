@@ -44,11 +44,12 @@ nicht rund laeuft.
   (kein Hinweis waehrend einer laufenden Einheit, Notbremse „App zuruecksetzen" in den
   Einstellungen, „Aktualisieren"-Knopf im Popup fixiert). Aktuelle Version 1.2.2. Details je
   Lieferung im Log unten. Konzept: `docs/Konzept-PWA-Offline.md`.
-- **Naechster Schritt:** kein festgelegtes Vorhaben. Pflege/Bugfixing laufend; neue Features
-  nach Konzept-vor-Code. Bei jeder Auslieferung die Versionsnummer in
+- **Naechster Schritt:** Verlauf Schritt 2 (Einheit bearbeiten) konzipieren, sobald
+  Schritt 1 live getestet ist – siehe „Offene Vorhaben". Pflege/Bugfixing laufend; neue
+  Features nach Konzept-vor-Code. Bei jeder Auslieferung die Versionsnummer in
   `public/changelog.json` fortschreiben (letzte Stelle pro normaler Auslieferung hoch,
   mittlere bei groesseren Features) und einen kurzen Nutzer-Eintrag ergaenzen. Aktuelle
-  Version 1.2.8.
+  Version 1.2.9.
 - **Konten per Einladung (Version 1.2.0) umgesetzt.** Neue Nutzer kommen ueber eine
   Supabase-Einladung dazu: Einladung im Dashboard verschicken, Eingeladener setzt ueber den
   Link aus der Mail sein Passwort und ist sofort angemeldet. Offene Selbstregistrierung
@@ -59,6 +60,20 @@ nicht rund laeuft.
 ---
 
 ## Offene Vorhaben
+
+### Verlauf: Satz-Darstellung & Bearbeiten
+
+Zwei Schritte, Konzept besprochen. Schritt 1 (reine Anzeige) ausgeliefert; Schritt 2
+(Bearbeiten-Panel) wird konzipiert, sobald Schritt 1 live getestet ist.
+
+- [x] Schritt 1 – Listenansicht satzweise: aufgeklappte Einheit zeigt jeden Arbeitssatz
+  einzeln (Kraft „Wdh × Gewicht kg", Skill Haltezeit/Wdh), Anstrengungs-Score je Satz
+  angehaengt („· S3"). Version 1.2.9.
+- [ ] Schritt 2 – Einheit bearbeiten: Tipp auf eine Einheit oeffnet ein Panel im
+  Live-Look, aber als Bearbeiten-Modus ohne Timer. Editierbar Wdh/Gewicht/Score je Satz,
+  Saetze ergaenzen/loeschen, Dauer der Einheit. Speichern schreibt in
+  sessions/session_exercises/sets zurueck. Komponentenschnitt: ruhige Schwester der
+  Live-Karte (gleiche Optik/Tippfelder, ohne Ablauf-Logik). Konzept noch ausarbeiten.
 
 ### Pflege / Bugfixing
 
@@ -81,6 +96,17 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - Verlauf satzweise (Schritt 1), Version 1.2.9: Die aufgeklappte Einheit
+  zeigt nicht mehr „schwerstes Gewicht + gemischte Wdh-Liste", sondern jeden Arbeitssatz
+  einzeln. In `src/lib/history.ts` `strengthInfo`/`skillInfo` umgestellt: Kraft je Satz
+  „<Wdh> × <kg> kg" (Eigengewicht ohne kg nur „<Wdh> Wdh"), Skill je Satz Haltezeit
+  „<s> s" bzw. „<Wdh> Wdh", jeweils Saetze per Komma getrennt; neuer Helfer `scoreTag`
+  haengt den Anstrengungs-Score je Satz an („· S3"), nur wo vorhanden (Kraft-Arbeitssaetze;
+  Skill/Yoga ohne). Reine Anzeige, Datenmodell und Karten-Layout (`SessionLogCard`)
+  unveraendert. Tests in `history.test.ts` auf das neue Format umgestellt und ein
+  Score-Fall ergaenzt. Validiert: tsc ohne Fehler, Build durch, 298 Tests gruen. Betroffen
+  ausserdem `public/changelog.json`, `PLAN.md`. Schritt 2 (Bearbeiten-Panel) bleibt offen.
 
 - 2026-06-24 - Hochformat bevorzugen, Version 1.2.8: `"orientation": "portrait"` ins
   `public/site.webmanifest` ergaenzt. Greift bei installierten PWAs auf Android; iOS/Safari
