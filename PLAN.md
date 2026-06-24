@@ -23,6 +23,8 @@ Inhaltliche Quellen:
   Design-Tokens. Bei neuen Primitives hier eine Zeile ergaenzen.
 - `docs/Konzept-PWA-Offline.md` – Konzept des umgesetzten Offline-/Update-Vorhabens
   (abgeschlossen; als Referenz erhalten).
+- `docs/Konzept-Einheit-bearbeiten.md` – Konzept des laufenden Vorhabens „Einheit bearbeiten"
+  (Verlauf, Schritt 2). Abgestimmt, noch nicht umgesetzt.
 - `docs/archive/PLAN-Migration-V1-zu-V2.md` – kompletter Migrationsverlauf V1->V2 (Historie,
   abgeschlossen). Bei Bedarf zum Nachschlagen, sonst nicht mehr aktiv gepflegt.
 
@@ -42,10 +44,11 @@ nicht rund laeuft.
   Offline-Huelle (Service Worker, Precache der App-Shell, Supabase ausgenommen),
   Update-Erkennung beim Start, „Was ist neu"-Popup aus `public/changelog.json`, Feinschliff
   (kein Hinweis waehrend einer laufenden Einheit, Notbremse „App zuruecksetzen" in den
-  Einstellungen, „Aktualisieren"-Knopf im Popup fixiert). Aktuelle Version 1.2.2. Details je
+  Einstellungen, „Aktualisieren"-Knopf im Popup fixiert). Details je
   Lieferung im Log unten. Konzept: `docs/Konzept-PWA-Offline.md`.
-- **Naechster Schritt:** Verlauf Schritt 2 (Einheit bearbeiten) konzipieren, sobald
-  Schritt 1 live getestet ist – siehe „Offene Vorhaben". Pflege/Bugfixing laufend; neue
+- **Naechster Schritt:** Verlauf Schritt 2 (Einheit bearbeiten) ist konzipiert und abgestimmt
+  (Konzept: `docs/Konzept-Einheit-bearbeiten.md`); als Naechstes Bauschritt 2a (Kraft) nach
+  Freigabe – siehe „Offene Vorhaben". Pflege/Bugfixing laufend; neue
   Features nach Konzept-vor-Code. Bei jeder Auslieferung die Versionsnummer in
   `public/changelog.json` fortschreiben (letzte Stelle pro normaler Auslieferung hoch,
   mittlere bei groesseren Features) und einen kurzen Nutzer-Eintrag ergaenzen. Aktuelle
@@ -63,20 +66,30 @@ nicht rund laeuft.
 
 ### Verlauf: Satz-Darstellung & Bearbeiten
 
-Zwei Schritte, Konzept besprochen. Schritt 1 (reine Anzeige) ausgeliefert; Schritt 2
-(Bearbeiten-Panel) wird konzipiert, sobald Schritt 1 live getestet ist.
+Zwei Schritte. Schritt 1 (reine Anzeige) ausgeliefert und live getestet. Schritt 2
+(Bearbeiten-Panel) ist konzipiert und abgestimmt – Konzept:
+`docs/Konzept-Einheit-bearbeiten.md`. Gebaut wird in den kleinen Bauschritten 2a/2b/2c nach
+Freigabe.
 
 - [x] Schritt 1 – Listenansicht satzweise: aufgeklappte Einheit zeigt jeden Arbeitssatz
   einzeln (Kraft „Wdh × Gewicht kg", Skill Haltezeit/Wdh), Anstrengungs-Score je Satz
   angehaengt („· S3"). Ab 1.2.9; ab 1.2.10 jeder Satz auf eigener Zeile (Bullet) unter dem
   Uebungsnamen statt in einer langen Zeile.
-- [ ] Schritt 2 – Einheit bearbeiten (alle Typen): Tipp auf eine Einheit im Verlauf
-  oeffnet ein Panel im Live-Look, aber als Bearbeiten-Modus ohne Timer. Kraft/Skill:
-  Wdh/Gewicht/Score je Satz editierbar, Saetze ergaenzen/loeschen. Yoga: Minuten und Notiz
-  editierbar. Fuer alle Typen die Dauer der Einheit anpassbar (fuer Nachtraege). Speichern
-  schreibt in sessions/session_exercises/sets zurueck, Abbrechen verwirft. Komponentenschnitt:
-  ruhige Schwester der Live-Karte (gleiche Optik/Tippfelder, ohne Ablauf-Logik). Konzept im
-  frischen Chat ausarbeiten, dann in kleinen Schritten bauen.
+- [ ] Schritt 2 – Einheit bearbeiten (alle Typen). Konzept abgestimmt, siehe
+  `docs/Konzept-Einheit-bearbeiten.md`. Kurz: „Bearbeiten"-Knopf in der aufgeklappten
+  Verlaufs-Karte (neben Loeschen) oeffnet ein Panel im Live-Look ohne Ablauf (kein Timer/
+  Abhaken/aktiver Satz). Die Live-Karten werden WIEDERVERWENDET (Bearbeiten-Modus an
+  `ExerciseLiveCard`/`SkillLiveCard`: Stange gelockt, Scheiben aus, Haken weg, Aufwaermsaetze
+  ausgeblendet; Tippfelder/„+ Satz" bleiben). Zurueckschreiben offline-fest nach dem Muster
+  des Live-Speicherns. Coach-Nachziehen NUR bei der juengsten Einheit einer Uebung (sonst nur
+  Eintrag korrigieren). Bauschritte:
+  - [ ] 2a – Kraft: Bearbeiten-Modus `ExerciseLiveCard`, Panel-Rahmen, Dauer-Feld,
+    Zurueckschreiben inkl. Coach-Nachziehen (nur juengste).
+  - [ ] 2b – Skill: Bearbeiten-Modus `SkillLiveCard` (Sekunden-/Wdh-Feld statt Stoppuhr),
+    Skill-Einheiten zurueckschreiben. Offen: ob skill_progress rueckwirkend nachzieht (vorher
+    klaeren).
+  - [ ] 2c – Yoga + Dauer-Feinschliff: Yoga-Koerper (Minuten + Notiz), Dauer-Feld ueber alle
+    Typen vereinheitlicht.
 
 ### Pflege / Bugfixing
 
@@ -99,6 +112,16 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - Konzept „Einheit bearbeiten" dokumentiert (Schritt 2 des Verlauf-Vorhabens):
+  neues Dokument `docs/Konzept-Einheit-bearbeiten.md` mit dem abgestimmten Vorhaben
+  (Einstieg ueber „Bearbeiten"-Knopf, Wiederverwendung der Live-Karten per Bearbeiten-Modus,
+  offline-festes Zurueckschreiben, Coach-Nachziehen nur bei der juengsten Einheit, Bauschritte
+  2a/2b/2c). In `PLAN.md` Schritt 2 als To-do mit den drei Bauschritten ausformuliert und auf
+  das Konzept verwiesen; Quellen-Liste ergaenzt; stehengebliebene Versionsangabe im PWA-Bullet
+  bereinigt. Reine Doku, kein Code, keine Auslieferung (changelog.json unberuehrt). Noch nicht
+  umgesetzt – Bau erst nach Freigabe. Betroffen: neue Datei `docs/Konzept-Einheit-bearbeiten.md`,
+  `PLAN.md`.
 
 - 2026-06-24 - Bugfix Update-Uebernahme, Version 1.2.11: „Aktualisieren\" im
   WhatsNewSheet liess das Popup gelegentlich offen stehen (vor allem installierte PWA auf
