@@ -74,3 +74,48 @@ describe("buildEditPayload", () => {
     expect(p.exercisePatches[0].rm).toBeUndefined();
   });
 });
+
+import { buildSkillEditPayload, type SkillEditContext } from "../editSession";
+
+function skillCtx(over: Partial<SkillEditContext> = {}): SkillEditContext {
+  return {
+    sessionId: "sess1",
+    durationSec: 1200,
+    userId: "u1",
+    exercises: [
+      { sessionExerciseId: "se1", metric: "duration", target: 10, values: [12, 8] },
+      { sessionExerciseId: "se2", metric: "reps", target: 5, values: [6] },
+    ],
+    newId: idGen(),
+    ...over,
+  };
+}
+
+describe("buildSkillEditPayload", () => {
+  it("schreibt Dauer-Saetze in duration_sec und Wdh-Saetze in reps", () => {
+    const p = buildSkillEditPayload(skillCtx());
+    const dur = p.exercises[0].workSetRows;
+    expect(dur[0].duration_sec).toBe(12);
+    expect(dur[0].reps).toBeNull();
+    const rep = p.exercises[1].workSetRows;
+    expect(rep[0].reps).toBe(6);
+    expect(rep[0].duration_sec).toBeNull();
+  });
+
+  it("bestimmt met gegen das Phasen-Ziel", () => {
+    const p = buildSkillEditPayload(skillCtx());
+    const dur = p.exercises[0].workSetRows;
+    expect(dur[0].met).toBe(true); // 12 >= 10
+    expect(dur[1].met).toBe(false); // 8 < 10
+  });
+
+  it("ruehrt Coach/Katalog und 1RM nicht an", () => {
+    const p = buildSkillEditPayload(skillCtx());
+    expect(p.exercisePatches).toHaveLength(0);
+    expect(p.exercises.every((e) => e.tested1RM === null)).toBe(true);
+  });
+
+  it("reicht die Dauer durch", () => {
+    expect(buildSkillEditPayload(skillCtx({ durationSec: null })).durationSec).toBeNull();
+  });
+});

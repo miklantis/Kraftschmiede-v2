@@ -3,7 +3,9 @@ import { useMutation } from "@tanstack/react-query";
 import type { RmFormula } from "@/engine/types";
 import {
   buildEditPayload,
+  buildSkillEditPayload,
   type EditDraftExercise,
+  type SkillEditDraftExercise,
   type EditPayload,
 } from "@/lib/editSession";
 import { EDIT_MUTATION_KEY } from "@/lib/editMutation";
@@ -33,7 +35,16 @@ export interface EditSaveInput {
 export interface UseEditSession {
   /** Schreibt die Bearbeitung zurueck. Ohne Netz wird pausiert und nachgeholt. */
   save: (input: EditSaveInput) => void;
+  /** Skill-Bearbeitung zurueckschreiben (Phasen-Fortschritt bleibt unberuehrt). */
+  saveSkill: (input: SkillEditSaveInput) => void;
   isSaving: boolean;
+}
+
+/** Eingabe fuer das Speichern einer Skill-Bearbeitung. */
+export interface SkillEditSaveInput {
+  sessionId: string;
+  durationSec: number | null;
+  exercises: SkillEditDraftExercise[];
 }
 
 export function useEditSession(): UseEditSession {
@@ -93,5 +104,20 @@ export function useEditSession(): UseEditSession {
     [userId, settingsQ.data, exercisesQ.data, detailedQ.data, mutation],
   );
 
-  return { save, isSaving: mutation.isPending };
+  const saveSkill = useCallback(
+    (input: SkillEditSaveInput): void => {
+      if (!userId) return;
+      const payload = buildSkillEditPayload({
+        sessionId: input.sessionId,
+        durationSec: input.durationSec,
+        userId,
+        exercises: input.exercises,
+        newId: () => crypto.randomUUID(),
+      });
+      mutation.mutate(payload);
+    },
+    [userId, mutation],
+  );
+
+  return { save, saveSkill, isSaving: mutation.isPending };
 }

@@ -12,9 +12,11 @@ import { SetCheck } from "./SetCheck";
 // das Ergebnis eintragen (V1-Paritaet liveSkillSession).
 
 const ROW = "grid grid-cols-[34px_1fr_1.4fr_30px] items-center gap-2";
+// Bearbeiten-Modus (Verlauf): ohne Haken-Spalte.
+const ROW_EDIT = "grid grid-cols-[34px_1fr_1.4fr] items-center gap-2";
 
-function rowCls(done: boolean): string {
-  const base = ROW + " my-0.5 rounded-[11px] border-2 px-1.5 py-2 text-[14px]";
+function rowCls(grid: string, done: boolean): string {
+  const base = grid + " my-0.5 rounded-[11px] border-2 px-1.5 py-2 text-[14px]";
   return done ? base + " border-transparent bg-primary/[0.07]" : base + " border-transparent";
 }
 
@@ -26,19 +28,28 @@ export function SkillLiveCard({
   onValue,
   onStartWatch,
   onStopWatch,
+  editMode = false,
+  onAddSet,
+  onDelSet,
 }: {
   exercise: SkillLiveExercise;
   /** Index des Satzes mit laufender Stoppuhr in dieser Uebung, sonst null. */
   watchSi: number | null;
-  audioPrefs: AudioPrefs;
+  audioPrefs?: AudioPrefs;
   onToggleSet: (si: number) => void;
   onValue: (si: number, value: number) => void;
   onStartWatch: (si: number) => void;
   onStopWatch: () => void;
+  /** Bearbeiten-Modus (Verlauf): Stoppuhr/Haken aus, einfaches Zahlenfeld,
+   *  „+/- Satz“. Default false = unveraenderter Live-Look. */
+  editMode?: boolean;
+  onAddSet?: () => void;
+  onDelSet?: () => void;
 }): React.ReactElement {
   const isDur = exercise.metric === "duration";
   const tag = isDur ? "DAUER" : "WDH";
   const targetLabel = isDur ? exercise.target + " s" : exercise.target + " Wdh";
+  const grid = editMode ? ROW_EDIT : ROW;
 
   return (
     <div className="overflow-hidden rounded-[14px] bg-card shadow-card">
@@ -57,26 +68,26 @@ export function SkillLiveCard({
       <div className="px-4 pb-4 pt-2">
         <div
           className={
-            ROW +
+            grid +
             " border-b border-border px-1.5 pb-1.5 pt-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground [&>span]:text-center"
           }
         >
           <span>Satz</span>
           <span>Ziel</span>
           <span>Ergebnis</span>
-          <span />
+          {!editMode && <span />}
         </div>
 
         {exercise.sets.map((st, si) => (
-          <div key={si} className={rowCls(st.done)}>
+          <div key={si} className={rowCls(grid, st.done)}>
             <span className="text-center text-muted-foreground">S{si + 1}</span>
             <span className="text-center font-mono text-muted-foreground">{targetLabel}</span>
-            {isDur ? (
+            {isDur && !editMode ? (
               <SkillWatchValue
                 value={st.value}
                 target={exercise.target}
                 active={watchSi === si}
-                audioPrefs={audioPrefs}
+                audioPrefs={audioPrefs ?? { sound: false, vibrate: false }}
                 onStart={() => onStartWatch(si)}
                 onStop={onStopWatch}
                 onCommit={(v) => onValue(si, v)}
@@ -87,17 +98,40 @@ export function SkillLiveCard({
                 value={st.value ?? 0}
                 onCommit={(v) => onValue(si, v)}
                 decimal={false}
-                ariaLabel={"Wiederholungen Satz " + (si + 1)}
+                ariaLabel={(isDur ? "Haltezeit Satz " : "Wiederholungen Satz ") + (si + 1)}
               />
             )}
-            <SetCheck
-              done={st.done}
-              active={false}
-              onToggle={() => onToggleSet(si)}
-              ariaLabel={"Satz " + (si + 1) + " abhaken"}
-            />
+            {!editMode && (
+              <SetCheck
+                done={st.done}
+                active={false}
+                onToggle={() => onToggleSet(si)}
+                ariaLabel={"Satz " + (si + 1) + " abhaken"}
+              />
+            )}
           </div>
         ))}
+
+        {editMode && (
+          <div className="flex gap-4 px-1.5 pb-1 pt-4">
+            <button
+              type="button"
+              onClick={onAddSet}
+              className="text-[13px] font-semibold text-primary"
+            >
+              + Satz
+            </button>
+            {exercise.sets.length > 1 && (
+              <button
+                type="button"
+                onClick={onDelSet}
+                className="text-[13px] font-semibold text-muted-foreground"
+              >
+                – Satz
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

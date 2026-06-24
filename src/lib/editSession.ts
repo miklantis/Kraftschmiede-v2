@@ -16,6 +16,7 @@
 
 import { best1RMFromSets } from "@/engine/oneRM";
 import { metTarget } from "@/engine/target";
+import { skillSetMet } from "@/engine/skills";
 import type { EngineSet, RmFormula } from "@/engine/types";
 import type { SetInsert } from "@/schemas";
 import type { ExercisePatch } from "./finishMutation";
@@ -142,5 +143,68 @@ export function buildEditPayload(ctx: EditContext): EditPayload {
     durationSec: ctx.durationSec,
     exercises,
     exercisePatches,
+  };
+}
+
+// ---- Skill-Bearbeiten (Bauschritt 2b) --------------------------------------
+// Skill-Einheiten werden ohne Coach/Katalog korrigiert: je Uebung die work-
+// Saetze neu schreiben (Wert in reps bzw. duration_sec je Metrik), met gegen das
+// Phasen-Ziel neu bestimmen. Der Phasen-Fortschritt (skill_progress) bleibt
+// bewusst unberuehrt - eine Korrektur soll dich nicht in der Phase verschieben.
+
+/** Eine Skill-Uebung im Bearbeiten-Entwurf: Ergebniswerte je Satz. */
+export interface SkillEditDraftExercise {
+  sessionExerciseId: string;
+  metric: "reps" | "duration";
+  /** Phasen-Ziel (fuer met und Anzeige). */
+  target: number;
+  /** Ergebniswert je Satz (Wdh bzw. Sekunden). */
+  values: number[];
+}
+
+export interface SkillEditContext {
+  sessionId: string;
+  durationSec: number | null;
+  userId: string;
+  exercises: SkillEditDraftExercise[];
+  newId: () => string;
+}
+
+export function buildSkillEditPayload(ctx: SkillEditContext): EditPayload {
+  const { userId, newId } = ctx;
+
+  const exercises: EditExerciseWrite[] = ctx.exercises.map((ex) => {
+    let pos = 0;
+    const workSetRows: Array<SetInsert & { id: string }> = ex.values.map((v) => ({
+      id: newId(),
+      user_id: userId,
+      session_exercise_id: ex.sessionExerciseId,
+      kind: "work",
+      position: pos++,
+      reps: ex.metric === "reps" ? v : null,
+      weight: null,
+      duration_sec: ex.metric === "duration" ? v : null,
+      score: null,
+      failed: false,
+      done: true,
+      target_reps: ex.metric === "reps" ? ex.target : null,
+      target_weight: null,
+      target_score: null,
+      adjusted: false,
+      adjust_note: "",
+      met: skillSetMet(ex.metric, ex.target, { value: v, done: true }),
+    }));
+    return {
+      sessionExerciseId: ex.sessionExerciseId,
+      tested1RM: null, // Skill trackt kein 1RM
+      workSetRows,
+    };
+  });
+
+  return {
+    sessionId: ctx.sessionId,
+    durationSec: ctx.durationSec,
+    exercises,
+    exercisePatches: [], // kein Coach/Katalog bei Skill
   };
 }

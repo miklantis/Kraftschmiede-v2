@@ -46,15 +46,16 @@ nicht rund laeuft.
   (kein Hinweis waehrend einer laufenden Einheit, Notbremse „App zuruecksetzen" in den
   Einstellungen, „Aktualisieren"-Knopf im Popup fixiert). Details je
   Lieferung im Log unten. Konzept: `docs/Konzept-PWA-Offline.md`.
-- **Naechster Schritt:** Verlauf Schritt 2 (Einheit bearbeiten) laeuft. Bauschritt 2a (Kraft)
-  ist ausgeliefert (1.2.12): Krafteinheiten lassen sich im Verlauf nachtraeglich korrigieren
-  (Bearbeiten-Panel im Live-Look). Als Naechstes 2b (Skill) und 2c (Yoga + Dauer-Feinschliff)
-  nach Freigabe – siehe „Offene Vorhaben". Offener Klaerpunkt fuer 2b: ob skill_progress
-  rueckwirkend nachzieht. Pflege/Bugfixing laufend; neue
+- **Naechster Schritt:** Verlauf Schritt 2 (Einheit bearbeiten) laeuft. Bauschritte 2a (Kraft,
+  1.2.12) und 2b (Skill, 1.2.15) sind ausgeliefert: Kraft- und Skill-Einheiten lassen sich im
+  Verlauf nachtraeglich korrigieren (Bearbeiten-Panel im Live-Look). Beim Skill bleibt der
+  Phasen-Fortschritt bewusst unberuehrt (nur Eintrag korrigieren – so entschieden). Offen ist
+  nur noch 2c (Yoga-Koerper: Minuten + Notiz; Dauer-Feld vereinheitlicht) nach Freigabe.
+  Pflege/Bugfixing laufend; neue
   Features nach Konzept-vor-Code. Bei jeder Auslieferung die Versionsnummer in
   `public/changelog.json` fortschreiben (letzte Stelle pro normaler Auslieferung hoch,
   mittlere bei groesseren Features) und einen kurzen Nutzer-Eintrag ergaenzen. Aktuelle
-  Version 1.2.14.
+  Version 1.2.15.
 - **Konten per Einladung (Version 1.2.0) umgesetzt und im Dashboard scharfgeschaltet.** Neue
   Nutzer kommen ueber eine Supabase-Einladung dazu: Einladung im Dashboard verschicken,
   Eingeladener setzt ueber den Link aus der Mail sein Passwort und ist sofort angemeldet. Die
@@ -79,8 +80,8 @@ Freigabe.
   angehaengt („· S3"). Ab 1.2.9; ab 1.2.10 jeder Satz auf eigener Zeile (Bullet) unter dem
   Uebungsnamen statt in einer langen Zeile.
 - [ ] Schritt 2 – Einheit bearbeiten (alle Typen). Konzept abgestimmt, siehe
-  `docs/Konzept-Einheit-bearbeiten.md`. Bauschritt 2a (Kraft) ist ausgeliefert (1.2.12);
-  offen bleiben 2b (Skill) und 2c (Yoga + Dauer-Feinschliff). Kurz: „Bearbeiten"-Knopf in
+  `docs/Konzept-Einheit-bearbeiten.md`. Bauschritte 2a (Kraft, 1.2.12) und 2b (Skill, 1.2.15)
+  sind ausgeliefert; offen bleibt nur 2c (Yoga + Dauer-Feinschliff). Kurz: „Bearbeiten"-Knopf in
   der aufgeklappten Verlaufs-Karte (neben Loeschen) oeffnet ein Panel im Live-Look ohne Ablauf (kein Timer/
   Abhaken/aktiver Satz). Die Live-Karten werden WIEDERVERWENDET (Bearbeiten-Modus an
   `ExerciseLiveCard`/`SkillLiveCard`: Stange gelockt, Scheiben aus, Haken weg, Aufwaermsaetze
@@ -89,9 +90,9 @@ Freigabe.
   Eintrag korrigieren). Bauschritte:
   - [x] 2a – Kraft: Bearbeiten-Modus `ExerciseLiveCard`, Panel-Rahmen, Dauer-Feld,
     Zurueckschreiben inkl. Coach-Nachziehen (nur juengste). Ausgeliefert ab 1.2.12.
-  - [ ] 2b – Skill: Bearbeiten-Modus `SkillLiveCard` (Sekunden-/Wdh-Feld statt Stoppuhr),
-    Skill-Einheiten zurueckschreiben. Offen: ob skill_progress rueckwirkend nachzieht (vorher
-    klaeren).
+  - [x] 2b – Skill: Bearbeiten-Modus `SkillLiveCard` (Sekunden-/Wdh-Feld statt Stoppuhr),
+    Skill-Einheiten zurueckschreiben. Ausgeliefert ab 1.2.15. Entschieden: skill_progress
+    wird NICHT rueckwirkend nachgezogen – Korrektur berichtigt nur den Eintrag, Phase bleibt.
   - [ ] 2c – Yoga + Dauer-Feinschliff: Yoga-Koerper (Minuten + Notiz), Dauer-Feld ueber alle
     Typen vereinheitlicht.
 
@@ -116,6 +117,25 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-24 - Verlauf: Einheit bearbeiten, Bauschritt 2b (Skill), Version 1.2.15: Auch
+  Skill-Einheiten lassen sich jetzt im Verlauf korrigieren. Der „Bearbeiten"-Knopf erscheint
+  nun auch fuer Skill-Einheiten (`SessionLogCard`). Die Skill-Live-Karte `SkillLiveCard` bekam
+  einen `editMode` (Default false, Live-Look unveraendert): Stoppuhr und Haken-Spalte fallen
+  weg, das Ergebnis wird – auch bei Haltezeit – ueber ein einfaches `LiveNumberInput` getippt,
+  dazu „+/- Satz". Das `SessionEditPanel` ist auf einen typdiskriminierten Entwurf
+  (strength|skill) umgebaut und rendert je nach Typ `ExerciseLiveCard` oder `SkillLiveCard`;
+  fuer Skill liefert `useSkills` das Phasen-Ziel (ueber `skill_id` + `skill_phase` + Position)
+  fuer Anzeige und met-Bewertung. Zurueckschreiben ueber den neuen reinen Builder
+  `buildSkillEditPayload` (in `editSession.ts`) und die bestehende offline-feste Edit-Mutation:
+  je Uebung die work-Saetze neu schreiben (Wert in reps bzw. duration_sec je Metrik, met gegen
+  das Phasen-Ziel), Dauer optional. Bewusste Entscheidung (mit Nutzer abgestimmt): der
+  Phasen-Fortschritt (`skill_progress`) wird NICHT rueckwirkend nachgezogen – eine Korrektur
+  verschiebt die Skill-Phase nicht, sie berichtigt nur den Eintrag (der frueher offene
+  Klaerpunkt aus dem Konzept ist damit entschieden). `useEditSession` um `saveSkill` erweitert.
+  Validiert: tsc ohne Fehler, Build durch (SW erzeugt, changelog.json nicht precached), 307
+  Tests gruen (4 neue in `editSession.test.ts`). Betroffen ausserdem
+  `src/components/history/SessionLogCard.tsx`, `public/changelog.json`, `PLAN.md`.
 
 - 2026-06-24 - Verlauf-Feinschliff, Version 1.2.14: Drei Anpassungen aus dem Live-Test.
   (1) Bearbeiten-Panel zeigt im Kopf jetzt den Namen der Einheit (Overlay-`title`) und das

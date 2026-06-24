@@ -117,7 +117,8 @@ So kann das Korrigieren eines alten Eintrags die laufende Progression nicht zur�
 
 ## 10. Offene Punkte (vor dem jeweiligen Bauschritt klären)
 
-- **Skill-Fortschritt nachziehen.** Ob ein korrigiertes Skill-Ergebnis den Phasenfortschritt
-  (`skill_progress`) rückwirkend nachzieht – analog zur „nur jüngste"-Regel – wird bei
-  Schritt 2b entschieden. Vorerst Annahme: Skill-Eintrag korrigieren, Phasenfortschritt
-  unberührt lassen, bis besprochen.
+- **Skill-Fortschritt nachziehen.** ENTSCHIEDEN (Bauschritt 2b, mit Nutzer abgestimmt): Ein
+  korrigiertes Skill-Ergebnis zieht den Phasenfortschritt (`skill_progress`) NICHT rückwirkend
+  nach. Begründung: Die Phase ist ein gespeicherter Stand (kein aus der Historie neu
+  berechneter); eine Rückberechnung könnte dich überraschend in eine andere Phase verschieben.
+  Korrektur berichtigt nur den Eintrag, die Phase bleibt unverändert.

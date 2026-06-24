@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.15",
+      "date": "2026-06-24",
+      "changes": [
+        "Jetzt lassen sich auch Skill-Einheiten im Verlauf bearbeiten. Über „Bearbeiten“ kannst du je Satz das Ergebnis anpassen (Haltezeit in Sekunden bzw. Wiederholungen), Sätze ergänzen oder entfernen und die Dauer ändern. Dein Phasen-Fortschritt bleibt dabei unangetastet – eine Korrektur verschiebt dich nicht in der Skill-Phase, sie berichtigt nur den Eintrag."
+      ]
+    },
+    {
       "version": "1.2.14",
       "date": "2026-06-24",
       "changes": [

@@ -109,7 +109,10 @@ export function SessionLogCard({
             </div>
           ) : (
             <div className="flex items-center justify-end gap-2 pt-2.5">
-              {onEdit && (session.kind === "kraft" || session.kind === "dev") && (
+              {onEdit &&
+                (session.kind === "kraft" ||
+                  session.kind === "dev" ||
+                  session.kind === "skill") && (
                 <button
                   type="button"
                   aria-label="Einheit bearbeiten"
