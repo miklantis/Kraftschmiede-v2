@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.31",
+      "date": "2026-06-26",
+      "changes": [
+        "Die Aufbau-Animation kommt jetzt auf allen Hauptseiten und läuft sauber nacheinander statt alles auf einmal. Bei zweispaltigen Seiten staffelt jede Spalte für sich von oben nach unten."
+      ]
+    },
+    {
       "version": "1.2.30",
       "date": "2026-06-26",
       "changes": [

@@ -55,7 +55,7 @@ nicht rund laeuft.
 - **Kein offenes Bau-Vorhaben.** Pflege/Bugfixing laufend; neue Features nach Konzept-vor-Code.
   Bei jeder Auslieferung die Versionsnummer in `public/changelog.json` fortschreiben (letzte
   Stelle pro normaler Auslieferung hoch, mittlere bei groesseren Features) und einen kurzen
-  Nutzer-Eintrag ergaenzen. Aktuelle Version 1.2.30.
+  Nutzer-Eintrag ergaenzen. Aktuelle Version 1.2.31.
 - **Konten per Einladung (Version 1.2.0) umgesetzt und im Dashboard scharfgeschaltet.** Neue
   Nutzer kommen ueber eine Supabase-Einladung dazu: Einladung im Dashboard verschicken,
   Eingeladener setzt ueber den Link aus der Mail sein Passwort und ist sofort angemeldet. Die
@@ -99,6 +99,18 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-26 - Page-Reveal echt gestaffelt + auf alle Hauptseiten ausgerollt, Version 1.2.31:
+  `PageReveal` setzt die Reihenfolge jetzt nach dem Mount direkt im DOM (CSS-Variable
+  `--ks-reveal-i` je Block, Klasse `ks-reveal-item`), statt nur die direkten Kinder per
+  `cloneElement` zu nummerieren. Damit staffeln auch verschachtelte Bloecke. Zweispaltige
+  Layouts: Spalten als `data-reveal-group` markiert (parallel, je von oben nach unten);
+  Masonry-/columns-Layouts: Container mit `data-reveal-flatten` (Sektionen einzeln). `TwoColumn`
+  markiert seine Spalten selbst. Ausgerollt auf Training, Verlauf, Journey, Skills, Uebungen,
+  Koerper, Einstellungen. Bewusst noch nicht: Uebungs-Detail und Journey-Auswahl (Sonderlayout
+  mit `display:contents` + `order`, braucht eigene Behandlung). CSS-Selektor von `.ks-reveal > *`
+  auf `.ks-reveal-item` umgestellt. Werte (10px / .34s / 55ms) weiter anpassbar. Validiert:
+  vite build, tsc --noEmit, vitest (309 Tests) gruen.
 
 - 2026-06-26 - Page-Reveal (gestaffeltes Einfaden beim Seitenwechsel), Version 1.2.30:
   Neues Primitive `PageReveal` (`src/components/ui/page-reveal.tsx`) umschliesst den

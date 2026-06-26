@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageReveal } from "@/components/ui/page-reveal";
 import { Section } from "@/components/ui/section";
 import { RestBanner } from "@/components/body/RestBanner";
 import { BodySoreMap } from "@/components/body/BodySoreMap";
@@ -48,33 +49,35 @@ function KoerperPage(): React.ReactElement {
   return (
     <div>
       <PageHeader title="Körper" />
-      <RestBanner advice={view.advice} className="mb-6 min-[960px]:mb-[26px]" />
+      <PageReveal>
+        <RestBanner advice={view.advice} className="mb-6 min-[960px]:mb-[26px]" />
 
-      <div className="grid grid-cols-1 items-start gap-y-7 min-[960px]:grid-cols-[1.05fr_1fr] min-[960px]:gap-x-[26px]">
-        {/* Befinden */}
-        <div className="flex min-w-0 flex-col gap-7">
-          <Section eyebrow="Muskelkater">
-            <BodySoreMap values={view.soreValues} info={view.soreInfo} />
-          </Section>
+        <div className="grid grid-cols-1 items-start gap-y-7 min-[960px]:grid-cols-[1.05fr_1fr] min-[960px]:gap-x-[26px]">
+          {/* Befinden */}
+          <div data-reveal-group className="flex min-w-0 flex-col gap-7">
+            <Section eyebrow="Muskelkater">
+              <BodySoreMap values={view.soreValues} info={view.soreInfo} />
+            </Section>
 
-          <Section eyebrow="Körperzustand heute">
-            <BodyStateCard today={view.today} hasToday={view.hasToday} />
-          </Section>
+            <Section eyebrow="Körperzustand heute">
+              <BodyStateCard today={view.today} hasToday={view.hasToday} />
+            </Section>
 
-          <Section eyebrow="Verlauf">
-            <BodyHistoryCard history={view.history} />
-          </Section>
+            <Section eyebrow="Verlauf">
+              <BodyHistoryCard history={view.history} />
+            </Section>
+          </div>
+
+          {/* Messung */}
+          <div data-reveal-group className="flex min-w-0 flex-col gap-4">
+            <Section eyebrow="Körpermessung">
+              <BodyMeasureCard rows={comp} />
+            </Section>
+            <BodyMeasureList rows={comp} />
+            <BodyImportCard />
+          </div>
         </div>
-
-        {/* Messung */}
-        <div className="flex min-w-0 flex-col gap-4">
-          <Section eyebrow="Körpermessung">
-            <BodyMeasureCard rows={comp} />
-          </Section>
-          <BodyMeasureList rows={comp} />
-          <BodyImportCard />
-        </div>
-      </div>
+      </PageReveal>
     </div>
   );
 }

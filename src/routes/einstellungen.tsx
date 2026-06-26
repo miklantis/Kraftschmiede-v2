@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageReveal } from "@/components/ui/page-reveal";
 import { Section } from "@/components/ui/section";
 import { SettingsGroup } from "@/components/ui/setting-list";
 import { AccountCard } from "@/components/settings/AccountCard";
@@ -59,10 +60,13 @@ function EinstellungenPage(): React.ReactElement {
     <div>
       <PageHeader title="Einstellungen" hideAccount />
 
-      <div className="flex flex-col gap-7">
+      <PageReveal className="flex flex-col gap-7">
         <AccountCard />
 
-        <div className="columns-1 gap-x-[26px] [&>*]:mb-7 [&>*]:break-inside-avoid min-[960px]:columns-2">
+        <div
+          data-reveal-flatten
+          className="columns-1 gap-x-[26px] [&>*]:mb-7 [&>*]:break-inside-avoid min-[960px]:columns-2"
+        >
           <Section eyebrow="Engine & Einheiten">
             {settings ? <EngineSettings settings={settings} /> : placeholder}
           </Section>
@@ -119,7 +123,7 @@ function EinstellungenPage(): React.ReactElement {
         <Section eyebrow="App">
           <AppVersionCard />
         </Section>
-      </div>
+      </PageReveal>
     </div>
   );
 }

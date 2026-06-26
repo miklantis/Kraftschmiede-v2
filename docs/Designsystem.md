@@ -72,9 +72,9 @@ Karten tragen einen sehr weichen Schatten statt eines harten Rahmens. Erhöhte E
 | Baustein | Wofür / wann nehmen |
 |---|---|
 | **PageHeader** | Seitenkopf oben auf jeder Feature-Seite: kleine Datumszeile plus großer Titel (am Handy rechts der Konto-Avatar). |
-| **PageReveal** | Wrapper um den Seiteninhalt: fadet seine direkten Kinder beim Seitenwechsel dezent gestaffelt ein (leicht von unten, nacheinander). Respektiert „Bewegung reduzieren"; Werte zentral als CSS-Variablen (`--ks-reveal-*`) in `index.css`. |
+| **PageReveal** | Wrapper um den Seiteninhalt: fadet die Blöcke beim Seitenwechsel dezent gestaffelt ein (leicht von unten, nacheinander). Bei zwei Spalten (`data-reveal-group`) staffelt jede Spalte für sich von oben nach unten; Masonry-Container über `data-reveal-flatten` auflösen. Respektiert „Bewegung reduzieren"; Werte zentral als CSS-Variablen (`--ks-reveal-*`) in `index.css`. |
 | **Section** | Abschnitt mit kleiner, gesperrter Versal-Eyebrow plus Inhalt. Auf fast jeder Seite. |
-| **TwoColumn** | Zwei-Spalten-Layout: mobil gestapelt, ab 960px Haupt- und Seitenspalte nebeneinander. |
+| **TwoColumn** | Zwei-Spalten-Layout: mobil gestapelt, ab 960px Haupt- und Seitenspalte nebeneinander. Markiert seine Spalten als `data-reveal-group`, damit PageReveal sie eigenständig staffelt. |
 | **Card** | Weiße Grundfläche mit weichem Schatten und 16px-Radius. Trägt fast allen Inhalt. |
 | **List** | Umrahmter Listen-Container mit Trennlinien zwischen den Zeilen. |
 | **SettingList** (SettingsGroup / SettingRow) | Gruppierte Listen im iOS-Einstellungen-Stil: Beschriftung links, Steuerelement rechts; Reihe optional tippbar, Label optional mit kleiner Erklärzeile (description) darunter. |

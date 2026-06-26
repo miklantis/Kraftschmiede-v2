@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageReveal } from "@/components/ui/page-reveal";
 import { Section } from "@/components/ui/section";
 import { List, ListRow } from "@/components/ui/list";
 import { PinnedCharts } from "@/components/exercise/PinnedCharts";
@@ -54,41 +55,46 @@ function UebungenPage(): React.ReactElement {
   return (
     <div>
       <PageHeader title="Übungen" />
-      <div className="mb-6 min-[960px]:mb-[30px]">
-        <PinnedCharts cards={pinned.cards} unit={pinned.unit} />
-      </div>
-      <div className="columns-1 [column-gap:24px] min-[960px]:columns-2">
-        {groups.map((g) => (
-          <Section
-            key={g.title}
-            eyebrow={g.title}
-            className="mb-6 break-inside-avoid"
-          >
-            <List bordered>
-              {g.items.map((it) => (
-                <ListRow
-                  key={it.id}
-                  title={it.name}
-                  subtitle={it.sub}
-                  trailing={
-                    <span className="font-mono text-[14px] text-muted-foreground tabular-nums">
-                      {it.meta}
-                    </span>
-                  }
-                  chevron
-                  ariaLabel={it.name + " öffnen"}
-                  onClick={() =>
-                    void navigate({
-                      to: "/uebungen/$exerciseId",
-                      params: { exerciseId: it.id },
-                    })
-                  }
-                />
-              ))}
-            </List>
-          </Section>
-        ))}
-      </div>
+      <PageReveal>
+        <div className="mb-6 min-[960px]:mb-[30px]">
+          <PinnedCharts cards={pinned.cards} unit={pinned.unit} />
+        </div>
+        <div
+          data-reveal-flatten
+          className="columns-1 [column-gap:24px] min-[960px]:columns-2"
+        >
+          {groups.map((g) => (
+            <Section
+              key={g.title}
+              eyebrow={g.title}
+              className="mb-6 break-inside-avoid"
+            >
+              <List bordered>
+                {g.items.map((it) => (
+                  <ListRow
+                    key={it.id}
+                    title={it.name}
+                    subtitle={it.sub}
+                    trailing={
+                      <span className="font-mono text-[14px] text-muted-foreground tabular-nums">
+                        {it.meta}
+                      </span>
+                    }
+                    chevron
+                    ariaLabel={it.name + " öffnen"}
+                    onClick={() =>
+                      void navigate({
+                        to: "/uebungen/$exerciseId",
+                        params: { exerciseId: it.id },
+                      })
+                    }
+                  />
+                ))}
+              </List>
+            </Section>
+          ))}
+        </div>
+      </PageReveal>
     </div>
   );
 }

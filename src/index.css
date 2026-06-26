@@ -236,12 +236,12 @@ body.ks-live-collapsed main { padding-bottom: calc(150px + env(safe-area-inset-b
   from { opacity: 0; transform: translateY(var(--ks-reveal-shift)); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.ks-reveal > * {
+.ks-reveal-item {
   animation: ksReveal var(--ks-reveal-dur) cubic-bezier(.22, 1, .36, 1) both;
   animation-delay: calc(var(--ks-reveal-i, 0) * var(--ks-reveal-step));
 }
 @media (prefers-reduced-motion: reduce) {
-  .ks-reveal > * { animation: none; }
+  .ks-reveal-item { animation: none; }
 }
 
 /* --- Griff + Kopf --- */

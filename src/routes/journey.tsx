@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
+import { PageReveal } from "@/components/ui/page-reveal";
 import { ActiveJourneyCard } from "@/components/journey/ActiveJourneyCard";
 import { PeriodizationChart } from "@/components/journey/PeriodizationChart";
 import { PhaseList } from "@/components/journey/PhaseList";
@@ -57,7 +58,7 @@ function JourneyPage(): React.ReactElement {
   return (
     <div>
       <PageHeader title="Journey" />
-      <div className="flex flex-col gap-7 min-[960px]:gap-8">
+      <PageReveal className="flex flex-col gap-7 min-[960px]:gap-8">
         <ActiveJourneyCard name={data.name} metaLine={metaLine} />
         {data.periodization.weeks.length > 0 && (
           <Section eyebrow="Periodisierung">
@@ -67,7 +68,7 @@ function JourneyPage(): React.ReactElement {
         <Section eyebrow="Phasen · Ablauf">
           <PhaseList phases={data.phases} />
         </Section>
-      </div>
+      </PageReveal>
     </div>
   );
 }

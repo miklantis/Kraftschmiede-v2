@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
+import { PageReveal } from "@/components/ui/page-reveal";
 import { SegmentedControl } from "@/components/ui/segmented";
 import {
   Calendar,
@@ -109,30 +110,38 @@ function VerlaufPage(): React.ReactElement {
     <div>
       <PageHeader title="Verlauf" />
 
-      {/* Umschalter nur am Handy. */}
-      <div className="mb-3.5 min-[960px]:hidden">
-        <SegmentedControl
-          value={view}
-          onChange={setView}
-          options={[
-            { value: "list", label: "Liste" },
-            { value: "calendar", label: "Kalender" },
-          ]}
-        />
-      </div>
-
-      <div className="grid grid-cols-1 gap-6 min-[960px]:grid-cols-[1fr_1.35fr] min-[960px]:items-start min-[960px]:gap-[26px]">
-        {/* Letzte Einheiten: am Handy nur in der Listen-Ansicht, am Desktop links. */}
-        <div className={(view === "list" ? "block" : "hidden") + " min-[960px]:block"}>
-          <Section eyebrow="Letzte Einheiten">{list}</Section>
+      <PageReveal>
+        {/* Umschalter nur am Handy. */}
+        <div className="mb-3.5 min-[960px]:hidden">
+          <SegmentedControl
+            value={view}
+            onChange={setView}
+            options={[
+              { value: "list", label: "Liste" },
+              { value: "calendar", label: "Kalender" },
+            ]}
+          />
         </div>
 
-        {/* Kalender: am Handy nur in der Kalender-Ansicht, am Desktop rechts. */}
-        <div className={(view === "calendar" ? "block" : "hidden") + " min-[960px]:block"}>
-          <div className={EYEBROW + " hidden min-[960px]:block"}>Kalender</div>
-          {calendar}
+        <div className="grid grid-cols-1 gap-6 min-[960px]:grid-cols-[1fr_1.35fr] min-[960px]:items-start min-[960px]:gap-[26px]">
+          {/* Letzte Einheiten: am Handy nur in der Listen-Ansicht, am Desktop links. */}
+          <div
+            data-reveal-group
+            className={(view === "list" ? "block" : "hidden") + " min-[960px]:block"}
+          >
+            <Section eyebrow="Letzte Einheiten">{list}</Section>
+          </div>
+
+          {/* Kalender: am Handy nur in der Kalender-Ansicht, am Desktop rechts. */}
+          <div
+            data-reveal-group
+            className={(view === "calendar" ? "block" : "hidden") + " min-[960px]:block"}
+          >
+            <div className={EYEBROW + " hidden min-[960px]:block"}>Kalender</div>
+            {calendar}
+          </div>
         </div>
-      </div>
+      </PageReveal>
 
       <SessionEditPanel
         sessionId={editId}
