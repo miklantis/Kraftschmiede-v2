@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.30",
+      "date": "2026-06-26",
+      "changes": [
+        "Beim Öffnen einer Seite bauen sich die Inhalte jetzt mit einer dezenten Animation auf – nacheinander, leicht von unten. Vorerst auf der Trainingsseite zum Ausprobieren."
+      ]
+    },
+    {
       "version": "1.2.29",
       "date": "2026-06-26",
       "changes": [

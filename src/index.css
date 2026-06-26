@@ -224,6 +224,26 @@ body.ks-live-collapsed main { padding-bottom: calc(150px + env(safe-area-inset-b
 @keyframes ksLiveEnter { from { transform: translateY(100%); } to { transform: translateY(0); } }
 .kl-ov--mob.is-entering { animation: ksLiveEnter .42s cubic-bezier(.22, 1, .36, 1); }
 
+/* Page-Reveal: dezent gestaffeltes Einfaden beim Seitenwechsel. Die direkten
+   Kinder des Wrappers kommen nacheinander leicht von unten herein. Werte
+   bewusst als Variablen, damit sie sich leicht nachjustieren lassen. */
+:root {
+  --ks-reveal-shift: 10px;
+  --ks-reveal-dur: .34s;
+  --ks-reveal-step: 55ms;
+}
+@keyframes ksReveal {
+  from { opacity: 0; transform: translateY(var(--ks-reveal-shift)); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.ks-reveal > * {
+  animation: ksReveal var(--ks-reveal-dur) cubic-bezier(.22, 1, .36, 1) both;
+  animation-delay: calc(var(--ks-reveal-i, 0) * var(--ks-reveal-step));
+}
+@media (prefers-reduced-motion: reduce) {
+  .ks-reveal > * { animation: none; }
+}
+
 /* --- Griff + Kopf --- */
 .kl-ov-grip { flex: none; padding: 10px 0 0; touch-action: none; }
 .kl-ov-grip-bar { width: 38px; height: 5px; border-radius: 3px; background: #d4d4d8; margin: 0 auto 6px; }

@@ -5,6 +5,7 @@ import { Section } from "@/components/ui/section";
 import { List, ListRow } from "@/components/ui/list";
 import { ScoreBadge } from "@/components/ui/score-badge";
 import { TwoColumn } from "@/components/ui/two-column";
+import { PageReveal } from "@/components/ui/page-reveal";
 import { JourneyStrip } from "@/components/training/JourneyStrip";
 import { UpdateBanner } from "@/components/training/UpdateBanner";
 import { RecommendedWorkout } from "@/components/training/RecommendedWorkout";
@@ -169,7 +170,7 @@ function TrainingPage(): React.ReactElement {
   return (
     <div>
       <PageHeader title="Training" date={data.date} />
-      <div className="flex flex-col gap-[18px] min-[960px]:gap-[26px]">
+      <PageReveal className="flex flex-col gap-[18px] min-[960px]:gap-[26px]">
         <UpdateBanner />
         {data.journey && (
           <JourneyStrip
@@ -180,7 +181,7 @@ function TrainingPage(): React.ReactElement {
           />
         )}
         <TwoColumn main={mainColumn} side={sideColumn} />
-      </div>
+      </PageReveal>
       <YogaEntryModal open={yogaOpen} onClose={() => setYogaOpen(false)} />
     </div>
   );

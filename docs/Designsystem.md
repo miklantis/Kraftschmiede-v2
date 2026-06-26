@@ -72,6 +72,7 @@ Karten tragen einen sehr weichen Schatten statt eines harten Rahmens. Erhöhte E
 | Baustein | Wofür / wann nehmen |
 |---|---|
 | **PageHeader** | Seitenkopf oben auf jeder Feature-Seite: kleine Datumszeile plus großer Titel (am Handy rechts der Konto-Avatar). |
+| **PageReveal** | Wrapper um den Seiteninhalt: fadet seine direkten Kinder beim Seitenwechsel dezent gestaffelt ein (leicht von unten, nacheinander). Respektiert „Bewegung reduzieren"; Werte zentral als CSS-Variablen (`--ks-reveal-*`) in `index.css`. |
 | **Section** | Abschnitt mit kleiner, gesperrter Versal-Eyebrow plus Inhalt. Auf fast jeder Seite. |
 | **TwoColumn** | Zwei-Spalten-Layout: mobil gestapelt, ab 960px Haupt- und Seitenspalte nebeneinander. |
 | **Card** | Weiße Grundfläche mit weichem Schatten und 16px-Radius. Trägt fast allen Inhalt. |
