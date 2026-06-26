@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.28",
+      "date": "2026-06-26",
+      "changes": [
+        "Die Silhouette der Körperfigur ist wieder grau – die weiße Variante wurde zurückgenommen."
+      ]
+    },
+    {
       "version": "1.2.27",
       "date": "2026-06-26",
       "changes": [
