@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.35",
+      "date": "2026-06-26",
+      "changes": [
+        "Feinschliff an der unteren Navigationsleiste auf dem Handy: Schatten etwas zurückgenommen und die Leiste ganz leicht grün getönt, damit sie sich auch farblich vom Inhalt abhebt."
+      ]
+    },
+    {
       "version": "1.2.34",
       "date": "2026-06-26",
       "changes": [

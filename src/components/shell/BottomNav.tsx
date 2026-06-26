@@ -4,12 +4,12 @@ import { NAV_ENTRIES } from "@/lib/nav";
 // Untere Navigationsleiste fuer Mobile (unter 960px). Sichtbarkeit steuert die
 // AppShell. Nur Icons (kein Label); das Label dient als aria-label/Titel fuer
 // Bedienhilfen. Einstellungen sitzt separat im Kopf (Konto-Symbol).
-// Optik an V1-"Klar" angeglichen: deckend weiss (bg-card, kein Weichzeichner),
+// Optik an V1-"Klar" angeglichen: ganz leicht gruen getoent (#f3faf8, ~5% Akzent auf Weiss)
 // kraeftiger oberer Schatten zur Abgrenzung, inaktive Icons in hellem Grau (#b0b0b6, V1-Wert).
 export function BottomNav(): React.ReactElement {
   return (
     <nav
-      className="ks-botnav bg-card border-border fixed inset-x-0 bottom-0 z-[86] flex border-t px-1.5 pt-2.5 shadow-[0_-11px_26px_-8px_rgba(10,12,22,0.45)] transition-transform duration-[360ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
+      className="ks-botnav bg-[#f3faf8] border-border fixed inset-x-0 bottom-0 z-[86] flex border-t px-1.5 pt-2.5 shadow-[0_-11px_26px_-8px_rgba(10,12,22,0.34)] transition-transform duration-[360ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
       style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 22px)" }}
     >
       {NAV_ENTRIES.map((entry) => {

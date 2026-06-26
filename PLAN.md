@@ -53,7 +53,7 @@ nicht rund laeuft.
   unberuehrt; Yoga bearbeitet Minuten + Notiz. Damit ist das Vorhaben „Verlauf: Satz-Darstellung
   & Bearbeiten" insgesamt fertig (siehe Abgeschlossene Vorhaben).
 - **Kein offenes Bau-Vorhaben.** Pflege/Bugfixing laufend; neue Features nach Konzept-vor-Code.
-  Aktuelle Version: 1.2.34.
+  Aktuelle Version: 1.2.35.
   Bei jeder Auslieferung die Versionsnummer in `public/changelog.json` fortschreiben (letzte
   Stelle pro normaler Auslieferung hoch, mittlere bei groesseren Features) und einen kurzen
   Nutzer-Eintrag ergaenzen. Aktuelle Version 1.2.33.
@@ -100,6 +100,12 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-26 - Mobiler Navi-Feinschliff, Version 1.2.35: Schatten-Deckkraft von 0.45 auf
+  0.34 zurueckgenommen (etwas transparenter) und Hintergrund der `BottomNav` von `bg-card`
+  (Weiss) auf `bg-[#f3faf8]` (~5% Akzent-Gruen auf Weiss) getoent, damit sich die untere
+  Leiste auch farblich leicht vom Inhalt abhebt. Nur `src/components/shell/BottomNav.tsx`
+  (Hintergrund- und Schattenklasse + Kommentar). Validiert: Build, tsc, Vitest gruen.
 
 - 2026-06-26 - Mobiler Navi-Schatten kraeftiger, Version 1.2.34: oberer Schatten der
   `BottomNav` von `0 -6px 20px -14px rgba(20,24,40,0.25)` auf
