@@ -55,7 +55,7 @@ nicht rund laeuft.
 - **Kein offenes Bau-Vorhaben.** Pflege/Bugfixing laufend; neue Features nach Konzept-vor-Code.
   Bei jeder Auslieferung die Versionsnummer in `public/changelog.json` fortschreiben (letzte
   Stelle pro normaler Auslieferung hoch, mittlere bei groesseren Features) und einen kurzen
-  Nutzer-Eintrag ergaenzen. Aktuelle Version 1.2.22.
+  Nutzer-Eintrag ergaenzen. Aktuelle Version 1.2.23.
 - **Konten per Einladung (Version 1.2.0) umgesetzt und im Dashboard scharfgeschaltet.** Neue
   Nutzer kommen ueber eine Supabase-Einladung dazu: Einladung im Dashboard verschicken,
   Eingeladener setzt ueber den Link aus der Mail sein Passwort und ist sofort angemeldet. Die
@@ -100,6 +100,18 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
 
+- 2026-06-26 - Muskelkarte: ueberarbeitete Master-SVG, Version 1.2.23: Neue Fassung von
+  `src/assets/body-muscles.svg` (vom Nutzer in Illustrator bearbeitet). Aenderung rein
+  geometrisch: die Rueckenansicht-Silhouette wurde von sechs getrennten Pfaden
+  (`body_x5F_01..06`) auf eine zusammengefasste Flaeche reduziert, dazu kleinere
+  Punktverschiebungen in anderen Pfaden. Vor dem Austausch geprueft und bestaetigt:
+  `viewBox` unveraendert (`0 0 1338.2 1473`, sonst saessen die festen Crop-Werte in
+  `muscle-map.tsx` daneben), valides XML, alle Gruppen-IDs identisch, alle 14 Regionen der
+  Registry (`src/lib/muscles.ts`) weiterhin per `id` vorhanden. Die entfallenen
+  `body_x5F_*`-IDs nutzt die App nicht einzeln - sie braucht nur die Gruppe
+  `silhouette_back`, die zusammengefasste Flaeche liegt weiterhin darin und wird wie zuvor
+  zum Basis-Grauton neutralisiert. Keine Code-Aenderung. Validiert: vite build, tsc
+  --noEmit, vitest (alle gruen).
 - 2026-06-25 - Vorlagen-Waehler: Journey als Kurve statt Phasen-Chips, Version 1.2.22: Im
   Vorlagen-Waehler (`src/routes/journey_.waehlen.tsx`) zeigt jede Karte jetzt die komplette
   Periodisierungskurve der Journey statt der bisherigen Phasen-Schlagwort-Chips - Volumen +
