@@ -55,7 +55,7 @@ nicht rund laeuft.
 - **Kein offenes Bau-Vorhaben.** Pflege/Bugfixing laufend; neue Features nach Konzept-vor-Code.
   Bei jeder Auslieferung die Versionsnummer in `public/changelog.json` fortschreiben (letzte
   Stelle pro normaler Auslieferung hoch, mittlere bei groesseren Features) und einen kurzen
-  Nutzer-Eintrag ergaenzen. Aktuelle Version 1.2.23.
+  Nutzer-Eintrag ergaenzen. Aktuelle Version 1.2.24.
 - **Konten per Einladung (Version 1.2.0) umgesetzt und im Dashboard scharfgeschaltet.** Neue
   Nutzer kommen ueber eine Supabase-Einladung dazu: Einladung im Dashboard verschicken,
   Eingeladener setzt ueber den Link aus der Mail sein Passwort und ist sofort angemeldet. Die
@@ -100,6 +100,19 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
 
+- 2026-06-26 - Bugfix Muskelkarte: Anstrich bei Tab-Rueckkehr, Version 1.2.24: Die
+  `MuscleMap` (`src/components/ui/muscle-map.tsx`) bettet die SVG einmal per
+  `dangerouslySetInnerHTML` ein und setzt Zuschnitt (viewBox-Crop) + Einfaerbung danach
+  per Effekt direkt auf den nicht von React verwalteten SVG-Teilbaum. Beim Verlassen und
+  Zurueckkehren eines Browser-Tabs fiel die SVG auf ihren rohen Einbett-Zustand zurueck
+  (volle Master-viewBox -> wirkt runterskaliert; neutrales Grau ohne Region-Einfaerbung).
+  Da sich die Werte-Map dabei nicht aenderte, lief der Effekt nicht erneut; der Anstrich
+  fehlte bis zum naechsten Seitenwechsel (Remount erzwang frischen Lauf). Fix: Paint-Logik
+  in eine idempotente `apply()`-Funktion gefasst, die zusaetzlich bei
+  `visibilitychange` (Tab wieder sichtbar) erneut laeuft - greift einmal je
+  Sichtbar-Wechsel, Listener wird im Cleanup entfernt, Effekt-Deps unveraendert. Betrifft
+  beide Nutzungen (Koerper-Seite Muskelkater, Uebungs-Detail Beteiligung). Keine Aenderung
+  an Daten oder SVG. Validiert: vite build, tsc --noEmit, vitest 309/309 gruen.
 - 2026-06-26 - Muskelkarte: ueberarbeitete Master-SVG, Version 1.2.23: Neue Fassung von
   `src/assets/body-muscles.svg` (vom Nutzer in Illustrator bearbeitet). Aenderung rein
   geometrisch: die Rueckenansicht-Silhouette wurde von sechs getrennten Pfaden

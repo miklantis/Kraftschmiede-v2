@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.24",
+      "date": "2026-06-26",
+      "changes": [
+        "Behoben: Wenn du den Browser-Tab verlassen und wieder zur Körper-Seite zurückkehrtest, war die Muskelkater-Figur manchmal grau und kleiner dargestellt – die Einfärbung fehlte, bis du die Seite gewechselt hast. Die Figur färbt sich jetzt automatisch neu, sobald der Tab wieder sichtbar ist. Betrifft auch die Beteiligungs-Figur auf der Übungsseite."
+      ]
+    },
+    {
       "version": "1.2.23",
       "date": "2026-06-26",
       "changes": [

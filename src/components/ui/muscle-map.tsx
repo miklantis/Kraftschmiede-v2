@@ -122,34 +122,56 @@ export function MuscleMap({
   useEffect(() => {
     const root = ref.current;
     if (!root) return;
-    const svg = root.querySelector("svg");
-    if (!svg) return;
 
-    // Zuschnitt + responsive Skalierung (Hoehe folgt aus der viewBox).
-    svg.removeAttribute("width");
-    svg.removeAttribute("height");
-    svg.setAttribute("viewBox", VIEWBOX[view] ?? VIEWBOX.both);
-    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
-    svg.setAttribute("role", "img");
-    svg.setAttribute("aria-label", ariaLabel);
-    svg.style.display = "block";
-    svg.style.width = "100%";
-    svg.style.height = "auto";
+    // Zuschnitt + Einfaerbung der eingebetteten SVG. Setzt Attribute/Inline-Stile
+    // direkt auf den (nicht von React verwalteten) SVG-Teilbaum. Idempotent:
+    // mehrfaches Anwenden mit denselben Werten ergibt denselben Zustand.
+    const apply = (): void => {
+      const svg = root.querySelector("svg");
+      if (!svg) return;
 
-    // Einfaerben: Silhouette = base, beanspruchte Region = colorFn(v), Rest = idle.
-    const brand = readPrimary();
-    const paint =
-      colorFn ?? ((v: number) => mix("#ffffff", brand, 0.35 + 0.65 * clamp01(v)));
-    const regionValues = expand(values ?? {});
+      // Zuschnitt + responsive Skalierung (Hoehe folgt aus der viewBox).
+      svg.removeAttribute("width");
+      svg.removeAttribute("height");
+      svg.setAttribute("viewBox", VIEWBOX[view] ?? VIEWBOX.both);
+      svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+      svg.setAttribute("role", "img");
+      svg.setAttribute("aria-label", ariaLabel);
+      svg.style.display = "block";
+      svg.style.width = "100%";
+      svg.style.height = "auto";
 
-    for (const id of SILHOUETTE_IDS) {
-      setFill(svg.querySelector("#" + id), base);
-    }
-    for (const m of MUSCLES) {
-      const el = svg.querySelector("#" + m.id);
-      const v = regionValues[m.id];
-      setFill(el, v != null && v > 0 ? paint(v) : idle);
-    }
+      // Einfaerben: Silhouette = base, beanspruchte Region = colorFn(v), Rest = idle.
+      const brand = readPrimary();
+      const paint =
+        colorFn ??
+        ((v: number) => mix("#ffffff", brand, 0.35 + 0.65 * clamp01(v)));
+      const regionValues = expand(values ?? {});
+
+      for (const id of SILHOUETTE_IDS) {
+        setFill(svg.querySelector("#" + id), base);
+      }
+      for (const m of MUSCLES) {
+        const el = svg.querySelector("#" + m.id);
+        const v = regionValues[m.id];
+        setFill(el, v != null && v > 0 ? paint(v) : idle);
+      }
+    };
+
+    apply();
+
+    // Beim Verlassen und Zurueckkehren eines Browser-Tabs faellt die SVG auf
+    // ihren rohen Einbett-Zustand zurueck (volle viewBox, neutrales Grau). Da
+    // sich die Werte dabei nicht aendern, lief der Effekt nicht erneut und der
+    // Anstrich fehlte bis zum naechsten Seitenwechsel. Darum hier neu streichen,
+    // sobald der Tab wieder sichtbar ist - greift einmal je Sichtbar-Wechsel.
+    const onVisible = (): void => {
+      if (document.visibilityState === "visible") apply();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisible);
+    };
   }, [values, view, colorFn, base, idle, ariaLabel]);
 
   return (
