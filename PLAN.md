@@ -53,7 +53,7 @@ nicht rund laeuft.
   unberuehrt; Yoga bearbeitet Minuten + Notiz. Damit ist das Vorhaben „Verlauf: Satz-Darstellung
   & Bearbeiten" insgesamt fertig (siehe Abgeschlossene Vorhaben).
 - **Kein offenes Bau-Vorhaben.** Pflege/Bugfixing laufend; neue Features nach Konzept-vor-Code.
-  Aktuelle Version: 1.2.37.
+  Aktuelle Version: 1.2.38.
   Bei jeder Auslieferung die Versionsnummer in `public/changelog.json` fortschreiben (letzte
   Stelle pro normaler Auslieferung hoch, mittlere bei groesseren Features) und einen kurzen
   Nutzer-Eintrag ergaenzen. Aktuelle Version 1.2.33.
@@ -100,6 +100,14 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-26 - Mobile Navi zurueck auf hellen Look, Version 1.2.38: Akzentgruener
+  Hintergrund (1.2.36) wieder verworfen. `BottomNav` zurueck auf `bg-card` (hell) und obere
+  Kante `border-border`; Icons inaktiv `text-[#b0b0b6]` (V1-Grau), aktiv `text-primary`
+  (Akzentgruen). Beibehalten: die saubere Farbtrennung ueber inactiveProps/activeProps
+  (kein Kaskaden-Konflikt mehr, Aktiv-Zustand zuverlaessig sichtbar) sowie der kraeftigere
+  Schatten aus 1.2.34/1.2.35 (rgba(10,12,22,0.34)). Nur `src/components/shell/BottomNav.tsx`.
+  Validiert: Build, tsc, Vitest gruen.
 
 - 2026-06-26 - Aktiv-Zustand der mobilen Navi gefixt, Version 1.2.37: Aktiv/Inaktiv war
   nicht unterscheidbar, weil `text-white/55` (Basisklasse) und `text-white` (activeProps)
