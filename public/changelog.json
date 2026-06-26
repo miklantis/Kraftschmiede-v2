@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.37",
+      "date": "2026-06-26",
+      "changes": [
+        "Korrektur an der unteren Navigationsleiste: Das aktuell ausgewählte Icon hebt sich jetzt zuverlässig durch volles Weiß ab, die übrigen sind deutlich blasser. Vorher war der Unterschied nicht sichtbar."
+      ]
+    },
+    {
       "version": "1.2.36",
       "date": "2026-06-26",
       "changes": [
