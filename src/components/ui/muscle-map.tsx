@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { MUSCLES, expand, type MuscleView } from "@/lib/muscles";
 import bodySvgRaw from "@/assets/body-muscles.svg?raw";
@@ -119,9 +119,18 @@ export function MuscleMap({
 }: MuscleMapProps): React.ReactElement {
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const root = ref.current;
     if (!root) return;
+
+    // SVG genau einmal imperativ einbetten - bewusst NICHT ueber Reacts
+    // dangerouslySetInnerHTML. In React 19 fuellt React den Container sonst bei
+    // JEDEM Re-Render erneut mit dem (gleichen) String und loescht damit unseren
+    // Zuschnitt + die Farben; da sich die Effekt-Dependencies dabei nicht aendern,
+    // liefe der Anstrich-Effekt nicht erneut und die Figur bliebe roh-grau
+    // (haeufigster Ausloeser: Tab-Rueckkehr via Query-Refetch/Auth-Event). So
+    // besitzt React den SVG-Teilbaum nie - kein Re-Render kann ihn ruecksetzen.
+    if (!root.querySelector("svg")) root.innerHTML = bodySvg;
 
     // Zuschnitt + Einfaerbung der eingebetteten SVG. Setzt Attribute/Inline-Stile
     // direkt auf den (nicht von React verwalteten) SVG-Teilbaum. Idempotent:
@@ -159,28 +168,11 @@ export function MuscleMap({
     };
 
     apply();
-
-    // Beim Verlassen und Zurueckkehren eines Browser-Tabs faellt die SVG auf
-    // ihren rohen Einbett-Zustand zurueck (volle viewBox, neutrales Grau). Da
-    // sich die Werte dabei nicht aendern, lief der Effekt nicht erneut und der
-    // Anstrich fehlte bis zum naechsten Seitenwechsel. Darum hier neu streichen,
-    // sobald der Tab wieder sichtbar ist - greift einmal je Sichtbar-Wechsel.
-    const onVisible = (): void => {
-      if (document.visibilityState === "visible") apply();
-    };
-    document.addEventListener("visibilitychange", onVisible);
-    return () => {
-      document.removeEventListener("visibilitychange", onVisible);
-    };
   }, [values, view, colorFn, base, idle, ariaLabel]);
 
   return (
-    <div
-      ref={ref}
-      className={cn("mx-auto w-full max-w-[360px]", className)}
-      // SVG einmalig einbetten; React reconciled den Inhalt nicht (gleicher
-      // String), der Effekt faerbt nach jedem Werte-Wechsel neu.
-      dangerouslySetInnerHTML={{ __html: bodySvg }}
-    />
+    // Leerer Container; die SVG wird im Layout-Effekt einmalig eingebettet und
+    // bleibt damit ausserhalb von Reacts Reconciliation (siehe oben).
+    <div ref={ref} className={cn("mx-auto w-full max-w-[360px]", className)} />
   );
 }

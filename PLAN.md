@@ -55,7 +55,7 @@ nicht rund laeuft.
 - **Kein offenes Bau-Vorhaben.** Pflege/Bugfixing laufend; neue Features nach Konzept-vor-Code.
   Bei jeder Auslieferung die Versionsnummer in `public/changelog.json` fortschreiben (letzte
   Stelle pro normaler Auslieferung hoch, mittlere bei groesseren Features) und einen kurzen
-  Nutzer-Eintrag ergaenzen. Aktuelle Version 1.2.24.
+  Nutzer-Eintrag ergaenzen. Aktuelle Version 1.2.25.
 - **Konten per Einladung (Version 1.2.0) umgesetzt und im Dashboard scharfgeschaltet.** Neue
   Nutzer kommen ueber eine Supabase-Einladung dazu: Einladung im Dashboard verschicken,
   Eingeladener setzt ueber den Link aus der Mail sein Passwort und ist sofort angemeldet. Die
@@ -100,6 +100,24 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
 
+- 2026-06-26 - Bugfix Muskelkarte (Korrektur zu 1.2.24), Version 1.2.25: Eigentliche
+  Ursache eingegrenzt (isoliert in jsdom/React-19 nachgestellt). Kein Remount und nicht
+  `visibilitychange`: ein simples Re-Render von `MuscleMap` genuegt. React 19 wendet
+  `dangerouslySetInnerHTML` bei JEDEM Re-Render erneut an, auch bei byte-gleichem `__html`,
+  und setzt damit den SVG-Teilbaum auf den rohen Einbett-Zustand zurueck (volle
+  Master-viewBox -> wirkt runterskaliert; neutrales Grau). Da die Effekt-Deps (`values`
+  usw.) dabei stabil bleiben, lief der Anstrich-Effekt nicht erneut. Tab-Rueckkehr ist nur
+  der haeufigste Ausloeser des Re-Renders (TanStack `refetchOnWindowFocus` und/oder Supabase
+  `onAuthStateChange` setzt bei Fokus eine neue Session). 1.2.24 scheiterte, weil das
+  ruecksetzende Re-Render nach dem `visibilitychange`-Anstrich kommt und ihn ueberschreibt.
+  Fix: `dangerouslySetInnerHTML` entfernt; die SVG wird in einem `useLayoutEffect` einmalig
+  imperativ eingebettet (nur wenn noch kein `<svg>` vorhanden), danach `apply()`. React
+  verwaltet den Teilbaum damit nie -> kein Re-Render kann ihn ruecksetzen; `apply()` streicht
+  weiterhin bei echten Werte-Aenderungen neu. `visibilitychange`-Listener entfernt
+  (ueberfluessig). Im selben Testaufbau gegengeprueft: uebersteht Re-Renders (Zuschnitt +
+  Farben bleiben). Betrifft beide Nutzungen (Koerper Muskelkater, Uebungs-Detail
+  Beteiligung). Keine Aenderung an Daten oder SVG-Datei. Validiert: vite build, tsc
+  --noEmit, vitest 309/309 gruen.
 - 2026-06-26 - Bugfix Muskelkarte: Anstrich bei Tab-Rueckkehr, Version 1.2.24: Die
   `MuscleMap` (`src/components/ui/muscle-map.tsx`) bettet die SVG einmal per
   `dangerouslySetInnerHTML` ein und setzt Zuschnitt (viewBox-Crop) + Einfaerbung danach

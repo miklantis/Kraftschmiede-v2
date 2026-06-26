@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.25",
+      "date": "2026-06-26",
+      "changes": [
+        "Behoben: Die Muskelkater- und Beteiligungs-Figur konnte nach einem Tab-Wechsel grau und kleiner erscheinen, die Einfärbung fehlte. Der vorige Anlauf hat das nur teilweise gelöst. Jetzt behält die Figur ihre Farben und ihren Zuschnitt zuverlässig, egal wie oft du den Tab wechselst."
+      ]
+    },
+    {
       "version": "1.2.24",
       "date": "2026-06-26",
       "changes": [
