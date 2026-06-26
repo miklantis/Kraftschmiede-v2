@@ -53,6 +53,7 @@ nicht rund laeuft.
   unberuehrt; Yoga bearbeitet Minuten + Notiz. Damit ist das Vorhaben „Verlauf: Satz-Darstellung
   & Bearbeiten" insgesamt fertig (siehe Abgeschlossene Vorhaben).
 - **Kein offenes Bau-Vorhaben.** Pflege/Bugfixing laufend; neue Features nach Konzept-vor-Code.
+  Aktuelle Version: 1.2.34.
   Bei jeder Auslieferung die Versionsnummer in `public/changelog.json` fortschreiben (letzte
   Stelle pro normaler Auslieferung hoch, mittlere bei groesseren Features) und einen kurzen
   Nutzer-Eintrag ergaenzen. Aktuelle Version 1.2.33.
@@ -99,6 +100,13 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-26 - Mobiler Navi-Schatten kraeftiger, Version 1.2.34: oberer Schatten der
+  `BottomNav` von `0 -6px 20px -14px rgba(20,24,40,0.25)` auf
+  `0 -11px 26px -8px rgba(10,12,22,0.45)` angehoben - hoeherer Versatz, gelockerter
+  negativer Spread und dunklere, deckendere Farbe, damit sich die untere Leiste auf Mobile
+  sichtbar vom darueberliegenden Inhalt abhebt. Nur `src/components/shell/BottomNav.tsx`
+  (Schattenklasse + Kommentar). Validiert: Build, tsc, Vitest gruen.
 
 - 2026-06-26 - Haptik wieder zurueckgenommen, Version 1.2.33: das in 1.2.32 eingefuehrte
   taktile Tipp-Feedback komplett ausgebaut. Grund: der einzige Web-Weg auf iOS (der

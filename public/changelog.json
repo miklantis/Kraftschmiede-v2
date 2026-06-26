@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.34",
+      "date": "2026-06-26",
+      "changes": [
+        "Die untere Navigationsleiste auf dem Handy hebt sich jetzt deutlicher vom Inhalt darüber ab: kräftigerer, etwas höher reichender Schatten."
+      ]
+    },
+    {
       "version": "1.2.33",
       "date": "2026-06-26",
       "changes": [
