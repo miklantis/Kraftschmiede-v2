@@ -102,7 +102,7 @@ function JourneyPickerPage(): React.ReactElement {
   });
 
   return (
-    <PageReveal>
+    <>
       {back}
 
       {active !== null && (
@@ -129,17 +129,19 @@ function JourneyPickerPage(): React.ReactElement {
         </p>
       )}
 
-      <div data-reveal-flatten className="grid grid-cols-1 gap-[18px]">
-        {models.map(({ template, card, periodization }) => (
-          <TemplateCard
-            key={card.id}
-            model={card}
-            periodization={periodization}
-            busy={actions.isCreating}
-            onStart={() => start(template)}
-          />
-        ))}
-      </div>
-    </PageReveal>
+      <PageReveal>
+        <div data-reveal-flatten className="grid grid-cols-1 gap-[18px]">
+          {models.map(({ template, card, periodization }) => (
+            <TemplateCard
+              key={card.id}
+              model={card}
+              periodization={periodization}
+              busy={actions.isCreating}
+              onStart={() => start(template)}
+            />
+          ))}
+        </div>
+      </PageReveal>
+    </>
   );
 }

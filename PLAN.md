@@ -53,7 +53,7 @@ nicht rund laeuft.
   unberuehrt; Yoga bearbeitet Minuten + Notiz. Damit ist das Vorhaben „Verlauf: Satz-Darstellung
   & Bearbeiten" insgesamt fertig (siehe Abgeschlossene Vorhaben).
 - **Kein offenes Bau-Vorhaben.** Pflege/Bugfixing laufend; neue Features nach Konzept-vor-Code.
-  Aktuelle Version: 1.2.39.
+  Aktuelle Version: 1.2.40.
   Bei jeder Auslieferung die Versionsnummer in `public/changelog.json` fortschreiben (letzte
   Stelle pro normaler Auslieferung hoch, mittlere bei groesseren Features) und einen kurzen
   Nutzer-Eintrag ergaenzen. Aktuelle Version 1.2.33.
@@ -100,6 +100,14 @@ Ueberblick der fertigen Vorhaben; der chronologische Verlauf steht im Log unten.
 ## Erledigt (Log)
 
 Hier kommen abgeschlossene Bloecke mit Datum dazu.
+
+- 2026-06-27 - Reveal-Timing der Unterseiten angeglichen, Version 1.2.40: Auf allen
+  Hauptseiten steht der `PageHeader` ausserhalb von `PageReveal`, der Effekt beginnt also
+  direkt beim Inhalt. Auf Uebungs-Detail und Journey-Auswahl lag der Kopf (BackLink,
+  PageHeader, bei der Uebung zusaetzlich Kategorie-Chip und Beschreibung) zunaechst im
+  Reveal und staffelte mit - der laengere Vorlauf wirkte wie zusaetzliche Wartezeit. Kopf
+  nun auf Fragment-Ebene gezogen, `PageReveal` umfasst nur noch den Inhalt (columns- bzw.
+  Karten-Block). Step (55ms) unveraendert.
 
 - 2026-06-27 - Reveal-Effekt auf den Unterseiten, Version 1.2.39: Das gestaffelte
   Einblenden beim Seitenwechsel greift jetzt auch auf Uebungs-Detail und Journey-Auswahl.

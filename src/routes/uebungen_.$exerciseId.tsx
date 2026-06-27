@@ -74,16 +74,16 @@ function ExerciseDetailPage(): React.ReactElement {
 
   return (
     <>
-      <PageReveal>
-        <BackLink to="/uebungen" label="Übungen" />
-        <PageHeader title={exercise.name} className="mb-3 min-[960px]:mb-4" />
-        <div className="-mt-2 mb-4 flex flex-wrap items-center gap-2">
-          <span className="rounded-[20px] bg-muted px-2.5 py-1 text-[13px] font-medium text-muted-foreground">
-            {exerciseRowSub(exercise)}
-          </span>
-        </div>
-        {exercise.description && <Prose>{exercise.description}</Prose>}
+      <BackLink to="/uebungen" label="Übungen" />
+      <PageHeader title={exercise.name} className="mb-3 min-[960px]:mb-4" />
+      <div className="-mt-2 mb-4 flex flex-wrap items-center gap-2">
+        <span className="rounded-[20px] bg-muted px-2.5 py-1 text-[13px] font-medium text-muted-foreground">
+          {exerciseRowSub(exercise)}
+        </span>
+      </div>
+      {exercise.description && <Prose>{exercise.description}</Prose>}
 
+      <PageReveal>
         {/* Mobil ein Stapel in fester Reihenfolge (Statistik, Diagramm, Muskeln,
           Verlauf). Ab 960px zwei unabhaengig fliessende Spalten wie V1: links
           (breiter) Diagramm + Verlauf, rechts Statistik + Muskeln. Bewusst KEIN

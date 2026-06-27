@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.40",
+      "date": "2026-06-27",
+      "changes": [
+        "Feinschliff am Einblende-Effekt der Unterseiten: Der Kopf (Zurück-Link und Titel) steht jetzt sofort, nur der Inhalt darunter baut sich gestaffelt auf – genau wie auf den Hauptseiten. Dadurch wirkt das Timing gleichmäßig, ohne Wartezeit am Anfang."
+      ]
+    },
+    {
       "version": "1.2.39",
       "date": "2026-06-27",
       "changes": [
