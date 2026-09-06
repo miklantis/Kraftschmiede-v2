@@ -721,7 +721,7 @@ export interface SeedExercise {
 export const exerciseSeeds: SeedExercise[] = [
   {
     key: "back_squat",
-    name: "Deep Back Squat",
+    name: "Back Squat (Full)",
     profile: "strength",
     tier: "main",
     equipment: "barbell",

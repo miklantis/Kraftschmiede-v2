@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.50.10",
+      "date": "2026-09-06",
+      "changes": [
+        "Die Übung heißt jetzt „Back Squat (Full)“ statt „Deep Back Squat“ – kürzere, gebräuchlichere Bezeichnung für dieselbe volle Kniebeuge."
+      ]
+    },
+    {
       "version": "1.50.9",
       "date": "2026-09-06",
       "changes": [
