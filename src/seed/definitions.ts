@@ -721,13 +721,13 @@ export interface SeedExercise {
 export const exerciseSeeds: SeedExercise[] = [
   {
     key: "back_squat",
-    name: "Back Squat",
+    name: "Deep Back Squat",
     profile: "strength",
     tier: "main",
     equipment: "barbell",
     barKey: "standard",
     description:
-      "Tiefe Kniebeuge mit der Langhantel auf dem oberen Rücken; Hüfte und Knie gemeinsam beugen und strecken.",
+      "Kniebeuge mit der Langhantel auf dem oberen Rücken bis in die volle Tiefe (Hüfte unter Kniehöhe); Hüfte und Knie gemeinsam beugen und strecken.",
     metric: null,
     muscleGroups: ["legs", "glutes"],
     repRangeMin: 6,
