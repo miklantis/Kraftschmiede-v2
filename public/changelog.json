@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.50.9",
+      "date": "2026-09-06",
+      "changes": [
+        "Die Übung „Back Squat“ heißt jetzt „Deep Back Squat“, weil sie bewusst komplett in die Tiefe geht statt nur bis parallel. Die Beschreibung nennt das jetzt genauer."
+      ]
+    },
+    {
       "version": "1.50.8",
       "date": "2026-09-02",
       "changes": [
