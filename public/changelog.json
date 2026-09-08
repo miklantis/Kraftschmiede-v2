@@ -1,6 +1,17 @@
 {
   "versions": [
     {
+      "version": "1.52.0",
+      "date": "2026-09-08",
+      "changes": [
+        "Jede Phase deiner Journey zeigt jetzt ihre Wochen einzeln – nicht mehr nur Maximalkraft, Intensivierung und Test/Peak. Bei Hypertrophie, Kraftausdauer, Wiedereinstieg, Erhaltung und Wiederaufbau steht pro Woche, mit wie vielen Sätzen und in welchem Wiederholungsband gearbeitet wird.",
+        "Erledigte Wochen sind abgehakt, die laufende ist hervorgehoben, kommende stehen blass – wie bei den Kraftphasen.",
+        "Die Deload-Woche steht als eigene Zeile mit ihrer reduzierten Satzzahl.",
+        "Beim Wiederaufbau stehen Sätze, Wiederholungen und die vorgegebene Last in einer Zeile zusammen.",
+        "Die Info-Kachel über der Wochenliste entfällt dort, wo die Wochen dieselben Angaben schon tragen – die Phasenkarten sehen dadurch überall gleich aus."
+      ]
+    },
+    {
       "version": "1.51.1",
       "date": "2026-09-08",
       "changes": [
