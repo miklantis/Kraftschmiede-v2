@@ -531,9 +531,12 @@ Eindampfen, sonst wären die alten Felder schon weg.
   ihr; alle übrigen – die vom Coach geführten Bausteine samt Wiederaufbau – aus ihren
   Eckwerten: Satzzahl aus derselben Volumenformel, nach der der Coach die Woche fährt
   (`volumeForWeek`, gerechnet als geplanter Verlauf mit grünen Erholungsmarkern),
-  Wiederholungsband aus der Phase, Lastanteil – wo die Phase einen vorgibt – aus ihrer
-  Lastliste, alles in einer Zeile („4 × 8–12 · 80 %"). Die Deload-Woche steht als eigene
-  Zeile mit gesenkter Satzzahl und dem Zusatz „Deload, weniger Volumen" (Issue #427).
+  Wiederholungsband aus der Phase, Ziel-Anstrengung aus der systemweiten Vorgabe
+  (`DEFAULT_TARGET_SCORE`, Score 3 = RIR 2, Issue #298 – dieselbe Zahl, mit der der Coach
+  dort rechnet), Lastanteil – wo die Phase einen vorgibt – aus ihrer Lastliste, alles in
+  einer Zeile („4 × 8–12 · RIR 2 · 80 %"). Die Deload-Woche trägt ihren Vermerk neben der
+  Wochenangabe („Woche 4 · Deload") und rechts die gesenkte Satzzahl
+  (Issues #427, #429).
   Unterschiedlich ist nur der markierte Stand – an einer vergangenen Phase sind alle
   Wochen abgehakt, an einer künftigen alle blass, an der laufenden ist die aktuelle
   hervorgehoben; in der Vorlagen-Vorschau läuft keine Journey, dort stehen alle Zeilen
