@@ -55,8 +55,9 @@ function LoadNote({ text }: { text: string }): React.ReactElement {
   );
 }
 
-// Wochentabelle des Plans an einer Phase (Issue #225, Schritt 5): je Woche
-// Saetze, Wiederholungen und Ziel-Anstrengung, darunter das Wochenziel.
+// Wochentabelle des Plans an einer Phase (Issue #225, Schritt 5): je Woche eine
+// Zeile - links die Woche samt Vermerk (Deload, Entlastung, Test), rechts
+// Saetze, Wiederholungen, Ziel-Anstrengung und Lastanteil (Issue #431).
 // Abgeschlossene Wochen sind abgehakt, die laufende ist hervorgehoben, kuenftige
 // stehen blass. Die Testwoche traegt statt Zahlen den Test selbst (#364). Eine
 // Ueberschrift braucht der Block nicht - "Woche 1" sagt schon, was dort steht.
@@ -107,11 +108,6 @@ function WeekPlanRows({
               {r.targets}
             </span>
           </div>
-          {r.note && (
-            <div className="mt-0.5 text-[11.5px] leading-snug text-muted-foreground">
-              {r.note}
-            </div>
-          )}
         </div>
       ))}
     </div>
