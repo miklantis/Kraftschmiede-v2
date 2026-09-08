@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "1.52.2",
+      "date": "2026-09-08",
+      "changes": [
+        "Auch Test/Peak zeigt seine Wochen jetzt einzeilig wie alle anderen Phasen: „Woche 1 · Entlastung“ mit „2 × 3–5 · RIR 3 · 60 %“ und „Woche 2 · Test“ mit „1RM-Test“.",
+        "Der Erklärtext unter den Wochenzeilen entfällt damit überall – was die Woche besonders macht, steht neben der Wochenangabe, die Zahlen stehen rechts."
+      ]
+    },
+    {
       "version": "1.52.1",
       "date": "2026-09-08",
       "changes": [

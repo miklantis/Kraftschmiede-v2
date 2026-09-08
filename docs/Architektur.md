@@ -546,6 +546,14 @@ Eindampfen, sonst wären die alten Felder schon weg.
   Intensivierung und zeigt ihn genauso – Woche 1 die Entlastung, Woche 2 den Test. Weil
   die Testwoche keine Einheit plant (0 Sätze), steht in ihrer Zeile „1RM-Test" statt
   Zahlen; der frühere Fließtext (`testNote`) ist damit entfallen (Issue #364).
+  Jede Zeile ist einzeilig: was die Woche besonders macht, steht als Vermerk neben der
+  Wochenangabe („Woche 1 · Entlastung", „Woche 2 · Test", „Woche 4 · Deload"), die Zahlen
+  stehen rechts, ein Lastanteil unter vollem Arbeitsgewicht hängt hinten an
+  („2 × 3–5 · RIR 3 · 60 %"). Der Vermerk kommt aus dem Plan selbst (`planWeekMark`:
+  keine geplante Einheit = Test, `loadPct < 1` = Entlastung) und nicht aus einer
+  Fokus-Liste. Einen Wochentext trägt die Anzeige damit nicht mehr –
+  `PhaseWeekRow.note` und die zweite Zeile in `PhaseList` sind entfallen, das Feld
+  `week_plan.note` bleibt in der gespeicherten Wochenliste stehen (Issue #431).
 - **Was die Wochentabelle trägt, steht nicht noch einmal darüber.** Die Detailzeilen
   einer Phase sind die Zusammenfassung derselben Zahlen, die die Tabelle Woche für
   Woche auflistet – also lässt `phaseDetail` weg, was die Tabelle schon zeigt

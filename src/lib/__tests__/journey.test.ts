@@ -95,7 +95,6 @@ describe("buildPhaseViews", () => {
       "6 \u00d7 8\u201312 \u00b7 RIR 2",
     ]);
     expect(views[0].weekRows?.[3].label).toBe("Woche 4 \u00b7 Deload");
-    expect(views[0].weekRows?.every((r) => r.note === "")).toBe(true);
     // Die Kachel darueber waere nur die Zusammenfassung derselben Zahlen.
     expect(views[0].detail).toEqual([]);
   });
@@ -114,7 +113,14 @@ describe("buildPhaseViews", () => {
       "3 S\u00e4tze \u00b7 RIR 2",
       "3 S\u00e4tze \u00b7 RIR 2",
     ]);
-    expect(views[0].weekRows?.every((r) => r.note === "")).toBe(true);
+    // Ohne Deload traegt keine Woche einen Vermerk.
+    expect(views[0].weekRows?.map((r) => r.label)).toEqual([
+      "Woche 1",
+      "Woche 2",
+      "Woche 3",
+      "Woche 4",
+      "Woche 5",
+    ]);
     expect(views[0].detail).toEqual([
       { k: "Wiederholungsband", v: "je \u00dcbung" },
     ]);
@@ -285,8 +291,14 @@ describe("buildPhaseViews – Wochenplan", () => {
     ]);
     expect(rows[0].mark).toBe("✓");
     expect(rows[2].mark).toBe("");
-    // Kraftphasen tragen keinen Wochentext mehr (#275).
-    expect(rows[0].note).toBe("");
+    // Kraftwochen laufen auf vollem Arbeitsgewicht - kein Vermerk neben der
+    // Woche und kein Lastanteil in der Zeile (#431).
+    expect(rows.map((r) => r.label)).toEqual([
+      "Woche 1",
+      "Woche 2",
+      "Woche 3",
+      "Woche 4",
+    ]);
   });
 
   it("zeigt die Tabelle auch an einer Phase, die nicht laeuft", () => {
@@ -320,12 +332,15 @@ describe("buildPhaseViews – Wochenplan", () => {
       done: false,
     });
     const rows = views[1].weekRows!;
-    expect(rows.map((r) => r.label)).toEqual(["Woche 1", "Woche 2"]);
-    expect(rows[0].targets).toBe("2 × 3–5 · RIR 3");
-    expect(rows[0].note).toBe("Entlastung mit 60 % vom Arbeitsgewicht");
+    // Entlastung und Test stehen als Vermerk neben der Woche, der Lastanteil
+    // der Entlastung in der Zeile (#431).
+    expect(rows.map((r) => r.label)).toEqual([
+      "Woche 1 · Entlastung",
+      "Woche 2 · Test",
+    ]);
+    expect(rows[0].targets).toBe("2 × 3–5 · RIR 3 · 60 %");
     // Die Testwoche plant nichts - dort steht der Test statt Zahlen.
     expect(rows[1].targets).toBe("1RM-Test");
-    expect(rows[1].note).toBe("Keine Vorgabe, läuft über die Übungsseite");
     // Wie bei allen Planphasen traegt die Tabelle alles (#362).
     expect(views[1].detail).toEqual([]);
   });
@@ -349,7 +364,7 @@ describe("buildPhaseViews – Wochenplan", () => {
     });
     // Statt einer Zusammenfassung stehen die Wochen selbst da (Issue #366).
     expect(views[1].weekRows?.map((r) => r.targets)).toEqual([
-      "2 × 3–5 · RIR 3",
+      "2 × 3–5 · RIR 3 · 60 %",
       "1RM-Test",
     ]);
     expect(views[1].detail).toEqual([]);
@@ -417,9 +432,6 @@ describe("buildPhaseViews – Wochentabelle aus der Lastliste", () => {
     expect(rows.map((r) => r.state)).toEqual(["past", "current", "future"]);
     expect(rows[0].mark).toBe("✓");
     expect(rows[1].mark).toBe("");
-    // Derselbe Satz an jeder Zeile waere nur Rauschen - die Leiter spricht fuer
-    // sich.
-    expect(rows.every((r) => r.note === "")).toBe(true);
   });
 
   it("gibt jeder Phasenwoche eine Zeile, auch wenn die Liste kuerzer ist", () => {

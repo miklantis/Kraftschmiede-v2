@@ -62,8 +62,6 @@ export interface PhaseWeekRow {
   /** "4 × 4 · RIR 1" - Saetze, Wiederholungen, Ziel-Anstrengung. Bei einer
    *  Phase, die nur die Last vorgibt, steht dort deren Anteil ("80 %"). */
   targets: string;
-  /** Wochenziel in einem kurzen Satz (aus dem Plan). */
-  note: string;
   /** Vergangen, laufend oder kuenftig - wie bei den Phasen selbst. In der
    *  Vorlagen-Vorschau laeuft keine Woche, dort stehen alle Zeilen neutral. */
   state: PhaseState;
@@ -207,9 +205,20 @@ function tableWeek(
   return null;
 }
 
+/** Vermerk neben der Wochenangabe einer Planwoche; null = die Woche ist der
+ *  Normalfall der Phase und braucht keinen. Er entsteht aus dem Plan selbst und
+ *  nicht aus einer Fokus-Liste: eine Woche ohne geplante Einheit ist die
+ *  Testwoche, eine Woche unter vollem Arbeitsgewicht eine Entlastung
+ *  (Issue #431). */
+function planWeekMark(w: WeekPlanWeek): string | null {
+  if (!weekDemandsSession(w)) return "Test";
+  return w.loadPct < 1 ? "Entlastung" : null;
+}
+
 // Wochentabelle des Plans: je Woche Saetze, Wiederholungen, Ziel-Anstrengung und
-// das Wochenziel. Der Zustand kommt aus der laufenden Woche der Phase -
-// abgeschlossene Wochen sind abgehakt, die laufende ist markiert.
+// - wo die Woche unter vollem Arbeitsgewicht laeuft - ihr Lastanteil. Der
+// Zustand kommt aus der laufenden Woche der Phase - abgeschlossene Wochen sind
+// abgehakt, die laufende ist markiert.
 function planWeekRows(
   plan: WeekPlan,
   weekInPhase: number | null,
@@ -219,13 +228,20 @@ function planWeekRows(
     .sort((a, b) => a.week - b.week)
     .map((w) => {
       const state = weekState(w.week, weekInPhase);
+      const vermerk = planWeekMark(w);
       return {
-        label: `Woche ${w.week}`,
+        label:
+          vermerk === null
+            ? `Woche ${w.week}`
+            : `Woche ${w.week} \u00b7 ${vermerk}`,
         // Die reine Testwoche plant nichts - "0 × 1 · RIR 0" waere Unsinn.
-        targets: weekDemandsSession(w) ? weekTargets(w) : TEST_WEEK_TARGETS,
-        note: w.note,
+        targets: !weekDemandsSession(w)
+          ? TEST_WEEK_TARGETS
+          : w.loadPct < 1
+            ? `${weekTargets(w)} \u00b7 ${loadPercent(w.loadPct)}`
+            : weekTargets(w),
         state,
-        mark: state === "past" ? "✓" : "",
+        mark: state === "past" ? "\u2713" : "",
       };
     });
 }
@@ -290,7 +306,6 @@ function coachWeekRows(
       targets: [core, COACH_RIR, pct == null ? null : loadPercent(pct)]
         .filter((t) => t !== null)
         .join(" \u00b7 "),
-      note: "",
       state,
       mark: state === "past" ? "\u2713" : "",
     };
