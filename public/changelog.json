@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.51.1",
+      "date": "2026-09-08",
+      "changes": [
+        "Die Auswahl „Art des Ziels“ im Meilenstein-Dialog sieht jetzt genauso aus wie die Tageswahl im Yoga-Dialog: der gewählte Knopf ist deutlich grün gefüllt statt nur zart getönt."
+      ]
+    },
+    {
       "version": "1.51.0",
       "date": "2026-09-08",
       "changes": [

@@ -2,16 +2,20 @@ import { useEffect, useState } from "react";
 import { Overlay } from "@/components/ui/overlay";
 import { FieldLabel } from "@/components/ui/field-label";
 import { NoteBlock } from "@/components/ui/note-block";
+import { OptionRow } from "@/components/ui/option-row";
 import { useAddYoga } from "@/hooks/useAddYoga";
 import { todayISO } from "@/lib/format";
-import { cn } from "@/lib/utils";
 
 // Yoga-Eintrag-Popup: Datum als drei Schnellwahl-Knoepfe und Dauer als Stepper.
 // Keine freie Kalenderwahl – bewusst schlicht. Die Notiz laeuft ueber denselben
 // Baustein wie bei allen anderen Einheiten-Arten: ohne Notiz nur ein schlanker
 // "+ Notiz"-Knopf, damit die Optik schlicht bleibt.
 // Akzent durchgehend Yoga-Lila. Nutzt das generische Overlay-Fundament.
-const DAYS = ["Heute", "Gestern", "Vorgestern"];
+const DAYS = [
+  { value: "0", label: "Heute" },
+  { value: "1", label: "Gestern" },
+  { value: "2", label: "Vorgestern" },
+] as const;
 const MIN_START = 80;
 const STEP = 5;
 const MIN_LO = 5;
@@ -56,26 +60,14 @@ export function YogaEntryModal({
   return (
     <Overlay open={open} onClose={onClose} title="Yoga eintragen">
       <FieldLabel>Datum</FieldLabel>
-      <div className="mt-2 mb-[18px] flex gap-2">
-        {DAYS.map((label, off) => {
-          const active = dayOffset === off;
-          return (
-            <button
-              key={off}
-              type="button"
-              onClick={() => setDayOffset(off)}
-              className={cn(
-                "flex-1 rounded-control border p-[11px] text-[14px] font-semibold transition-colors",
-                active
-                  ? "border-yoga bg-yoga text-white"
-                  : "border-border bg-card text-foreground hover:border-yoga",
-              )}
-            >
-              {label}
-            </button>
-          );
-        })}
-      </div>
+      <OptionRow
+        options={DAYS}
+        value={String(dayOffset) as "0" | "1" | "2"}
+        onChange={(v) => setDayOffset(Number(v))}
+        accent="yoga"
+        ariaLabel="Datum"
+        className="mt-2 mb-[18px]"
+      />
 
       <FieldLabel>Dauer</FieldLabel>
       <div className="mt-2 mb-5 flex items-center justify-between rounded-control bg-muted px-4 py-3">

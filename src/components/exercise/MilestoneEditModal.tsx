@@ -4,12 +4,12 @@ import { DialogFooter } from "@/components/ui/dialog-footer";
 import { DeleteConfirmButton } from "@/components/ui/delete-confirm-button";
 import { Input } from "@/components/ui/input";
 import { FieldLabel } from "@/components/ui/field-label";
+import { OptionRow } from "@/components/ui/option-row";
 import type { ExerciseMilestoneRow, MeilensteinBasis } from "@/schemas";
 import { useMilestoneActions } from "@/hooks/useMilestoneActions";
 import { useMeilensteinBasis } from "@/hooks/useMeilensteinBasis";
 import { BASIS_NAME, zielWert } from "@/lib/meilensteinBasis";
 import { fmtWeight } from "@/lib/format";
-import { cn } from "@/lib/utils";
 
 // Anlegen/Bearbeiten eines Meilensteins ueber das generische Overlay. Drei
 // Felder: Name, Art des Ziels und je nach Art ein festes Ziel-1RM oder ein
@@ -20,7 +20,9 @@ import { cn } from "@/lib/utils";
 // sind auf das Koerpergewicht bezogen, damit passen die ueblichen Faktoren
 // (0,75 / 1,0 / 1,5) ohne Umrechnung.
 
-const ARTEN: MeilensteinBasis[] = ["fix", "koerpergewicht", "ffm"];
+const ARTEN: { value: MeilensteinBasis; label: string }[] = (
+  ["fix", "koerpergewicht", "ffm"] as const
+).map((art) => ({ value: art, label: BASIS_NAME[art] }));
 
 export function MilestoneEditModal({
   exerciseId,
@@ -109,24 +111,14 @@ export function MilestoneEditModal({
       />
 
       <FieldLabel className="mb-2">Art des Ziels</FieldLabel>
-      <div className="mb-[18px] flex gap-2">
-        {ARTEN.map((art) => (
-          <button
-            key={art}
-            type="button"
-            onClick={() => setBasis(art)}
-            disabled={saved}
-            className={cn(
-              "flex-1 rounded-[11px] border px-2 py-2.5 text-[13px] font-semibold transition-colors",
-              basis === art
-                ? "border-primary bg-primary/10 text-primary"
-                : "border-border bg-card text-muted-foreground",
-            )}
-          >
-            {BASIS_NAME[art]}
-          </button>
-        ))}
-      </div>
+      <OptionRow
+        options={ARTEN}
+        value={basis}
+        onChange={setBasis}
+        disabled={saved}
+        ariaLabel="Art des Ziels"
+        className="mb-[18px]"
+      />
 
       {basis === "fix" ? (
         <>

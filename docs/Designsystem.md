@@ -203,6 +203,7 @@ Doku nur als Beispiel im Text stehen – samt Farben, die es in der App gar nich
 | **Stepper** | Zwei ±-Knöpfe mit beliebigem Wert in der Mitte; kennt selbst keine Einheit oder Grenzen. |
 | **SegmentedControl** | Segment-Umschalter, genau einer aktiv – z. B. Liste/Kalender im Verlauf. |
 | **ChipSwitch** | Einfachauswahl als kleine Chips, genau einer aktiv (z. B. Metrik-Umschalter). |
+| **OptionRow** | Auswahl-Reihe aus gleich breiten Knöpfen über die volle Zeile, genau einer aktiv: aktiv im Akzent gefüllt, inaktiv Karte mit Rahmen. **Verbindlich für Auswahlfelder in Dialogen** (Tageswahl im Yoga-Dialog, Zielart beim Meilenstein); Akzent wahlweise `primary` oder `yoga`. Abgrenzung: SegmentedControl für Ansichtswechsel, ChipSwitch für kompakte Chips. |
 | **ChipEditor** | Mehrfachauswahl als Chips zum Hinzufügen und Entfernen (z. B. Scheiben, Kettlebells). |
 | **RatingScale** | Bewertungs-Skala: Reihe gleichwertiger Buttons, einer aktiv; Farbe je Wert frei vorgebbar (Kater, Readiness). |
 | **LoadMore** | Nachladen bei gekürzten Listen: kein Rahmen, kein Hintergrund, kein Text – nur ein dezent grauer Chevron nach unten, zentriert über die volle Breite als Tippfläche (Beschriftung nur als `aria-label`). **Verbindlich für alle Listen**, die zunächst einen Teil zeigen und nachladen können; kein eigener Outline-Button mehr. Den Zähler dahinter hält der Hook `useMehrLaden` (sichtbarer Ausschnitt, Rest-Flag, Nachladen; Seitengröße standardmäßig fünf) – zusammen genutzt in der Verlauf-Liste, im Befinden-Verlauf, bei den Messungen und den Zeiträumen. |
