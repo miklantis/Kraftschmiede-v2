@@ -1,6 +1,16 @@
 {
   "versions": [
     {
+      "version": "1.51.0",
+      "date": "2026-09-08",
+      "changes": [
+        "Meilensteine je Übung können jetzt dynamisch sein: statt eines festen Gewichts legst du einen Faktor auf dein Körpergewicht oder auf deine fettfreie Masse fest, zum Beispiel „1,0× Körpergewicht“ beim Back Squat. Das Ziel wandert dann mit deinen Messungen mit.",
+        "Als Grundlage zählt der Durchschnitt deiner Messungen der letzten 30 Tage, damit das Ziel nicht bei jeder Tagesschwankung springt.",
+        "Ein einmal erreichter Meilenstein bleibt erreicht – auch wenn sich dein Körpergewicht danach ändert.",
+        "Liegt in den letzten 30 Tagen keine passende Messung vor, zeigt der Meilenstein „wartet auf Messung“ statt eines falschen Ziels."
+      ]
+    },
+    {
       "version": "1.50.10",
       "date": "2026-09-06",
       "changes": [

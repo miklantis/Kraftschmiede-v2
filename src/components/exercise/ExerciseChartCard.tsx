@@ -3,6 +3,8 @@ import { ChipSwitch } from "@/components/ui/chip-switch";
 import { ExerciseChart } from "./ExerciseChart";
 import { usePinnedCharts } from "@/hooks/usePinnedCharts";
 import { useMilestones } from "@/hooks/useMilestones";
+import { useMeilensteinBasis } from "@/hooks/useMeilensteinBasis";
+import { anzeigeZiel } from "@/lib/meilensteinBasis";
 import { useRmTests } from "@/hooks/useRmTests";
 import { fmtWeight } from "@/lib/format";
 import {
@@ -64,21 +66,29 @@ export function ExerciseChartCard({
     () => recordSeries(history, rmTests, currentRm),
     [history, rmTests, currentRm],
   );
+  const basisWerte = useMeilensteinBasis();
   const goalsAvailable =
     milestones.length > 0 && active === "rm" && rmPoints.length > 0;
   const [showGoals, setShowGoals] = useState(false);
   const goalsOn = goalsAvailable && showGoals;
 
+  // Dynamische Meilensteine tragen ihr Ziel nicht in der Zeile, es kommt aus
+  // den Koerperwerten. Wer (noch) keinen Zielwert hat, bekommt auch keine Linie.
   const milestoneLines = useMemo(
     () =>
       goalsOn
-        ? milestones.map((m) => ({
-            value: m.target_rm,
-            achieved: m.achieved_at != null,
-            label: m.name + " · " + fmtWeight(m.target_rm, unit),
-          }))
+        ? milestones
+            .map((m) => ({ m, ziel: anzeigeZiel(m, basisWerte) }))
+            .filter((e): e is { m: (typeof milestones)[number]; ziel: number } =>
+              e.ziel != null,
+            )
+            .map(({ m, ziel }) => ({
+              value: ziel,
+              achieved: m.achieved_at != null,
+              label: m.name + " · " + fmtWeight(ziel, unit),
+            }))
         : undefined,
-    [goalsOn, milestones, unit],
+    [goalsOn, milestones, basisWerte, unit],
   );
 
   return (

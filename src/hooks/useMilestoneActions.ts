@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { INVALIDATE, invalidateGroup } from "@/lib/queryKeys";
 import { supabaseExerciseStore } from "@/lib/exerciseStore";
 import { writeMilestoneAction } from "@/lib/exerciseWrite";
-import type { MilestoneAction } from "@/lib/exerciseWrite";
+import type { MilestoneAction, MeilensteinZiel } from "@/lib/exerciseWrite";
 import { useUserId } from "./useUserId";
 import { todayISO } from "@/lib/format";
 
@@ -12,12 +12,14 @@ import { todayISO } from "@/lib/format";
 // hier steht nur noch Absicht und Auffrischung.
 // markAchieved stempelt das heutige Datum, aber nur solange achieved_at leer ist
 // (Guard im Store) – idempotent, ueberschreibt kein bestehendes Erreichen-Datum.
+// Dabei wandert der gerade gueltige Zielwert mit in die Zeile, damit ein
+// dynamischer Meilenstein nach dem Erreichen nicht weiterwandert.
 
 export function useMilestoneActions(): {
-  add: (exerciseId: string, name: string, targetRm: number) => Promise<void>;
-  update: (id: string, name: string, targetRm: number) => Promise<void>;
+  add: (exerciseId: string, name: string, ziel: MeilensteinZiel) => Promise<void>;
+  update: (id: string, name: string, ziel: MeilensteinZiel) => Promise<void>;
   remove: (id: string) => Promise<void>;
-  markAchieved: (id: string) => Promise<void>;
+  markAchieved: (id: string, ziel: number) => Promise<void>;
   isPending: boolean;
   error: unknown;
 } {
@@ -33,13 +35,13 @@ export function useMilestoneActions(): {
   });
 
   return {
-    add: (exerciseId, name, targetRm) =>
-      mutation.mutateAsync({ type: "add", exerciseId, name, targetRm }),
-    update: (id, name, targetRm) =>
-      mutation.mutateAsync({ type: "update", id, name, targetRm }),
+    add: (exerciseId, name, ziel) =>
+      mutation.mutateAsync({ type: "add", exerciseId, name, ziel }),
+    update: (id, name, ziel) =>
+      mutation.mutateAsync({ type: "update", id, name, ziel }),
     remove: (id) => mutation.mutateAsync({ type: "delete", id }),
-    markAchieved: (id) =>
-      mutation.mutateAsync({ type: "markAchieved", id, date: todayISO() }),
+    markAchieved: (id, ziel) =>
+      mutation.mutateAsync({ type: "markAchieved", id, date: todayISO(), ziel }),
     isPending: mutation.isPending,
     error: mutation.error,
   };

@@ -2,6 +2,8 @@ import { useMemo } from "react";
 import { X } from "lucide-react";
 import { ExerciseChart } from "./ExerciseChart";
 import { useMilestones } from "@/hooks/useMilestones";
+import { useMeilensteinBasis } from "@/hooks/useMeilensteinBasis";
+import { anzeigeZiel } from "@/lib/meilensteinBasis";
 import { usePinnedGoals } from "@/hooks/usePinnedGoals";
 import { usePinnedCharts } from "@/hooks/usePinnedCharts";
 import { useRmTests } from "@/hooks/useRmTests";
@@ -35,6 +37,7 @@ export function PinnedChartTile({
     () => recordSeries(card.history, rmTests, card.rm),
     [card.history, rmTests, card.rm],
   );
+  const basisWerte = useMeilensteinBasis();
   const goalsAvailable =
     milestones.length > 0 && card.metric === "rm" && rmPoints.length > 0;
 
@@ -45,16 +48,23 @@ export function PinnedChartTile({
   // toggle entfernt den vorhandenen Pin sofort (ohne Rueckfrage), Sync inklusive.
   const { toggle: togglePin } = usePinnedCharts();
 
+  // Dynamische Meilensteine tragen ihr Ziel nicht in der Zeile, es kommt aus
+  // den Koerperwerten. Wer (noch) keinen Zielwert hat, bekommt auch keine Linie.
   const milestoneLines = useMemo(
     () =>
       goalsOn
-        ? milestones.map((m) => ({
-            value: m.target_rm,
-            achieved: m.achieved_at != null,
-            label: m.name + " · " + fmtWeight(m.target_rm, unit),
-          }))
+        ? milestones
+            .map((m) => ({ m, ziel: anzeigeZiel(m, basisWerte) }))
+            .filter((e): e is { m: (typeof milestones)[number]; ziel: number } =>
+              e.ziel != null,
+            )
+            .map(({ m, ziel }) => ({
+              value: ziel,
+              achieved: m.achieved_at != null,
+              label: m.name + " · " + fmtWeight(ziel, unit),
+            }))
         : undefined,
-    [goalsOn, milestones, unit],
+    [goalsOn, milestones, basisWerte, unit],
   );
 
   return (

@@ -70,3 +70,5 @@ zweideutig.
   Bausteine-Konzepts; der übrige Abschnitt 9 gilt weiter.
 - **0022 – vergeben** an „Eine abgeschlossene Journey ist ein Protokoll, kein Plan"
   (#387).
+- **0023 – vergeben** an „Dynamische Meilensteine rechnen gegen Körpergewicht und
+  fettfreie Masse" (#420).

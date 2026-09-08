@@ -22,11 +22,20 @@ import type {
 
 /** Was der Nutzer mit einem Uebungs-Meilenstein will. Uebung und Nutzer-Kennung
  *  stehen nur beim Anlegen fest. */
+/** Wogegen ein Meilenstein zaehlt: entweder ein festes Ziel in Kilogramm oder
+ *  ein Faktor auf einen Koerperwert (Koerpergewicht bzw. fettfreie Masse). Der
+ *  dynamische Zielwert wird nicht gespeichert, sondern beim Anzeigen aus dem
+ *  Basiswert der letzten 30 Tage gerechnet. */
+export type MeilensteinZiel =
+  | { basis: "fix"; targetRm: number }
+  | { basis: "koerpergewicht" | "ffm"; faktor: number };
+
 export type MilestoneAction =
-  | { type: "add"; exerciseId: string; name: string; targetRm: number }
-  | { type: "update"; id: string; name: string; targetRm: number }
+  | { type: "add"; exerciseId: string; name: string; ziel: MeilensteinZiel }
+  | { type: "update"; id: string; name: string; ziel: MeilensteinZiel }
   | { type: "delete"; id: string }
-  | { type: "markAchieved"; id: string; date: string };
+  /** `ziel` ist der im Moment des Erreichens gueltige Zielwert in kg. */
+  | { type: "markAchieved"; id: string; date: string; ziel: number };
 
 /** Was der Nutzer mit einem 1RM-Test will. `restore` beschreibt beim Loeschen,
  *  auf welchen Stand der Rekord zurueckgeht – null heisst: der Rekord bleibt
@@ -66,6 +75,19 @@ export interface ExerciseEditValues {
   rep_range_max?: number;
 }
 
+/** Das Ziel in die drei Spalten uebersetzen. Immer alle drei, damit beim
+ *  Wechsel der Art kein Rest der vorherigen stehen bleibt – die Datenbank
+ *  laesst genau eine der beiden Kombinationen zu. */
+function zielFelder(ziel: MeilensteinZiel): {
+  basis: MeilensteinZiel["basis"];
+  target_rm: number | null;
+  faktor: number | null;
+} {
+  return ziel.basis === "fix"
+    ? { basis: "fix", target_rm: ziel.targetRm, faktor: null }
+    : { basis: ziel.basis, target_rm: null, faktor: ziel.faktor };
+}
+
 /** Eine Meilenstein-Aktion abspielen: Absicht herein, Handgriffe auf den
  *  Speicher heraus. Ohne angemeldeten Nutzer wird nichts geschrieben. */
 export async function writeMilestoneAction(
@@ -80,7 +102,7 @@ export async function writeMilestoneAction(
       user_id: userId,
       exercise_id: action.exerciseId,
       name: action.name,
-      target_rm: action.targetRm,
+      ...zielFelder(action.ziel),
     };
     await store.insertMeilenstein(row);
     return;
@@ -89,13 +111,13 @@ export async function writeMilestoneAction(
   if (action.type === "update") {
     await store.updateMeilenstein(action.id, {
       name: action.name,
-      target_rm: action.targetRm,
+      ...zielFelder(action.ziel),
     });
     return;
   }
 
   if (action.type === "markAchieved") {
-    await store.markMeilensteinAchieved(action.id, action.date);
+    await store.markMeilensteinAchieved(action.id, action.date, action.ziel);
     return;
   }
 
