@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "1.52.1",
+      "date": "2026-09-08",
+      "changes": [
+        "In den Wochenzeilen einer Phase steht der Deload jetzt direkt neben der Woche („Woche 4 · Deload“) statt als Zusatzzeile darunter.",
+        "Die Wochenzeilen nennen zusätzlich die Ziel-Anstrengung („4 × 8–12 · RIR 2“) – dieselbe Vorgabe, mit der der Coach in diesen Phasen ohnehin rechnet."
+      ]
+    },
+    {
       "version": "1.52.0",
       "date": "2026-09-08",
       "changes": [

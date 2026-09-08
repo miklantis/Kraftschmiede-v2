@@ -84,16 +84,18 @@ describe("buildPhaseViews", () => {
       weekInPhase: 1,
       done: false,
     });
-    // Satz-Rampe und Band stehen Woche fuer Woche in der Tabelle, die
-    // Deload-Woche als eigene Zeile mit gesenkter Satzzahl.
+    // Satz-Rampe, Band und Ziel-Anstrengung stehen Woche fuer Woche in der
+    // Tabelle; die Deload-Woche traegt ihren Vermerk neben der Wochenangabe
+    // und rechts die gesenkte Satzzahl (Issue #429).
     expect(views[0].weekRows?.map((r) => r.targets)).toEqual([
-      "2 \u00d7 8\u201312",
-      "3 \u00d7 8\u201312",
-      "4 \u00d7 8\u201312",
-      "3 \u00d7 8\u201312",
-      "6 \u00d7 8\u201312",
+      "2 \u00d7 8\u201312 \u00b7 RIR 2",
+      "3 \u00d7 8\u201312 \u00b7 RIR 2",
+      "4 \u00d7 8\u201312 \u00b7 RIR 2",
+      "3 \u00d7 8\u201312 \u00b7 RIR 2",
+      "6 \u00d7 8\u201312 \u00b7 RIR 2",
     ]);
-    expect(views[0].weekRows?.[3].note).toBe("Deload, weniger Volumen");
+    expect(views[0].weekRows?.[3].label).toBe("Woche 4 \u00b7 Deload");
+    expect(views[0].weekRows?.every((r) => r.note === "")).toBe(true);
     // Die Kachel darueber waere nur die Zusammenfassung derselben Zahlen.
     expect(views[0].detail).toEqual([]);
   });
@@ -106,11 +108,11 @@ describe("buildPhaseViews", () => {
     // Ohne Vorgabeband bleibt es in den Zeilen bei der Satzzahl, und genau eine
     // Kachelzeile sagt, woher das Band stattdessen kommt.
     expect(views[0].weekRows?.map((r) => r.targets)).toEqual([
-      "3 S\u00e4tze",
-      "3 S\u00e4tze",
-      "3 S\u00e4tze",
-      "3 S\u00e4tze",
-      "3 S\u00e4tze",
+      "3 S\u00e4tze \u00b7 RIR 2",
+      "3 S\u00e4tze \u00b7 RIR 2",
+      "3 S\u00e4tze \u00b7 RIR 2",
+      "3 S\u00e4tze \u00b7 RIR 2",
+      "3 S\u00e4tze \u00b7 RIR 2",
     ]);
     expect(views[0].weekRows?.every((r) => r.note === "")).toBe(true);
     expect(views[0].detail).toEqual([
@@ -149,8 +151,8 @@ describe("buildPhaseViews \u2013 Lastliste", () => {
     // Die Tabelle fuehrt den Anteil je Woche auf - eine Detailzeile daneben
     // waere dieselbe Zahl ein zweites Mal (Issue #362).
     expect(views[0].detail.map((d) => d.k)).not.toContain("Vorgegebene Last");
-    expect(views[0].weekRows?.[0].targets).toBe("6 \u00d7 8\u201312 \u00b7 65 %");
-    expect(views[1].weekRows?.[0].targets).toBe("6 \u00d7 8\u201312 \u00b7 100 %");
+    expect(views[0].weekRows?.[0].targets).toBe("6 \u00d7 8\u201312 \u00b7 RIR 2 \u00b7 65 %");
+    expect(views[1].weekRows?.[0].targets).toBe("6 \u00d7 8\u201312 \u00b7 RIR 2 \u00b7 100 %");
   });
 
   it("zeigt an der laufenden Phase den Anteil der laufenden Woche", () => {
@@ -159,7 +161,7 @@ describe("buildPhaseViews \u2013 Lastliste", () => {
       weekInPhase: 2,
       done: false,
     });
-    expect(views[0].weekRows?.[1].targets).toBe("4 \u00d7 8\u201312 \u00b7 80 %");
+    expect(views[0].weekRows?.[1].targets).toBe("4 \u00d7 8\u201312 \u00b7 RIR 2 \u00b7 80 %");
     expect(views[0].weekRows?.[1].state).toBe("current");
     expect(views[0].loadNote).toContain("80 %");
   });
@@ -173,9 +175,9 @@ describe("buildPhaseViews \u2013 Lastliste", () => {
     });
     const rows = views[0].weekRows!;
     expect(rows.map((r) => r.targets)).toEqual([
-      "2 \u00d7 8\u201312 \u00b7 65 %",
-      "4 \u00d7 8\u201312 \u00b7 80 %",
-      "6 \u00d7 8\u201312 \u00b7 95 %",
+      "2 \u00d7 8\u201312 \u00b7 RIR 2 \u00b7 65 %",
+      "4 \u00d7 8\u201312 \u00b7 RIR 2 \u00b7 80 %",
+      "6 \u00d7 8\u201312 \u00b7 RIR 2 \u00b7 95 %",
     ]);
     expect(rows.every((r) => r.state === "past")).toBe(true);
     expect(rows.every((r) => r.mark === "✓")).toBe(true);
@@ -377,7 +379,7 @@ describe("buildPhaseViews – Wochenplan", () => {
     // Coach-Phasen tragen keine Wochenliste - ihre Zeilen entstehen aus
     // Satz-Rampe und Band, statt dass die Phase ohne Tabelle dasteht.
     expect(views.every((v) => v.weekRows !== null)).toBe(true);
-    expect(views[1].weekRows?.[0].targets).toBe("2 \u00d7 8\u201312");
+    expect(views[1].weekRows?.[0].targets).toBe("2 \u00d7 8\u201312 \u00b7 RIR 2");
     expect(views[1].detail).toEqual([]);
   });
 });
@@ -408,9 +410,9 @@ describe("buildPhaseViews – Wochentabelle aus der Lastliste", () => {
     const rows = views[0].weekRows!;
     expect(rows.map((r) => r.label)).toEqual(["Woche 1", "Woche 2", "Woche 3"]);
     expect(rows.map((r) => r.targets)).toEqual([
-      "2 \u00d7 6\u201310 \u00b7 65 %",
-      "3 \u00d7 6\u201310 \u00b7 80 %",
-      "4 \u00d7 6\u201310 \u00b7 95 %",
+      "2 \u00d7 6\u201310 \u00b7 RIR 2 \u00b7 65 %",
+      "3 \u00d7 6\u201310 \u00b7 RIR 2 \u00b7 80 %",
+      "4 \u00d7 6\u201310 \u00b7 RIR 2 \u00b7 95 %",
     ]);
     expect(rows.map((r) => r.state)).toEqual(["past", "current", "future"]);
     expect(rows[0].mark).toBe("✓");
@@ -434,15 +436,15 @@ describe("buildPhaseViews – Wochentabelle aus der Lastliste", () => {
     const rows = views[0].weekRows!;
     expect(rows).toHaveLength(4);
     // Hinter der Liste haelt die Vorgabe auf ihrem letzten Wert.
-    expect(rows[3].targets).toBe("4 \u00d7 6\u201310 \u00b7 95 %");
+    expect(rows[3].targets).toBe("4 \u00d7 6\u201310 \u00b7 RIR 2 \u00b7 95 %");
   });
 
   it("zeigt die Tabelle in der Vorschau neutral, ohne laufende Woche", () => {
     const rows = buildTemplatePhaseViews([wiederaufbau])[0].weekRows!;
     expect(rows.map((r) => r.targets)).toEqual([
-      "2 \u00d7 6\u201310 \u00b7 65 %",
-      "3 \u00d7 6\u201310 \u00b7 80 %",
-      "4 \u00d7 6\u201310 \u00b7 95 %",
+      "2 \u00d7 6\u201310 \u00b7 RIR 2 \u00b7 65 %",
+      "3 \u00d7 6\u201310 \u00b7 RIR 2 \u00b7 80 %",
+      "4 \u00d7 6\u201310 \u00b7 RIR 2 \u00b7 95 %",
     ]);
     expect(rows.every((r) => r.state === "preview")).toBe(true);
     expect(rows.every((r) => r.mark === "")).toBe(true);
@@ -508,9 +510,9 @@ describe("buildTemplatePhaseViews", () => {
       }),
     ]);
     expect(views[0].weekRows?.map((r) => r.targets)).toEqual([
-      "2 \u00d7 8\u201312 \u00b7 65 %",
-      "4 \u00d7 8\u201312 \u00b7 80 %",
-      "6 \u00d7 8\u201312 \u00b7 95 %",
+      "2 \u00d7 8\u201312 \u00b7 RIR 2 \u00b7 65 %",
+      "4 \u00d7 8\u201312 \u00b7 RIR 2 \u00b7 80 %",
+      "6 \u00d7 8\u201312 \u00b7 RIR 2 \u00b7 95 %",
     ]);
     expect(views[0].detail.map((d) => d.k)).not.toContain("Vorgegebene Last");
   });

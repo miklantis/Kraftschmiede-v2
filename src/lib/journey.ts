@@ -5,8 +5,10 @@ import type {
   WeekPlanWeek,
 } from "@/engine";
 import {
+  DEFAULT_TARGET_SCORE,
   buildPhasePlans,
   loadPlanForWeek,
+  scoreInfo,
   volumeForWeek,
   weekDemandsSession,
 } from "@/engine";
@@ -228,13 +230,22 @@ function planWeekRows(
     });
 }
 
+/** Ziel-Anstrengung der Coach-Phasen. Ausserhalb einer Wochenliste ist sie
+ *  systemweit festgelegt (Issue #298) - dieselbe Zahl, mit der der Coach dort
+ *  rechnet und die das Popup "Uebung anpassen" zeigt. Die Zeile nennt sie mit,
+ *  damit sie sich liest wie die Zeile einer Kraftphase (Issue #429). */
+const COACH_RIR: string | null = (() => {
+  const rir = scoreInfo(DEFAULT_TARGET_SCORE)?.rir;
+  return rir == null ? null : `RIR ${rir}`;
+})();
+
 // Zweiter Bauweg derselben Tabelle: aus den Eckwerten der Phase statt aus einer
 // Wochenliste. Die vom Coach gefuehrten Bausteine (Hypertrophie, Kraftausdauer,
 // Wiedereinstieg, Erhaltung, Wiederaufbau) haben keine Wochenliste - ihre Wochen
 // stehen trotzdem fest genug, um sie zu zeigen: die Satzzahl kommt aus derselben
 // Volumenformel, nach der der Coach die Woche fuehrt, das Wiederholungsband aus
-// der Phase, die Last - wo die Phase eine vorgibt - aus ihrer Lastliste
-// (Issue #427).
+// der Phase, die Ziel-Anstrengung aus der systemweiten Vorgabe (COACH_RIR) und
+// die Last - wo die Phase eine vorgibt - aus ihrer Lastliste (Issue #427).
 //
 // Gerechnet wird der geplante Verlauf, also mit gruenen Erholungsmarkern: bei
 // schlechter Erholung rampt der Coach nicht weiter, aber das ist die Lage der
@@ -270,9 +281,16 @@ function coachWeekRows(
     const core = band === null ? `${sets} S\u00e4tze` : `${sets} \u00d7 ${band}`;
     const pct = loadPlanForWeek(p.loadPlan, week);
     return {
-      label: `Woche ${week}`,
-      targets: pct == null ? core : `${core} \u00b7 ${loadPercent(pct)}`,
-      note: p.deloadWeek === week ? "Deload, weniger Volumen" : "",
+      // Der Deload steht neben der Woche, nicht als Zusatzzeile darunter: er
+      // beschreibt diese Woche, und die gesenkte Satzzahl steht daneben (#429).
+      label:
+        p.deloadWeek === week
+          ? `Woche ${week} \u00b7 Deload`
+          : `Woche ${week}`,
+      targets: [core, COACH_RIR, pct == null ? null : loadPercent(pct)]
+        .filter((t) => t !== null)
+        .join(" \u00b7 "),
+      note: "",
       state,
       mark: state === "past" ? "\u2713" : "",
     };
