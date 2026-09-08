@@ -19,14 +19,16 @@ describe("writeMilestoneAction", () => {
       type: "add",
       exerciseId: "ex1",
       name: "Bank 100",
-      targetRm: 100,
+      ziel: { basis: "fix", targetRm: 100 },
     });
     expect(log.meilensteinInserted).toEqual([
       {
         user_id: "u1",
         exercise_id: "ex1",
         name: "Bank 100",
+        basis: "fix",
         target_rm: 100,
+        faktor: null,
       },
     ]);
     expect(log.uebungPatches).toHaveLength(0);
@@ -39,12 +41,61 @@ describe("writeMilestoneAction", () => {
       type: "update",
       id: "m1",
       name: "Bank 110",
-      targetRm: 110,
+      ziel: { basis: "fix", targetRm: 110 },
     });
     expect(log.meilensteinPatches).toEqual([
-      { id: "m1", patch: { name: "Bank 110", target_rm: 110 } },
+      {
+        id: "m1",
+        patch: {
+          name: "Bank 110",
+          basis: "fix",
+          target_rm: 110,
+          faktor: null,
+        },
+      },
     ]);
     expect(log.meilensteinInserted).toHaveLength(0);
+  });
+
+  it("legt einen dynamischen Meilenstein mit Faktor statt Ziel an", async () => {
+    const { store, log } = createMemoryExerciseStore();
+    await writeMilestoneAction(store, "u1", {
+      type: "add",
+      exerciseId: "ex1",
+      name: "Einmal Koerpergewicht",
+      ziel: { basis: "koerpergewicht", faktor: 1 },
+    });
+    expect(log.meilensteinInserted).toEqual([
+      {
+        user_id: "u1",
+        exercise_id: "ex1",
+        name: "Einmal Koerpergewicht",
+        basis: "koerpergewicht",
+        target_rm: null,
+        faktor: 1,
+      },
+    ]);
+  });
+
+  it("raeumt beim Wechsel der Art das Feld der anderen Art ab", async () => {
+    const { store, log } = createMemoryExerciseStore();
+    await writeMilestoneAction(store, "u1", {
+      type: "update",
+      id: "m1",
+      name: "1,25x fettfreie Masse",
+      ziel: { basis: "ffm", faktor: 1.25 },
+    });
+    expect(log.meilensteinPatches).toEqual([
+      {
+        id: "m1",
+        patch: {
+          name: "1,25x fettfreie Masse",
+          basis: "ffm",
+          target_rm: null,
+          faktor: 1.25,
+        },
+      },
+    ]);
   });
 
   it("loescht einen Meilenstein", async () => {
@@ -60,9 +111,10 @@ describe("writeMilestoneAction", () => {
       type: "markAchieved",
       id: "m1",
       date: "2026-08-10",
+      ziel: 92.5,
     });
     expect(log.meilensteinAchieved).toEqual([
-      { id: "m1", date: "2026-08-10" },
+      { id: "m1", date: "2026-08-10", ziel: 92.5 },
     ]);
     // Kein gewoehnliches Aendern: der Guard "nur solange leer" haengt am
     // eigenen Handgriff.
@@ -76,7 +128,7 @@ describe("writeMilestoneAction", () => {
         type: "add",
         exerciseId: "ex1",
         name: "Bank 100",
-        targetRm: 100,
+        ziel: { basis: "fix", targetRm: 100 },
       }),
     ).rejects.toThrow("Nicht angemeldet.");
     expect(log.folge).toHaveLength(0);

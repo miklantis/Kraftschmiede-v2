@@ -15,17 +15,25 @@
 // Hooks darueber.
 
 import { supabase } from "@/lib/supabase";
-import type { ExerciseMilestoneInsert, RmTestInsert } from "@/schemas";
+import type {
+  ExerciseMilestoneInsert,
+  MeilensteinBasis,
+  RmTestInsert,
+} from "@/schemas";
 
 /** Zeile beim Anlegen eines Uebungs-Meilensteins. */
 export type UebungMeilensteinRowIns = ExerciseMilestoneInsert;
 
 /** Aenderbare Felder eines Uebungs-Meilensteins. Uebung und Nutzer-Kennung
  *  stehen beim Anlegen fest und werden nie nachtraeglich umgeschrieben; das
- *  Erreichen-Datum laeuft ueber den eigenen Handgriff `markMeilensteinAchieved`. */
+ *  Erreichen-Datum laeuft ueber den eigenen Handgriff `markMeilensteinAchieved`.
+ *  Basis, Ziel und Faktor werden immer gemeinsam geschrieben: beim Wechsel von
+ *  fest auf dynamisch muss das alte Ziel weg und umgekehrt der alte Faktor. */
 export interface UebungMeilensteinPatch {
   name: string;
-  target_rm: number;
+  basis: MeilensteinBasis;
+  target_rm: number | null;
+  faktor: number | null;
 }
 
 /** Zeile beim Anlegen eines 1RM-Tests. */
@@ -60,8 +68,14 @@ export interface ExerciseStore {
   updateMeilenstein(id: string, patch: UebungMeilensteinPatch): Promise<void>;
   deleteMeilenstein(id: string): Promise<void>;
   /** Erreichen-Datum stempeln, aber nur solange keines steht – idempotent, der
-   *  Guard sitzt in der Abfrage selbst und ueberschreibt kein aelteres Datum. */
-  markMeilensteinAchieved(id: string, date: string): Promise<void>;
+   *  Guard sitzt in der Abfrage selbst und ueberschreibt kein aelteres Datum.
+   *  `ziel` friert den in diesem Moment gueltigen Zielwert ein, damit ein
+   *  dynamischer Meilenstein nach dem Erreichen nicht weiterwandert. */
+  markMeilensteinAchieved(
+    id: string,
+    date: string,
+    ziel: number,
+  ): Promise<void>;
   insertRmTest(row: RmTestRowIns): Promise<void>;
   updateRmTest(id: string, patch: RmTestPatch): Promise<void>;
   deleteRmTest(id: string): Promise<void>;
@@ -86,11 +100,11 @@ export const supabaseExerciseStore: ExerciseStore = {
   async deleteMeilenstein(id) {
     must(await supabase.from("exercise_milestones").delete().eq("id", id));
   },
-  async markMeilensteinAchieved(id, date) {
+  async markMeilensteinAchieved(id, date, ziel) {
     must(
       await supabase
         .from("exercise_milestones")
-        .update({ achieved_at: date })
+        .update({ achieved_at: date, achieved_target: ziel })
         .eq("id", id)
         .is("achieved_at", null),
     );
@@ -118,7 +132,7 @@ export interface MemoryExerciseLog {
   meilensteinInserted: UebungMeilensteinRowIns[];
   meilensteinPatches: Array<{ id: string; patch: UebungMeilensteinPatch }>;
   meilensteinDeleted: string[];
-  meilensteinAchieved: Array<{ id: string; date: string }>;
+  meilensteinAchieved: Array<{ id: string; date: string; ziel: number }>;
   rmTestInserted: RmTestRowIns[];
   rmTestPatches: Array<{ id: string; patch: RmTestPatch }>;
   rmTestDeleted: string[];
@@ -156,8 +170,8 @@ export function createMemoryExerciseStore(): {
       log.meilensteinDeleted.push(id);
       log.folge.push("deleteMeilenstein");
     },
-    async markMeilensteinAchieved(id, date) {
-      log.meilensteinAchieved.push({ id, date });
+    async markMeilensteinAchieved(id, date, ziel) {
+      log.meilensteinAchieved.push({ id, date, ziel });
       log.folge.push("markMeilensteinAchieved");
     },
     async insertRmTest(row) {

@@ -200,8 +200,13 @@ Begründung in ADR-0003.
   skeletal_muscle_kg, muscle_mass_kg, tbw_kg, phase_angle, visceral_fat, ecw_kg, icw_kg,
   bmr_kcal, `unique(user_id, date)` (ecw_kg/icw_kg = extra-/intrazellulaeres Wasser,
   muscle_mass_kg = Muskelmasse inkl. glatter Muskulatur, alles Rohwerte)
-- **exercise_milestones** – Ziele je Übung: exercise_id (FK), name, target_rm,
-  achieved_at (Erreichen-Datum, nullable), position (Migration 0011)
+- **exercise_milestones** – Ziele je Übung: exercise_id (FK), name, basis
+  (fix/koerpergewicht/ffm), target_rm (nur bei `fix`, sonst null), faktor (nur
+  bei den dynamischen Basen), achieved_at (Erreichen-Datum, nullable),
+  achieved_target (beim Erreichen gültiger Zielwert, nullable), position
+  (Migration 0011, dynamische Ziele in 0057). Der dynamische Zielwert wird nicht
+  gespeichert, sondern in `meilensteinBasis.ts` aus dem 30-Tage-Durchschnitt der
+  `composition`-Messungen gerechnet
 - **composition_milestones** – Ziele je Mess-Metrik: metric
   (weight/fat/muscle/muscle_mass/water/phase/bmr), name, target, position
   (Migration 0012, erweitert in 0021)
