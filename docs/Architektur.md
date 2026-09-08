@@ -525,8 +525,15 @@ Eindampfen, sonst wären die alten Felder schon weg.
   Stelle (`lib/planNote.ts`, Schrittweite und Einheit aus den Einstellungen), beim Start
   auf die Einheit eingefroren wie der Lasthinweis (`WorkoutSession.planNote`) und
   in Start-Popup und Live-Panel im selben Kasten gezeigt (`PlanNoteBanner`). Auf der
-  Journey-Seite listet **jede** Phase mit Plan ihre Wochen auf (`PhaseView.weekRows` aus
+  Journey-Seite listet **jede** Phase ihre Wochen auf (`PhaseView.weekRows` aus
   `lib/journey.ts`): je Woche Sätze, Wiederholungen, Ziel-Anstrengung und Wochenziel.
+  Phasen mit Wochenliste (Maximalkraft, Intensivierung, Test/Peak) bauen die Zeilen aus
+  ihr; alle übrigen – die vom Coach geführten Bausteine samt Wiederaufbau – aus ihren
+  Eckwerten: Satzzahl aus derselben Volumenformel, nach der der Coach die Woche fährt
+  (`volumeForWeek`, gerechnet als geplanter Verlauf mit grünen Erholungsmarkern),
+  Wiederholungsband aus der Phase, Lastanteil – wo die Phase einen vorgibt – aus ihrer
+  Lastliste, alles in einer Zeile („4 × 8–12 · 80 %"). Die Deload-Woche steht als eigene
+  Zeile mit gesenkter Satzzahl und dem Zusatz „Deload, weniger Volumen" (Issue #427).
   Unterschiedlich ist nur der markierte Stand – an einer vergangenen Phase sind alle
   Wochen abgehakt, an einer künftigen alle blass, an der laufenden ist die aktuelle
   hervorgehoben; in der Vorlagen-Vorschau läuft keine Journey, dort stehen alle Zeilen
@@ -540,13 +547,12 @@ Eindampfen, sonst wären die alten Felder schon weg.
   einer Phase sind die Zusammenfassung derselben Zahlen, die die Tabelle Woche für
   Woche auflistet – also lässt `phaseDetail` weg, was die Tabelle schon zeigt
   (`PhaseView.detail` bleibt dann leer, `PhaseList` blendet die Kachel aus). Kommt die
-  Tabelle aus der Wochenliste, entfällt die Kachel ganz; kommt sie aus der Lastliste,
-  entfällt nur die Zeile „Vorgegebene Last", weil Band, Satz-Rampe und Deload dort
-  nirgends stehen. Ohne Tabelle – die Phasen, die ganz beim Coach liegen – bleiben die
-  Eckwerte unverändert stehen. Daraus folgt eine Regel ohne Ausnahme: Phase mit
-  Wochenplan zeigt ihre Wochen und keine Kachel, Phase mit Lastliste zeigt ihre
-  Laststufen je Woche plus Band, Satz-Rampe und Deload, Coach-Phase zeigt nur die
-  Eckwerte. Sichtbar ist das auf beiden Breiten gleich: die mobile Liste klappt nicht
+  Tabelle aus der Wochenliste, entfällt die Kachel ganz; entsteht sie aus den Eckwerten,
+  bleibt höchstens stehen, was keine Zeile hergibt – das fehlende Vorgabeband der
+  Erhaltung („Wiederholungsband – je Übung") und der Vermerk, dass eine Phase keine Last
+  vorgibt. Daraus folgt eine Regel ohne Ausnahme: jede Phase zeigt ihre Wochen, und die
+  Kachel darüber sagt nur noch, was in keiner Zeile steht (Issue #427).
+  Sichtbar ist das auf beiden Breiten gleich: die mobile Liste klappt nicht
   mehr nur die laufende Phase auf, sondern zeigt an jeder Phase dieselben Angaben wie
   das Raster (Issue #362). Auch die Periodisierungskurve
   rechnet dann wochengenau: beide Linien kommen in `lib/periodization.ts` aus der

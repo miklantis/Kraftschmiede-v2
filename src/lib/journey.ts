@@ -4,7 +4,12 @@ import type {
   WeekPlan,
   WeekPlanWeek,
 } from "@/engine";
-import { buildPhasePlans, loadPlanForWeek, weekDemandsSession } from "@/engine";
+import {
+  buildPhasePlans,
+  loadPlanForWeek,
+  volumeForWeek,
+  weekDemandsSession,
+} from "@/engine";
 import {
   loadFactorNote,
   loadPercent,
@@ -90,6 +95,8 @@ const TEST_WEEK_TARGETS = "1RM-Test";
 
 function repBand(min: number | null, max: number | null): string {
   if (min == null || max == null) return "?";
+  // Gleiche Grenzen sind keine Spanne - "8\u20138" waere nur Ballast.
+  if (min === max) return `${min}`;
   return `${min}\u2013${max}`;
 }
 
@@ -116,9 +123,9 @@ function loadValue(plan: LoadPlan | null, currentWeek: number | null): string {
 //
 // `covered` sagt, was die Wochentabelle unter der Phase schon Woche fuer Woche
 // auffuehrt (Issue #362) - was dort steht, faellt hier weg, statt doppelt
-// dazustehen. Eine Phase mit Wochenplan traegt in der Tabelle alles, was hier
-// stuende, und bekommt deshalb gar keine Kachel mehr; bei einer Lasttabelle
-// faellt nur die Lastzeile weg, Band, Satz-Rampe und Deload stehen dort nicht.
+// dazustehen. Seit jede Phase eine Tabelle traegt (Issue #427) bleibt hoechstens
+// stehen, was keine Zeile hergibt: das fehlende Vorgabeband der Erhaltung und
+// der Vermerk, dass eine Phase keine Last vorgibt.
 function phaseDetail(
   p: JourneyPhaseInput,
   withLoad: boolean,
@@ -127,15 +134,23 @@ function phaseDetail(
   // Quelle der Wochentabelle unter dieser Phase; null = es gibt keine.
   covered: WeekTableSource | null = null,
 ): PhaseDetail[] {
-  // Die Lasttabelle nennt den Anteil jeder Woche - die Zusammenfassung daneben
-  // waere reine Wiederholung.
-  const loadRow =
-    withLoad && covered !== "load"
-      ? [{ k: "Vorgegebene Last", v: loadValue(p.loadPlan, currentWeek) }]
-      : [];
-  // Uebrig bleibt hoechstens die Last - und auch nur, wenn die Phase ueberhaupt
-  // eine vorgibt; sonst bliebe eine Kachel mit einem einzelnen "keine" stehen.
+  const loadRow = withLoad
+    ? [{ k: "Vorgegebene Last", v: loadValue(p.loadPlan, currentWeek) }]
+    : [];
+  // Die Wochenliste nennt Saetze, Wiederholungen und Ziel-Anstrengung; uebrig
+  // bleibt hoechstens die Last - und auch nur, wenn die Phase ueberhaupt eine
+  // vorgibt, sonst bliebe eine Kachel mit einem einzelnen "keine" stehen.
   if (covered === "plan") return p.loadPlan?.length ? loadRow : [];
+  if (covered === "coach") {
+    // Ohne Vorgabeband steht in den Zeilen nur die Satzzahl - dann sagt genau
+    // eine Zeile, woher das Band kommt, statt es an jeder Woche zu wiederholen.
+    const bandRow =
+      p.repTargetMin == null || p.repTargetMax == null
+        ? [{ k: "Wiederholungsband", v: "je \u00dcbung" }]
+        : [];
+    // Gibt die Phase eine Last vor, steht sie in jeder Zeile der Tabelle.
+    return [...bandRow, ...(p.loadPlan?.length ? [] : loadRow)];
+  }
   return [
     {
       k: "Wiederholungsband",
@@ -143,7 +158,7 @@ function phaseDetail(
     },
     {
       // Kraftphasen fahren eine feste Satzzahl - dort waere "Rampe" falsch.
-      k: p.setsStart === p.setsEnd ? "Sätze / Woche" : "Satz-Rampe / Woche",
+      k: p.setsStart === p.setsEnd ? "S\u00e4tze / Woche" : "Satz-Rampe / Woche",
       v: setsRamp(p.setsStart, p.setsEnd),
     },
     { k: "Deload", v: p.deloadWeek ? `Woche ${p.deloadWeek}` : "keiner" },
@@ -213,41 +228,62 @@ function planWeekRows(
     });
 }
 
-// Zweiter Bauweg derselben Tabelle: aus der Lastliste statt aus der
-// Wochenliste. Der Wiederaufbau gibt nur das Gewicht vor - Saetze und
-// Wiederholungen bleiben beim Coach -, hat also gar keine Wochenliste. Ohne
-// diesen Weg bliebe seine Laststufen-Leiter unsichtbar, obwohl sie das ist,
-// was die Phase ausmacht (Konzept Bausteine, Abschnitt 10).
+// Zweiter Bauweg derselben Tabelle: aus den Eckwerten der Phase statt aus einer
+// Wochenliste. Die vom Coach gefuehrten Bausteine (Hypertrophie, Kraftausdauer,
+// Wiedereinstieg, Erhaltung, Wiederaufbau) haben keine Wochenliste - ihre Wochen
+// stehen trotzdem fest genug, um sie zu zeigen: die Satzzahl kommt aus derselben
+// Volumenformel, nach der der Coach die Woche fuehrt, das Wiederholungsband aus
+// der Phase, die Last - wo die Phase eine vorgibt - aus ihrer Lastliste
+// (Issue #427).
 //
-// Eine Zeile je Phasenwoche, nicht je Listenzeile: der Anteil kommt ueber
-// loadPlanForWeek, damit eine kuerzere Liste die Tabelle nicht verkuerzt,
-// sondern - wie ueberall sonst - auf ihrem letzten Wert stehen bleibt. Der
-// Wochentext bleibt leer; die Leiter erklaert sich aus den Prozentwerten, und
-// derselbe Satz an jeder Zeile waere nur Rauschen.
-function loadWeekRows(
-  plan: LoadPlan,
+// Gerechnet wird der geplante Verlauf, also mit gruenen Erholungsmarkern: bei
+// schlechter Erholung rampt der Coach nicht weiter, aber das ist die Lage der
+// einzelnen Woche und nicht der Plan der Phase.
+//
+// Eine Zeile je Phasenwoche, nicht je Zeile der Lastliste: der Anteil kommt
+// ueber loadPlanForWeek, damit eine kuerzere Liste die Tabelle nicht verkuerzt,
+// sondern - wie ueberall sonst - auf ihrem letzten Wert stehen bleibt.
+function coachWeekRows(
+  p: JourneyPhaseInput,
   weeks: number,
   weekInPhase: number | null,
 ): PhaseWeekRow[] {
-  const anzahl = weeks > 0 ? weeks : plan.length;
-  return Array.from({ length: anzahl }, (_, i) => {
+  const band =
+    p.repTargetMin == null || p.repTargetMax == null
+      ? null
+      : repBand(p.repTargetMin, p.repTargetMax);
+  return Array.from({ length: weeks }, (_, i) => {
     const week = i + 1;
     const state = weekState(week, weekInPhase);
-    const pct = loadPlanForWeek(plan, week);
+    const sets = volumeForWeek(
+      {
+        setsStart: p.setsStart,
+        setsEnd: p.setsEnd,
+        weeks,
+        deloadWeek: p.deloadWeek,
+      },
+      i,
+      true,
+    );
+    // Ohne Vorgabeband (Erhaltung) bleibt es bei der Satzzahl - das Band steht
+    // dort an jeder Uebung und nicht an der Phase.
+    const core = band === null ? `${sets} S\u00e4tze` : `${sets} \u00d7 ${band}`;
+    const pct = loadPlanForWeek(p.loadPlan, week);
     return {
       label: `Woche ${week}`,
-      targets: pct == null ? "" : loadPercent(pct),
-      note: "",
+      targets: pct == null ? core : `${core} \u00b7 ${loadPercent(pct)}`,
+      note: p.deloadWeek === week ? "Deload, weniger Volumen" : "",
       state,
-      mark: state === "past" ? "✓" : "",
+      mark: state === "past" ? "\u2713" : "",
     };
   });
 }
 
 // Woraus die Wochentabelle entstanden ist. Entscheidet mit, welche Detailzeilen
 // die Phase noch braucht: die Tabelle aus der Wochenliste traegt Saetze,
-// Wiederholungen und Ziel-Anstrengung, die aus der Lastliste den Lastanteil.
-type WeekTableSource = "plan" | "load";
+// Wiederholungen und Ziel-Anstrengung, die aus den Eckwerten Saetze,
+// Wiederholungsband, Deload und - wo die Phase eine vorgibt - die Last.
+type WeekTableSource = "plan" | "coach";
 
 interface PhaseWeekTable {
   rows: PhaseWeekRow[];
@@ -255,7 +291,8 @@ interface PhaseWeekTable {
 }
 
 // Wochentabelle einer Phase auf dem Weg, den die Phase hergibt: Wochenliste
-// zuerst, sonst die Lastliste, sonst keine Tabelle.
+// zuerst, sonst die Eckwerte der Phase. Jede Phase mit Wochen bekommt damit
+// ihre Zeilen (Issue #427).
 //
 // Sie haengt nicht mehr an der laufenden Phase (#366): jede Phase mit Plan zeigt
 // ihre Wochen, nur der markierte Stand unterscheidet sich. Die Testphase ist
@@ -267,11 +304,11 @@ function phaseWeekTable(
 ): PhaseWeekTable | null {
   if (p.weekPlan?.length)
     return { rows: planWeekRows(p.weekPlan, weekInPhase), source: "plan" };
-  if (p.loadPlan?.length)
-    return {
-      rows: loadWeekRows(p.loadPlan, p.weeks, weekInPhase),
-      source: "load",
-    };
+  // Ohne gesetzte Wochenzahl traegt hoechstens die Lastliste noch eine Laenge;
+  // ohne beides gibt es keine Wochen, ueber die sich etwas sagen liesse.
+  const weeks = p.weeks > 0 ? p.weeks : (p.loadPlan?.length ?? 0);
+  if (weeks > 0)
+    return { rows: coachWeekRows(p, weeks, weekInPhase), source: "coach" };
   return null;
 }
 
